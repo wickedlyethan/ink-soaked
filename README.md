@@ -36,12 +36,12 @@ In `main.js` there is now an *if* statement that checks the first tag on any lin
 
 ## Customizing Your Story
 
-y-lohse did a marvelous job of creating a simple, lovely web template for easily playing your ink stories in a browser, and they included a CSS sheet ready to go!
+Inkle did a marvelous job of creating a simple, lovely web template for easily playing your ink stories in a browser, and they included a CSS sheet ready to go!
 
-I've added just a few minor modifications to make link text more apparent and left-aligned, much like in Twine 2's default story format, Harlowe, but the beauty of CSS is [anyone can do it](https://www.w3schools.com/css/)! Make your story beautiful!
+I've added just a few minor modifications to make choice text more apparent and left-aligned, much like in Twine 2's default story format, Harlowe, but the beauty of CSS is [anyone can do it](https://www.w3schools.com/css/)! Make your story beautiful!
 
 ---
 
 For full transparency, I also minify'd the code for `ink.js` using [JSCompress](https://jscompress.com/) - this was as much a psychological thing (so I wouldn't touch it) as it was an efficiency move (it cut out 55% of the file, making the whole folder to excatly 100kb, which is good for a webpage.)
 
-Additionally, if you wanted to be a bit crazy, or if you want to host on your own website or Itch.io, you can in fact take all the scripts and combine them into the `index.html` file - be careful, and consider compressing the javascript when you do so, but this will make launching your game even easier.
+Additionally, if you wanted to be a bit crazy, or if you want to host on your own website or Itch.io, you can in fact take all the scripts and combine them into the `index.html` file - be careful, and consider compressing the javascript when you do so, but this will make launching your game even easier! (This is what I've done with the demo story included at the root of the repo - all the javascript, including the story itself, and CSS is in that one HTML file, and it's only ~100kb.)

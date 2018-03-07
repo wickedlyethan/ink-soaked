@@ -10,9 +10,9 @@ All I did was lightly edit the template created by inkle's IDE, [Inky](https://g
 
 ## How to Use
 
-First off, get ink's IDE, [Inky](https://github.com/inkle/inky). This will let you write ink stories and test them in the same window, which is great. (One of the best features of ink is being able to write in **any** text editor, but Inky is a great place to start.)
+First off, get ink's IDE, [Inky](https://github.com/inkle/inky). This will let you write ink stories and test them in the same window, which is great. (One of the best features of ink is being able to write in **any** text editor, but Inky is a great place to start.) This is also the program we're using to convert our ink stories to JavaScript, so you can't really work without it!
 
-Once your story has been written or you want to test it, go into Inky and navigate to `File -> Export story.js only...` Save that JavaScript (.js) file in the `Ink-soaked` folder where you will see these files:
+Once your story has been written or you want to test it, go into Inky and navigate to `File -> Export story.js only...` Save that JavaScript (.js) file in the `ink-soaked` folder where you will see these files:
 
 - `index.html` (the webpage itself)
 - `style.css` (the cascading style sheet for customizing the look of your story)
@@ -26,7 +26,7 @@ Now, open `index.html` in your favorite text editor and replace `untitled.js`wit
 
 Now, double-click `index.html` to launch it, and voilà! Your ink story is now playable in any modern web-browser, and is even mobile-responsive. Unlike the default web template from Inky, it will erase each page, much like most Twines. 
 
-## Using Tags
+## Using Tags for Formatting
 
 ink has an incredibly powerful [tags](https://github.com/inkle/ink/blob/master/Documentation/WritingWithInk.md#tags) system, which is for creating hooks into your game engine to use or modify text in interesting ways. (In past projects I've used this in Unity to change character art, visual-novel style.) Here its functionality is more limited, but it can still be used! 
 
@@ -39,6 +39,28 @@ In `main.js` there is now an *if* statement that checks the first tag on any lin
 Inkle did a marvelous job of creating a simple, lovely web template for easily playing your ink stories in a browser, and they included a CSS sheet ready to go!
 
 I've added just a few minor modifications to make choice text more apparent and left-aligned, much like in Twine 2's default story format, Harlowe, but the beauty of CSS is [anyone can do it](https://www.w3schools.com/css/)! Make your story beautiful!
+
+### Images
+
+Inserting images is incredibly easy: simply insert an HTML `img` tag as its own line anywhere in your ink script, with the correct `src` path for the image. The CSS included in this template will make it fit into the current story container. For example:
+
+```
+<img src="images/1.jpg">
+- I looked at Monsiuer Fogg
+*   ... and I could contain myself no longer.
+```
+
+You can then customize what your images look like using any traditional CSS classes that you then declare in your `img` tag, like so: `<img class="blur" src="images/1.jpg">`.
+
+### Metadata and Other Finishing Touches
+
+Your first impression is always important, and there are some finishing touches you should put on your project before you publish! 
+
+1) A friendly reminder to _spellcheck_ because with interactive fiction a spelling error is the same as a bug. (Emily Short said that, though I can't find where, but that means it's very real.)
+
+2) Change the `<title>` property in your final HMTL file. By default it is "untitled" and that's what will show up as the name of the tab on someone's web browser - change this to the title of your game! Also change the values for "author" and "description" right near there, even just as a way to sign your name.
+
+3) Consider implementing the [Open Graph Protocol](http://ogp.me/) and [Twitter Card](https://developer.twitter.com/en/docs/tweets/optimize-with-cards/guides/getting-started) `meta` tags. If you plan on sharing your project on social media, or serious about getting people to read it in general, consider utilizing Facebook and Twitter's code that makes your project look great when shared. They give you a lot of control over how your work gets shared, and it looks very professional if done right.
 
 ---
 

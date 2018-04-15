@@ -41,16 +41,18 @@
             // Add as many as you want using this pattern!
             
             var paragraphElement = document.createElement("p");
+
+            // console.log(story.currentTags.toString());
             
             if (story.currentTags[0] != undefined){
                 var tags = story.currentTags;
                 if (tags.includes("toggleFlow")){
                     toggleFlow();
                 }
-                else if (tags.includes("h1")){
+                if (tags.includes("h1")){
                     var paragraphElement = document.createElement("h1");
                 }
-                else if (tags.includes("h2")){
+                if (tags.includes("h2")){
                     var paragraphElement = document.createElement("h2");
                 }
             }

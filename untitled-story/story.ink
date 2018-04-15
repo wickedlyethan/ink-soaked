@@ -1,9 +1,9 @@
-﻿- I looked at Monsieur Fogg 
-*   ... and I could contain myself no longer.
+﻿- I looked at Monsieur Fogg #h1
+*   ... and I could contain myself no longer. #toggleFlow
     'What is the purpose of our journey, Monsieur?'
     'A wager,' he replied.
     * *     'A wager!'[] I returned.
-            He nodded. 
+            He nodded. # toggleFlow # h2
             * * *   'But surely that is foolishness!'
             * * *  'A most serious matter then!'
             - - -   He nodded again.
@@ -16,3 +16,4 @@
     - -     After that, <>
 *   ... but I said nothing[] and <> 
 - we passed the day in silence.
+-> DONE

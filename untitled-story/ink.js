@@ -1,1 +1,6697 @@
-!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define("inkjs",["exports"],e):e(t.inkjs=t.inkjs||{})}(this,function(t){"use strict";var e="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},n=function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")},a=function(){function t(t,e){for(var n=0;n<e.length;n++){var i=e[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(t,i.key,i)}}return function(e,n,i){return n&&t(e.prototype,n),i&&t(e,i),e}}(),r=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var n=arguments[e];for(var i in n)Object.prototype.hasOwnProperty.call(n,i)&&(t[i]=n[i])}return t},o=function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):t.__proto__=e)},s=function(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e},u=function(){function t(){n(this,t),this._isRelative,this._components=[],"string"==typeof arguments[0]?this.componentsString=arguments[0]:arguments[0]instanceof l&&arguments[1]instanceof t?(this._components.push(arguments[0]),this._components=this._components.concat(arguments[1])):arguments[0]instanceof Array&&(this._components=this._components.concat(arguments[0]),this._isRelative=!!arguments[1])}return a(t,[{key:"PathByAppendingPath",value:function(e){for(var n=new t,i=0,a=0;a<e.components.length&&e.components[a].isParent;++a)i++;for(a=0;a<this.components.length-i;++a)n.components.push(this.components[a]);for(a=i;a<e.components.length;++a)n.components.push(e.components[a]);return n}},{key:"toString",value:function(){return this.componentsString}},{key:"Equals",value:function(t){if(null==t)return!1;if(t.components.length!=this.components.length)return!1;if(t.isRelative!=this.isRelative)return!1;for(var e=0,n=t.components.length;e<n;e++)if(!t.components[e].Equals(this.components[e]))return!1;return!0}},{key:"isRelative",get:function(){return this._isRelative}},{key:"components",get:function(){return this._components}},{key:"head",get:function(){return this.components.length>0?this.components[0]:null}},{key:"tail",get:function(){return this.components.length>=2?new t(this.components.slice(1,this.components.length)):t.self}},{key:"length",get:function(){return this.components.length}},{key:"lastComponent",get:function(){return this.components.length>0?this.components[this.components.length-1]:null}},{key:"containsNamedComponent",get:function(){for(var t=0,e=this.components.length;t<e;t++)if(!this.components[t].isIndex)return!0;return!1}},{key:"componentsString",get:function(){var t=this.components.join(".");return this.isRelative?"."+t:t},set:function(t){var e=this;this.components.length=0;var n=t;null!=n&&""!=n&&("."==n[0]&&(this._isRelative=!0,n=n.substring(1)),n.split(".").forEach(function(t){/^(\-|\+)?([0-9]+|Infinity)$/.test(t)?e.components.push(new l(parseInt(t))):e.components.push(new l(t))}))}}],[{key:"self",get:function(){var e=new t;return e._isRelative=!0,e}}]),t}(),l=function(){function t(e){n(this,t),"string"==typeof e?(this._index=-1,this._name=e):(this._index=parseInt(e),this._name=null)}return a(t,[{key:"toString",value:function(){return this.isIndex?this.index.toString():this.name}},{key:"Equals",value:function(t){return null!=t&&t.isIndex==this.isIndex&&(this.isIndex?this.index==t.index:this.name==t.name)}},{key:"index",get:function(){return this._index}},{key:"name",get:function(){return this._name}},{key:"isIndex",get:function(){return this.index>=0}},{key:"isParent",get:function(){return this.name==u.parentId}}],[{key:"ToParent",value:function(){return new t(u.parentId)}}]),t}();u.parentId="^",u.Component=l;var h=function(){function t(){n(this,t),this.parent=null,this._path=null}return a(t,[{key:"ResolvePath",value:function(t){if(t.isRelative){var e=this;return e instanceof T==!1&&(null==this.parent&&console.warn("Can't resolve relative path because we don't have a parent"),"Container"!==(e=this.parent).constructor.name&&console.warn("Expected parent to be a container"),t=t.tail),e.ContentAtPath(t)}return this.rootContentContainer.ContentAtPath(t)}},{key:"ConvertPathToRelative",value:function(t){for(var e=this.path,n=Math.min(t.components.length,e.components.length),i=-1,a=0;a<n;++a){var r=e.components[a],o=t.components[a];if(!r.Equals(o))break;i=a}if(-1==i)return t;for(var s=e.components.length-1-i,l=[],h=0;h<s;++h)l.push(u.Component.ToParent());for(var c=i+1;c<t.components.length;++c)l.push(t.components[c]);return new u(l,!0)}},{key:"CompactPathString",value:function(t){var e=null,n=null;return t.isRelative?(n=t.componentsString,e=this.path.PathByAppendingPath(t).componentsString):(n=this.ConvertPathToRelative(t).componentsString,e=t.componentsString),n.Length<e.Length?n:e}},{key:"Copy",value:function(){throw"Not Implemented"}},{key:"SetChild",value:function(t,e,n){t[e]&&(t[e]=null),t[e]=n,t[e]&&(t[e].parent=this)}},{key:"path",get:function(){if(null==this._path)if(null==this.parent)this._path=new u;else{for(var t=[],e=this,n=e.parent;n instanceof T;){var i=e;i.name&&i.hasValidName?t.unshift(new u.Component(i.name)):t.unshift(new u.Component(n.content.indexOf(e))),e=n,n=n.parent}this._path=new u(t)}return this._path}},{key:"rootContentContainer",get:function(){for(var t=this;t.parent;)t=t.parent;return t}}]),t}(),c=function(){function t(e){n(this,t),e=void 0!==e?e.toString():"",this._string=e}return a(t,[{key:"Append",value:function(t){this._string+=t}},{key:"AppendLine",value:function(t){void 0!==t&&this.Append(t),this._string+="\n"}},{key:"AppendFormat",value:function(t){var e=Array.prototype.slice.call(arguments,1);return t.replace(/{(\d+)}/g,function(t,n){return void 0!==e[n]?e[n]:t})}},{key:"toString",value:function(){return this._string}},{key:"Length",get:function(){return this._string.length}}]),t}(),f=function(){function t(e,i){if(n(this,t),void 0!==i)this.originName=e,this.itemName=i;else{var a=e.toString().split(".");this.originName=a[0],this.itemName=a[1]}}return a(t,[{key:"isNull",value:function(){return null==this.originName&&null==this.itemName}},{key:"toString",value:function(){return this.fullname}},{key:"Equals",value:function(e){if(e instanceof t){var n=e;return n.itemName==this.itemName&&n.originName==this.originName}return!1}},{key:"toString",value:function(){var t="0",e=this.itemName?this.itemName.toString():"null";return null!=this.originName&&(t=this.originName.toString()),t+e}},{key:"fullName",get:function(){return(null!==this.originName?this.originName:"?")+"."+this.itemName}}],[{key:"Null",value:function(){return new t(null,null)}}]),t}(),v=function(){function t(e,i){var a=this;if(n(this,t),this._keys={},this._values={},this.origins=null,this._originNames=null,e)if(e instanceof t){var r=e;r.forEach(function(t){a.Add(t.Key,t.Value)}),this._originNames=r._originNames}else if("string"==typeof e){this.SetInitialOriginName(e);var o=null;if(!(o=i.listDefinitions.TryGetDefinition(e,o)))throw new Error("InkList origin could not be found in story when constructing new list: "+singleOriginListName);this.origins=[o]}else if(e.hasOwnProperty("Key")&&e.hasOwnProperty("Value")){var s=e;this.Add(s.Key,s.Value)}}return a(t,[{key:"forEach",value:function(t){for(var e in this._values)t({Key:this._keys[e],Value:this._values[e]})}},{key:"AddItem",value:function(t){var e=this;if(t instanceof f){if(null==(a=t).originName)return void this.AddItem(a.itemName);throw this.origins.forEach(function(t){if(t.name==a.originName){var n;if(void 0!==(n=t.TryGetValueForItem(a,n)))return void e.Add(a,n);throw"Could not add the item "+a+" to this list because it doesn't exist in the original list definition in ink."}}),"Failed to add item to list because the item was from a new list definition that wasn't previously known to this list. Only items from previously known lists can be used, so that the int value can be found."}var n=t,i=null;if(this.origins.forEach(function(t){if(t.ContainsItemWithName(n)){if(null!=i)throw"Could not add the item "+n+" to this list because it could come from either "+t.name+" or "+i.name;i=t}}),null==i)throw"Could not add the item "+n+" to this list because it isn't known to any list definitions previously associated with this list.";var a=new f(i.name,n),r=i.ValueForItem(a);this.Add(a,r)}},{key:"ContainsItemNamed",value:function(t){var e=!1;return this.forEach(function(n){n.Key.itemName==t&&(e=!0)}),e}},{key:"ContainsKey",value:function(t){return t in this._values}},{key:"Add",value:function(t,e){this._keys[t]=t,this._values[t]=e}},{key:"Remove",value:function(t){delete this._values[t],delete this._keys[t]}},{key:"SetInitialOriginName",value:function(t){this._originNames=[t]}},{key:"SetInitialOriginNames",value:function(t){this._originNames=null==t?null:t.slice()}},{key:"Union",value:function(e){var n=new t(this);return e.forEach(function(t){n.Add(t.Key,t.Value)}),n}},{key:"Intersect",value:function(e){var n=new t;return this.forEach(function(t){e.ContainsKey(t.Key)&&n.Add(t.Key,t.Value)}),n}},{key:"Without",value:function(e){var n=new t(this);return e.forEach(function(t){n.Remove(t.Key)}),n}},{key:"Contains",value:function(t){var e=this,n=!0;return t.forEach(function(t){e.ContainsKey(t.Key)||(n=!1)}),n}},{key:"GreaterThan",value:function(t){return 0!=this.Count&&(0==t.Count||this.minItem.Value>t.maxItem.Value)}},{key:"GreaterThanOrEquals",value:function(t){return 0!=this.Count&&(0==t.Count||this.minItem.Value>=t.minItem.Value&&this.maxItem.Value>=t.maxItem.Value)}},{key:"LessThan",value:function(t){return 0!=t.Count&&(0==this.Count||this.maxItem.Value<t.minItem.Value)}},{key:"LessThanOrEquals",value:function(t){return 0!=t.Count&&(0==this.Count||this.maxItem.Value<=t.maxItem.Value&&this.minItem.Value<=t.minItem.Value)}},{key:"MaxAsList",value:function(){return this.Count>0?new t(this.maxItem):new t}},{key:"MinAsList",value:function(){return this.Count>0?new t(this.minItem):new t}},{key:"Equals",value:function(e){var n=e;if(n instanceof t==!1)return!1;if(n.Count!=this.Count)return!1;var i=!0;return this.forEach(function(t){n.ContainsKey(t.Key)||(i=!1)}),i}},{key:"toString",value:function(){var t=[];this.forEach(function(e){t.push(e)}),t=t.sort(function(t,e){return t.Value===e.Value?0:t.Value>e.Value?1:-1});for(var e=new c,n=0;n<t.length;n++){n>0&&e.Append(", ");var i=t[n].Key;e.Append(i.itemName)}return e.toString()}},{key:"valueOf",value:function(){return NaN}},{key:"Count",get:function(){return Object.keys(this._values).length}},{key:"originOfMaxItem",get:function(){if(null==this.origins)return null;var t=this.maxItem.Key.originName,e=null;return this.origins.every(function(n){return n.name!=t||(e=n,!1)}),e}},{key:"originNames",get:function(){var t=this;return this.Count>0&&(null==this._originNames&&this.Count>0?this._originNames=[]:this._originNames.length=0,this.forEach(function(e){t._originNames.push(e.Key.originName)})),this._originNames}},{key:"maxItem",get:function(){var t={Key:null,Value:null};return this.forEach(function(e){(null===t.Key||e.Value>t.Value)&&(t=e)}),t}},{key:"minItem",get:function(){var t={Key:null,Value:null};return this.forEach(function(e){(null===t.Key||e.Value<t.Value)&&(t=e)}),t}},{key:"inverse",get:function(){var e=this,n=new t;return null!=this.origins&&this.origins.forEach(function(t){t.items.forEach(function(t){e.ContainsKey(t.Key)||n.Add(t.Key,t.Value)})}),n}},{key:"all",get:function(){var e=new t;return null!=this.origins&&this.origins.forEach(function(t){t.items.forEach(function(t){e.Add(t.Key,t.Value)})}),e}}]),t}(),d={Int:0,Float:1,List:2,String:3,DivertTarget:4,VariablePointer:5},p=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return i.value=t,i}return o(e,t),a(e,[{key:"toString",value:function(){return this.value.toString()}},{key:"value",get:function(){return this._value},set:function(t){this._value=t}},{key:"valueObject",get:function(){return this.value}}]),e}(function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return i._valueType,i._isTruthy,i._valueObject,i}return o(e,t),a(e,[{key:"Cast",value:function(t){throw"Trying to casting an AbstractValue"}},{key:"Copy",value:function(t){return e.Create(t)}},{key:"valueType",get:function(){return this._valueType}},{key:"isTruthy",get:function(){return this._isTruthy}},{key:"valueObject",get:function(){return this._valueObject}}],[{key:"Create",value:function(t){return"boolean"==typeof t&&(t=!!t?1:0),Number.isInteger(Number(t))?new y(t):isNaN(t)?"string"==typeof t?new g(t):t instanceof u?new k(t):t instanceof v?new S(t):null:new m(t)}}]),e}(h)),y=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this,t||0));return i._valueType=d.Int,i}return o(e,t),a(e,[{key:"Cast",value:function(t){if(t==this.valueType)return this;if(t==d.Float)return new m(parseFloat(this.value));if(t==d.String)return new g(""+this.value);throw"Unexpected type cast of Value to new ValueType"}},{key:"isTruthy",get:function(){return 0!=this.value}},{key:"valueType",get:function(){return d.Int}}]),e}(p),m=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this,t||0));return i._valueType=d.Float,i}return o(e,t),a(e,[{key:"Cast",value:function(t){if(t==this.valueType)return this;if(t==d.Int)return new y(parseInt(this.value));if(t==d.String)return new g(""+this.value);throw"Unexpected type cast of Value to new ValueType"}},{key:"isTruthy",get:function(){return 0!=this._value}},{key:"valueType",get:function(){return d.Float}}]),e}(p),g=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this,t||""));return i._valueType=d.String,i._isNewline="\n"==i.value,i._isInlineWhitespace=!0,i.value.split().every(function(t){return" "==t||"\t"==t||(i._isInlineWhitespace=!1,!1)}),i}return o(e,t),a(e,[{key:"Cast",value:function(t){if(t==this.valueType)return this;if(t==d.Int){var e;return(e=parseInt(value))?new y(e):null}if(t==d.Float){var n;return(n=n(value))?new m(n):null}throw"Unexpected type cast of Value to new ValueType"}},{key:"valueType",get:function(){return d.String}},{key:"isTruthy",get:function(){return this.value.length>0}},{key:"isNewline",get:function(){return this._isNewline}},{key:"isInlineWhitespace",get:function(){return this._isInlineWhitespace}},{key:"isNonWhitespace",get:function(){return!this.isNewline&&!this.isInlineWhitespace}}]),e}(p),k=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this,t));return i._valueType=d.DivertTarget,i}return o(e,t),a(e,[{key:"Cast",value:function(t){if(t==this.valueType)return this;throw"Unexpected type cast of Value to new ValueType"}},{key:"toString",value:function(){return"DivertTargetValue("+this.targetPath+")"}},{key:"targetPath",get:function(){return this.value},set:function(t){this.value=t}},{key:"isTruthy",get:function(){throw"Shouldn't be checking the truthiness of a divert target"}}]),e}(p),C=function(t){function e(t,i){n(this,e);var a=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this,t));return a._valueType=d.VariablePointer,a.contextIndex=void 0!==i?i:-1,a}return o(e,t),a(e,[{key:"Cast",value:function(t){if(t==this.valueType)return this;throw"Unexpected type cast of Value to new ValueType"}},{key:"toString",value:function(){return"VariablePointerValue("+this.variableName+")"}},{key:"Copy",value:function(){return new e(this.variableName,this.contextIndex)}},{key:"variableName",get:function(){return this.value},set:function(t){this.value=t}},{key:"isTruthy",get:function(){throw"Shouldn't be checking the truthiness of a variable pointer"}}]),e}(p),S=function(t){function e(t,i){n(this,e);var a=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this,null));return a._valueType=d.List,a.value=t instanceof v?new v(t):void 0!==t&&void 0!==i?new v({Key:t,Value:i}):new v,a}return o(e,t),a(e,[{key:"Cast",value:function(t){if(t==d.Int){e=this.value.maxItem;return new y(e.Key.isNull?0:e.Value)}if(t==d.Float){e=this.value.maxItem;return new m(e.Key.isNull?0:parseFloat(e.Value))}if(t==d.String){var e=value.maxItem;return new g(e.Key.isNull?"":e.Key.toString())}if(t==this.valueType)return this;throw"Unexpected type cast of Value to new ValueType"}},{key:"valueType",get:function(){return d.List}},{key:"isTruthy",get:function(){var t=!1;return this.value.forEach(function(e){0!=e.Value&&(t=!0)}),t}}]),a(e,null,[{key:"RetainListOriginsForAssignment",value:function(t,n){var i=t,a=n;i instanceof e&&a instanceof e&&0==a.value.Count&&a.value.SetInitialOriginNames(i.value.originNames)}}]),e}(p),b=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this,t));return i.message=t,i.name="StoryException",i}return o(e,t),e}(Error),T=function(t){function e(){n(this,e);var t=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return t.name="",t._content=[],t.namedContent={},t.visitsShouldBeCounted=!1,t.turnIndexShouldBeCounted=!1,t.countingAtStartOnly=!1,t.CountFlags={Visits:1,Turns:2,CountStartOnly:4},t._pathToFirstLeafContent=null,t}return o(e,t),a(e,[{key:"AddContent",value:function(t){var e=this;if(t instanceof Array)t.forEach(function(t){e.AddContent(t)});else{if(this._content.push(t),t.parent)throw"content is already in "+t.parent;t.parent=this,this.TryAddNamedContent(t)}}},{key:"TryAddNamedContent",value:function(t){t.hasValidName&&t.name&&this.AddToNamedContentOnly(t)}},{key:"AddToNamedContentOnly",value:function(t){t instanceof h==!1&&console.warn("Can only add Runtime.Objects to a Runtime.Container"),t.parent=this,this.namedContent[t.name]=t}},{key:"ContentAtPath",value:function(t,n){n=void 0!==n?n:t.components.length;for(var i=this,a=this,r=0;r<n;++r){var o=t.components[r];if(!(i instanceof e))throw"Path continued, but previous object wasn't a container: "+a;i=a=i.ContentWithPathComponent(o)}return a}},{key:"InsertContent",value:function(t,e){if(this.content[i]=t,t.parent)throw"content is already in "+t.parent;t.parent=this,this.TryAddNamedContent(t)}},{key:"AddContentsOfContainer",value:function(t){var e=this;this.content=this.content.concat(t.content),t.content.forEach(function(t){t.parent=e,e.TryAddNamedContent(t)})}},{key:"ContentWithPathComponent",value:function(t){if(t.isIndex)return t.index>=0&&t.index<this.content.length?this.content[t.index]:null;if(t.isParent)return this.parent;var e=null;if(e=this.namedContent[t.name])return e;throw new b("Content '"+t.name+"' not found at path: '"+this.path+"'")}},{key:"BuildStringOfHierarchy",value:function(t,n,i){function a(){for(var e=0;e<4*n;++e)t.Append(" ")}if(0==arguments.length){var t=new c;return this.BuildStringOfHierarchy(t,0,null),t.toString()}a(),t.Append("["),this.hasValidName&&t.AppendFormat(" ({0})",this.name),this==i&&t.Append("  <---"),t.AppendLine(),n++;for(var r=0;r<this.content.length;++r){var o=this.content[r];o instanceof e?(l=o).BuildStringOfHierarchy(t,n,i):(a(),o instanceof g?(t.Append('"'),t.Append(o.toString().replace("\n","\\n")),t.Append('"')):t.Append(o.toString())),r!=this.content.length-1&&t.Append(","),o instanceof e||o!=i||t.Append("  <---"),t.AppendLine()}var s={};for(var u in this.namedContent)this.content.indexOf(this.namedContent[u])>=0||(s[u]=this.namedContent[u]);if(Object.keys(s).length>0){a(),t.AppendLine("-- named: --");for(var u in s){s[u]instanceof e||console.warn("Can only print out named Containers");var l=s[u];l.BuildStringOfHierarchy(t,n,i),t.Append("\n")}}n--,a(),t.Append("]")}},{key:"hasValidName",get:function(){return null!=this.name&&this.name.length>0}},{key:"content",get:function(){return this._content},set:function(t){this.AddContent(t)}},{key:"namedOnlyContent",get:function(){var t={};for(var e in this.namedContent)t[e]=this.namedContent[e];return this.content.forEach(function(e){var n=e;n.name&&n.hasValidName&&delete t[n.name]}),0==Object.keys(t).length&&(t=null),t},set:function(t){var e=this.namedOnlyContent;if(null!=e)for(var n in e)delete this.namedContent[n];if(null!=t)for(var n in t){var i=t[n];i.name&&void 0!==i.hasValidName&&this.AddToNamedContentOnly(i)}}},{key:"countFlags",get:function(){var t=0;return this.visitsShouldBeCounted&&(t|=this.CountFlags.Visits),this.turnIndexShouldBeCounted&&(t|=this.CountFlags.Turns),this.countingAtStartOnly&&(t|=this.CountFlags.CountStartOnly),t==this.CountFlags.CountStartOnly&&(t=0),t},set:function(t){var e=t;(e&this.CountFlags.Visits)>0&&(this.visitsShouldBeCounted=!0),(e&this.CountFlags.Turns)>0&&(this.turnIndexShouldBeCounted=!0),(e&this.CountFlags.CountStartOnly)>0&&(this.countingAtStartOnly=!0)}},{key:"pathToFirstLeafContent",get:function(){return null==this._pathToFirstLeafContent&&(this._pathToFirstLeafContent=this.path.PathByAppendingPath(this.internalPathToFirstLeafContent)),this._pathToFirstLeafContent}},{key:"internalPathToFirstLeafContent",get:function(){for(var t=new Path,n=this;n instanceof e;)n.content.length>0&&(t.components.push(new Path.Component(0)),n=n.content[0]);return t}}]),e}(h),_=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return i.glueType=t,i}return o(e,t),a(e,[{key:"toString",value:function(){switch(this.glueType){case O.Bidirectional:return"BidirGlue";case O.Left:return"LeftGlue";case O.Right:return"RightGlue"}return"UnexpectedGlueType"}},{key:"isLeft",get:function(){return this.glueType==O.Left}},{key:"isBi",get:function(){return this.glueType==O.Bidirectional}},{key:"isRight",get:function(){return this.glueType==O.Right}}]),e}(h),O={Bidirectional:0,Left:1,Right:2},E=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return i._commandType=void 0!==t?t:w.NotSet,i}return o(e,t),a(e,[{key:"copy",value:function(){return new e(this.commandType)}},{key:"toString",value:function(){return this.commandType.toString()}},{key:"commandType",get:function(){return this._commandType}}],[{key:"EvalStart",value:function(){return new e(w.EvalStart)}},{key:"EvalOutput",value:function(){return new e(w.EvalOutput)}},{key:"EvalEnd",value:function(){return new e(w.EvalEnd)}},{key:"Duplicate",value:function(){return new e(w.Duplicate)}},{key:"PopEvaluatedValue",value:function(){return new e(w.PopEvaluatedValue)}},{key:"PopFunction",value:function(){return new e(w.PopFunction)}},{key:"PopTunnel",value:function(){return new e(w.PopTunnel)}},{key:"BeginString",value:function(){return new e(w.BeginString)}},{key:"EndString",value:function(){return new e(w.EndString)}},{key:"NoOp",value:function(){return new e(w.NoOp)}},{key:"ChoiceCount",value:function(){return new e(w.ChoiceCount)}},{key:"TurnsSince",value:function(){return new e(w.TurnsSince)}},{key:"ReadCount",value:function(){return new e(w.ReadCount)}},{key:"Random",value:function(){return new e(w.Random)}},{key:"SeedRandom",value:function(){return new e(w.SeedRandom)}},{key:"VisitIndex",value:function(){return new e(w.VisitIndex)}},{key:"SequenceShuffleIndex",value:function(){return new e(w.SequenceShuffleIndex)}},{key:"StartThread",value:function(){return new e(w.StartThread)}},{key:"Done",value:function(){return new e(w.Done)}},{key:"End",value:function(){return new e(w.End)}},{key:"ListFromInt",value:function(){return new e(w.ListFromInt)}},{key:"ListRange",value:function(){return new e(w.ListRange)}}]),e}(h),w={NotSet:-1,EvalStart:0,EvalOutput:1,EvalEnd:2,Duplicate:3,PopEvaluatedValue:4,PopFunction:5,PopTunnel:6,BeginString:7,EndString:8,NoOp:9,ChoiceCount:10,TurnsSince:11,Random:12,SeedRandom:13,VisitIndex:14,SequenceShuffleIndex:15,StartThread:16,Done:17,End:18,ListFromInt:19,ListRange:20,ReadCount:21};w.TOTAL_VALUES=Object.keys(w).length-1,E.CommandType=w;var x={Tunnel:0,Function:1},I=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return i._targetPath,i._targetContent,i.variableDivertName,i.pushesToStack,i.stackPushType,i.isExternal,i.isConditional,i.externalArgs,i.pushesToStack=!1,t&&(i.pushesToStack=!0,i.stackPushType=t),i}return o(e,t),a(e,[{key:"Equals",value:function(t){var n=t;return n instanceof e&&this.hasVariableTarget==n.hasVariableTarget&&(this.hasVariableTarget?this.variableDivertName==n.variableDivertName:this.targetPath.Equals(n.targetPath))}},{key:"toString",value:function(){if(this.hasVariableTarget)return"Divert(variable: "+this.variableDivertName+")";if(null==this.targetPath)return"Divert(null)";var t=new c,e=this.targetPath.toString();return t.Append("Divert"),this.pushesToStack&&(this.stackPushType==x.Function?t.Append(" function"):t.Append(" tunnel")),t.Append(" ("),t.Append(e),t.Append(")"),t.toString()}},{key:"targetPath",get:function(){if(null!=this._targetPath&&this._targetPath.isRelative){var t=this.targetContent;t&&(this._targetPath=t.path)}return this._targetPath},set:function(t){this._targetPath=t,this._targetContent=null}},{key:"targetContent",get:function(){return null==this._targetContent&&(this._targetContent=this.ResolvePath(this._targetPath)),this._targetContent}},{key:"targetPathString",get:function(){return null==this.targetPath?null:this.CompactPathString(this.targetPath)},set:function(t){this.targetPath=null==t?null:new u(t)}},{key:"hasVariableTarget",get:function(){return null!=this.variableDivertName}}]),e}(h),P=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return i._pathOnChoice,i.hasCondition,i.hasStartContent,i.hasChoiceOnlyContent,i.onceOnly,i.isInvisibleDefault,i.onceOnly=!!t,i}return o(e,t),a(e,[{key:"toString",value:function(){var t=this.pathOnChoice.toString();return"Choice: -> "+t}},{key:"pathOnChoice",get:function(){if(null!=this._pathOnChoice&&this._pathOnChoice.isRelative){var t=this.choiceTarget;t&&(this._pathOnChoice=t.path)}return this._pathOnChoice},set:function(t){this._pathOnChoice=t}},{key:"choiceTarget",get:function(){return this.ResolvePath(this._pathOnChoice)}},{key:"pathStringOnChoice",get:function(){return this.CompactPathString(this.pathOnChoice)},set:function(t){this.pathOnChoice=new u(t)}},{key:"flags",get:function(){var t=0;return this.hasCondition&&(t|=1),this.hasStartContent&&(t|=2),this.hasChoiceOnlyContent&&(t|=4),this.isInvisibleDefault&&(t|=8),this.onceOnly&&(t|=16),t},set:function(t){this.hasCondition=(1&t)>0,this.hasStartContent=(2&t)>0,this.hasChoiceOnlyContent=(4&t)>0,this.isInvisibleDefault=(8&t)>0,this.onceOnly=(16&t)>0}}]),e}(h),A=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return i.name=t,i.pathForCount,i}return o(e,t),a(e,[{key:"toString",value:function(){return null!=this.name?"var("+this.name+")":"read_count("+this.pathStringForCount+")"}},{key:"containerForCount",get:function(){return this.ResolvePath(this.pathForCount)}},{key:"pathStringForCount",get:function(){return null==this.pathForCount?null:this.CompactPathString(this.pathForCount)},set:function(t){this.pathForCount=null==t?null:new u(t)}}]),e}(h),V=function(t){function e(t,i){n(this,e);var a=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return a._variableName=t||null,a._isNewDeclaration=!!i,a.isGlobal,a}return o(e,t),a(e,[{key:"toString",value:function(){return"VarAssign to "+this.variableName}},{key:"variableName",get:function(){return this._variableName}},{key:"isNewDeclaration",get:function(){return this._isNewDeclaration}}]),e}(h),N=function(t){function e(){return n(this,e),s(this,(e.__proto__||Object.getPrototypeOf(e)).apply(this,arguments))}return o(e,t),e}(h),F=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return i.name=t,i._numberOfParameters,i._prototype,i._isPrototype,i._operationFuncs=null,e.GenerateNativeFunctionsIfNecessary(),i}return o(e,t),a(e,[{key:"Call",value:function(t){if(this._prototype)return this._prototype.Call(t);if(this.numberOfParameters!=t.length)throw"Unexpected number of parameters";var e=!1;if(t.forEach(function(t){if(t instanceof N)throw new b("Attempting to perform operation on a void value. Did you forget to 'return' a value from a function you called here?");t instanceof S&&(e=!0)}),2==t.length&&e)return this.CallBinaryListOperation(t);var n=this.CoerceValuesToSingleType(t),i=n[0].valueType;return i==d.Int?this.CallType(n):i==d.Float?this.CallType(n):i==d.String?this.CallType(n):i==d.DivertTarget?this.CallType(n):i==d.List?this.CallType(n):null}},{key:"CallType",value:function(t){var e=t[0],n=e.valueType,i=e,a=t.length;if(2==a||1==a){var r=this._operationFuncs[n];if(!r)throw new b("Cannot perform operation '"+this.name+"' on "+n);if(2==a){var o=t[1],s=(u=r)(i.value,o.value);return p.Create(s)}var u=r,s=u(i.value);return p.Create(s)}throw"Unexpected number of parameters to NativeFunctionCall: "+t.length}},{key:"CallBinaryListOperation",value:function(t){if(("+"==this.name||"-"==this.name)&&t[0]instanceof S&&t[1]instanceof y)return this.CallListIncrementOperation(t);var e=t[0],n=t[1];if(!("&&"!=this.name&&"||"!=this.name||e.valueType==d.List&&n.valueType==d.List)){var i=(0,this._operationFuncs[d.Int])(e.isTruthy?1:0,n.isTruthy?1:0);return new y(i)}if(e.valueType==d.List&&n.valueType==d.List)return this.CallType([e,n]);throw new b("Can not call use '"+this.name+"' operation on "+e.valueType+" and "+n.valueType)}},{key:"CallListIncrementOperation",value:function(t){var e=this,n=t[0],i=t[1],a=new v;return n.value.forEach(function(t){var r=t.Key,o=t.Value,s=(0,e._operationFuncs[d.Int])(o,i.value),u=null;if(n.value.origins.forEach(function(t){if(t.name==r.originName)return u=t,!1}),null!=u){var l=u.TryGetItemWithValue(s);l.exists&&a.Add(l.item,s)}}),new S(a)}},{key:"CoerceValuesToSingleType",value:function(t){var e=d.Int,n=null;t.forEach(function(t){var i=t;i.valueType>e&&(e=i.valueType),i.valueType==d.List&&(n=i)});var i=[];return e==d.List?t.forEach(function(t){if(t.valueType==d.List)i.push(t);else{if(t.valueType!=d.Int)throw new b("Cannot mix Lists and "+t.valueType+" values in this operation");var e=parseInt(t.valueObject),a=n.value.originOfMaxItem,r=a.TryGetItemWithValue(e);if(!r.exists)throw new b("Could not find List item with the value "+e+" in "+a.name);var o=new S(r.item,e);i.push(o)}}):t.forEach(function(t){var n=t.Cast(e);i.push(n)}),i}},{key:"AddOpFuncForType",value:function(t,e){null==this._operationFuncs&&(this._operationFuncs={}),this._operationFuncs[t]=e}},{key:"toString",value:function(){return"Native '"+this.name+"'"}},{key:"name",get:function(){return this._name},set:function(t){this._name=t,this._isPrototype||(this._prototype=e._nativeFunctions[this._name])}},{key:"numberOfParameters",get:function(){return this._prototype?this._prototype.numberOfParameters:this._numberOfParameters},set:function(t){this._numberOfParameters=t}}],[{key:"internalConstructor",value:function(t,n){var i=new e(t);return i._isPrototype=!0,i.numberOfParameters=n,i}},{key:"CallWithName",value:function(t){return new e(t)}},{key:"CallExistsWithName",value:function(t){return this.GenerateNativeFunctionsIfNecessary(),this._nativeFunctions[t]}},{key:"GenerateNativeFunctionsIfNecessary",value:function(){if(null==this._nativeFunctions){this._nativeFunctions={},this.AddIntBinaryOp(this.Add,function(t,e){return t+e}),this.AddIntBinaryOp(this.Subtract,function(t,e){return t-e}),this.AddIntBinaryOp(this.Multiply,function(t,e){return t*e}),this.AddIntBinaryOp(this.Divide,function(t,e){return parseInt(t/e)}),this.AddIntBinaryOp(this.Mod,function(t,e){return t%e}),this.AddIntUnaryOp(this.Negate,function(t){return-t}),this.AddIntBinaryOp(this.Equal,function(t,e){return t==e?1:0}),this.AddIntBinaryOp(this.Greater,function(t,e){return t>e?1:0}),this.AddIntBinaryOp(this.Less,function(t,e){return t<e?1:0}),this.AddIntBinaryOp(this.GreaterThanOrEquals,function(t,e){return t>=e?1:0}),this.AddIntBinaryOp(this.LessThanOrEquals,function(t,e){return t<=e?1:0}),this.AddIntBinaryOp(this.NotEquals,function(t,e){return t!=e?1:0}),this.AddIntUnaryOp(this.Not,function(t){return 0==t?1:0}),this.AddIntBinaryOp(this.And,function(t,e){return 0!=t&&0!=e?1:0}),this.AddIntBinaryOp(this.Or,function(t,e){return 0!=t||0!=e?1:0}),this.AddIntBinaryOp(this.Max,function(t,e){return Math.max(t,e)}),this.AddIntBinaryOp(this.Min,function(t,e){return Math.min(t,e)}),this.AddFloatBinaryOp(this.Add,function(t,e){return t+e}),this.AddFloatBinaryOp(this.Subtract,function(t,e){return t-e}),this.AddFloatBinaryOp(this.Multiply,function(t,e){return t*e}),this.AddFloatBinaryOp(this.Divide,function(t,e){return t/e}),this.AddFloatBinaryOp(this.Mod,function(t,e){return t%e}),this.AddFloatUnaryOp(this.Negate,function(t){return-t}),this.AddFloatBinaryOp(this.Equal,function(t,e){return t==e?1:0}),this.AddFloatBinaryOp(this.Greater,function(t,e){return t>e?1:0}),this.AddFloatBinaryOp(this.Less,function(t,e){return t<e?1:0}),this.AddFloatBinaryOp(this.GreaterThanOrEquals,function(t,e){return t>=e?1:0}),this.AddFloatBinaryOp(this.LessThanOrEquals,function(t,e){return t<=e?1:0}),this.AddFloatBinaryOp(this.NotEquals,function(t,e){return t!=e?1:0}),this.AddFloatUnaryOp(this.Not,function(t){return 0==t?1:0}),this.AddFloatBinaryOp(this.And,function(t,e){return 0!=t&&0!=e?1:0}),this.AddFloatBinaryOp(this.Or,function(t,e){return 0!=t||0!=e?1:0}),this.AddFloatBinaryOp(this.Max,function(t,e){return Math.max(t,e)}),this.AddFloatBinaryOp(this.Min,function(t,e){return Math.min(t,e)}),this.AddStringBinaryOp(this.Add,function(t,e){return t+e}),this.AddStringBinaryOp(this.Equal,function(t,e){return t===e?1:0}),this.AddStringBinaryOp(this.NotEquals,function(t,e){return t!==e?1:0}),this.AddListBinaryOp(this.Add,function(t,e){return t.Union(e)}),this.AddListBinaryOp(this.Subtract,function(t,e){return t.Without(e)}),this.AddListBinaryOp(this.Has,function(t,e){return t.Contains(e)?1:0}),this.AddListBinaryOp(this.Hasnt,function(t,e){return t.Contains(e)?0:1}),this.AddListBinaryOp(this.Intersect,function(t,e){return t.Intersect(e)}),this.AddListBinaryOp(this.Equal,function(t,e){return t.Equals(e)?1:0}),this.AddListBinaryOp(this.Greater,function(t,e){return t.GreaterThan(e)?1:0}),this.AddListBinaryOp(this.Less,function(t,e){return t.LessThan(e)?1:0}),this.AddListBinaryOp(this.GreaterThanOrEquals,function(t,e){return t.GreaterThanOrEquals(e)?1:0}),this.AddListBinaryOp(this.LessThanOrEquals,function(t,e){return t.LessThanOrEquals(e)?1:0}),this.AddListBinaryOp(this.NotEquals,function(t,e){return t.Equals(e)?0:1}),this.AddListBinaryOp(this.And,function(t,e){return t.Count>0&&e.Count>0?1:0}),this.AddListBinaryOp(this.Or,function(t,e){return t.Count>0||e.Count>0?1:0}),this.AddListUnaryOp(this.Not,function(t){return 0==t.Count?1:0}),this.AddListUnaryOp(this.Invert,function(t){return t.inverse}),this.AddListUnaryOp(this.All,function(t){return t.all}),this.AddListUnaryOp(this.ListMin,function(t){return t.MinAsList()}),this.AddListUnaryOp(this.ListMax,function(t){return t.MaxAsList()}),this.AddListUnaryOp(this.Count,function(t){return t.Count}),this.AddListUnaryOp(this.ValueOfList,function(t){return t.maxItem.Value});this.AddOpToNativeFunc(this.Equal,2,d.DivertTarget,function(t,e){return t.Equals(e)?1:0})}}},{key:"AddOpToNativeFunc",value:function(t,n,i,a){var r=this._nativeFunctions[t];r||(r=e.internalConstructor(t,n),this._nativeFunctions[t]=r),r.AddOpFuncForType(i,a)}},{key:"AddIntBinaryOp",value:function(t,e){this.AddOpToNativeFunc(t,2,d.Int,e)}},{key:"AddIntUnaryOp",value:function(t,e){this.AddOpToNativeFunc(t,1,d.Int,e)}},{key:"AddFloatBinaryOp",value:function(t,e){this.AddOpToNativeFunc(t,2,d.Float,e)}},{key:"AddFloatUnaryOp",value:function(t,e){this.AddOpToNativeFunc(t,1,d.Float,e)}},{key:"AddStringBinaryOp",value:function(t,e){this.AddOpToNativeFunc(t,2,d.String,e)}},{key:"AddListBinaryOp",value:function(t,e){this.AddOpToNativeFunc(t,2,d.List,e)}},{key:"AddListUnaryOp",value:function(t,e){this.AddOpToNativeFunc(t,1,d.List,e)}}]),e}(h);F.Add="+",F.Subtract="-",F.Divide="/",F.Multiply="*",F.Mod="%",F.Negate="_",F.Equal="==",F.Greater=">",F.Less="<",F.GreaterThanOrEquals=">=",F.LessThanOrEquals="<=",F.NotEquals="!=",F.Not="!",F.And="&&",F.Or="||",F.Min="MIN",F.Max="MAX",F.Has="?",F.Hasnt="!?",F.Intersect="^",F.ListMin="LIST_MIN",F.ListMax="LIST_MAX",F.All="LIST_ALL",F.Count="LIST_COUNT",F.ValueOfList="LIST_VALUE",F.Invert="LIST_INVERT",F._nativeFunctions=null;var L=function(t){function e(t){n(this,e);var i=s(this,(e.__proto__||Object.getPrototypeOf(e)).call(this));return i._text=t.toString()||"",i}return o(e,t),a(e,[{key:"toString",value:function(){return"# "+this._text}},{key:"text",get:function(){return this._text}}]),e}(h),j=function(){function t(e){n(this,t),this.text,this.index,this.choicePoint,this.threadAtGeneration,this._originalThreadIndex,this._originalChoicePath,e&&(this.choicePoint=e)}return a(t,[{key:"pathStringOnChoice",get:function(){return this.choicePoint.pathStringOnChoice}},{key:"sourcePath",get:function(){return this.choicePoint.path.componentsString}}]),t}(),R=function(){function t(e,i){n(this,t),this._name=e||"",this._items=null,this._rawListItemsKeys=null,this._itemNameToValues=i||{}}return a(t,[{key:"forEachItems",value:function(t){for(var e in this._rawListItemsKeys)t({Key:this._rawListItemsKeys[e],Value:this._items[e]})}},{key:"ValueForItem",value:function(t){var e=this._itemNameToValues[t.itemName];return void 0!==e?e:0}},{key:"ContainsItem",value:function(t){return t.originName==this.name&&t.itemName in this._itemNameToValues}},{key:"ContainsItemWithName",value:function(t){return void 0!==this._itemNameToValues[t]}},{key:"TryGetItemWithValue",value:function(t,e){for(var n in this._itemNameToValues)if(this._itemNameToValues[n]==t)return e=new f(this.name,n),{item:e,exists:!0};return e=f.Null,{item:e,exists:!1}}},{key:"TryGetValueForItem",value:function(t,e){return intVal=this._itemNameToValues[t.itemName],intVal}},{key:"ListRange",value:function(t,e){var n=new v;for(var i in this._itemNameToValues)if(this._itemNameToValues[i]>=t&&this._itemNameToValues[i]<=e){var a=new f(this.name,i);n.Add(a,this._itemNameToValues[i])}return new S(n)}},{key:"name",get:function(){return this._name}},{key:"items",get:function(){if(null==this._items){this._items={},this._rawListItemsKeys={};for(var t in this._itemNameToValues){var e=new f(this.name,t);this._rawListItemsKeys[e]=e,this._items[e]=this._itemNameToValues[t]}}return this._items.forEach=this.forEachItems.bind(this),this._items}}]),t}(),D=function(){function t(e){var i=this;n(this,t),this._lists={},e.forEach(function(t){i._lists[t.name]=t})}return a(t,[{key:"TryGetDefinition",value:function(t,e){return t in this._lists?this._lists[t]:e}},{key:"FindSingleItemListWithName",value:function(t){var e=f.Null,n=null,i=t.split(".");if(2==i.length)e=new f(i[0],i[1]),n=this.TryGetDefinition(e.originName,n);else for(var a in this._lists){var r=this._lists[a];if(e=new f(a,t),r.ContainsItem(e)){n=r;break}}if(null!=n){var o=n.ValueForItem(e);return new S(e,o)}return null}},{key:"lists",get:function(){var t=[];for(var e in this._lists)t.push(this._lists[e]);return t}}]),t}(),B=function(){function t(){n(this,t)}return a(t,null,[{key:"ListToJArray",value:function(t){var e=this,n=[];return t.forEach(function(t){n.push(e.RuntimeObjectToJToken(t))}),n}},{key:"JArrayToRuntimeObjList",value:function(t,e){var n=t.length;e&&n--;for(var i=[],a=0;a<n;a++){var r=t[a],o=this.JTokenToRuntimeObject(r);i.push(o)}return i}},{key:"JObjectToDictionaryRuntimeObjs",value:function(t){var e={};for(var n in t)e[n]=this.JTokenToRuntimeObject(t[n]);return e}},{key:"DictionaryRuntimeObjsToJObject",value:function(t){var e={};for(var n in t){var i=t[n];i instanceof h&&(e[n]=this.RuntimeObjectToJToken(i))}return e}},{key:"JObjectToIntDictionary",value:function(t){var e={};for(var n in t)e[n]=parseInt(t[n]);return e}},{key:"IntDictionaryToJObject",value:function(t){var e={};for(var n in t)e[n]=t[n];return e}},{key:"JTokenToRuntimeObject",value:function(t){if(!isNaN(t)&&"\n"!==t)return p.Create(t);if("string"==typeof t){var n=t.toString(),i=n[0];if("^"==i)return new g(n.substring(1));if("\n"==i&&1==n.length)return new g("\n");if("<>"==n)return new _(O.Bidirectional);if("G<"==n)return new _(O.Left);if("G>"==n)return new _(O.Right);for(var a=0;a<G.length;++a)if(n==G[a])return new E(a);if("L^"==n&&(n="^"),F.CallExistsWithName(n))return F.CallWithName(n);if("->->"==n)return E.PopTunnel();if("~ret"==n)return E.PopFunction();if("void"==n)return new N}if("object"===(void 0===t?"undefined":e(t))&&t instanceof Array==!1){var r,o=t;if(o["^->"])return r=o["^->"],new k(new u(r.toString()));if(o["^var"]){r=o["^var"];var s=new C(r.toString());return o.ci&&(r=o.ci,s.contextIndex=parseInt(r)),s}var l=!1,h=!1,c=x.Function,d=!1;if((r=o["->"])?l=!0:(r=o["f()"])?(l=!0,h=!0,c=x.Function):(r=o["->t->"])?(l=!0,h=!0,c=x.Tunnel):(r=o["x()"])&&(l=!0,d=!0,h=!1,c=x.Function),l){var y=new I;y.pushesToStack=h,y.stackPushType=c,y.isExternal=d;var m=r.toString();return(r=o.var)?y.variableDivertName=m:y.targetPathString=m,y.isConditional=!!o.c,d&&(r=o.exArgs)&&(y.externalArgs=parseInt(r)),y}if(r=o["*"]){var b=new P;return b.pathStringOnChoice=r.toString(),(r=o.flg)&&(b.flags=parseInt(r)),b}if(r=o["VAR?"])return new A(r.toString());if(r=o["CNT?"]){var T=new A;return T.pathStringForCount=r.toString(),T}var w=!1,j=!1;if((r=o["VAR="])?(w=!0,j=!0):(r=o["temp="])&&(w=!0,j=!1),w){var R=r.toString(),D=!o.re,B=new V(R,D);return B.isGlobal=j,B}if(void 0!==o["#"])return r=o["#"],new L(r.toString());if(r=o.list){var J=r,M=new v;if(r=o.origins){var W=r;M.SetInitialOriginNames(W)}for(var q in J){var K=J[q],U=new f(q),H=parseInt(K);M.Add(U,H)}return new S(M)}if(null!=o.originalChoicePath)return this.JObjectToChoice(o)}if(t instanceof Array)return this.JArrayToContainer(t);if(null==t)return null;throw"Failed to convert token to runtime object: "+JSON.stringify(t)}},{key:"RuntimeObjectToJToken",value:function(t){var e=t;if(e instanceof T)return this.ContainerToJArray(e);var n=t;if(n instanceof I){var i="->";n.isExternal?i="x()":n.pushesToStack&&(n.stackPushType==x.Function?i="f()":n.stackPushType==x.Tunnel&&(i="->t->"));var a;return a=n.hasVariableTarget?n.variableDivertName:n.targetPathString,(O={})[i]=a,n.hasVariableTarget&&(O.var=!0),n.isConditional&&(O.c=!0),n.externalArgs>0&&(O.exArgs=n.externalArgs),O}var r=t;if(r instanceof P)return(O={})["*"]=r.pathStringOnChoice,O.flg=r.flags,O;var o=t;if(o instanceof y)return o.value;var s=t;if(s instanceof m)return s.value;var u=t;if(u instanceof g)return u.isNewline?"\n":"^"+u.value;var l=t;if(l instanceof S)return this.InkListToJObject(l);var h=t;if(h instanceof k)return{"^->":h.value.componentsString};var c=t;if(c instanceof C)return{"^var":c.value,ci:c.contextIndex};var f=t;if(f instanceof _)return f.isBi?"<>":f.isLeft?"G<":"G>";var v=t;if(v instanceof E)return G[parseInt(v.commandType)];var d=t;if(d instanceof F){var p=d.name;return"^"==p&&(p="L^"),p}var b=t;if(b instanceof A){var O={},w=b.pathStringForCount;return null!=w?O["CNT?"]=w:O["VAR?"]=b.name,O}var R=t;if(R instanceof V)return(O={})[R.isGlobal?"VAR=":"temp="]=R.variableName,R.isNewDeclaration||(O.re=!0),O;if(t instanceof N)return"void";var D=t;if(D instanceof L)return(O={})["#"]=D.text,O;var B=t;if(B instanceof j)return this.ChoiceToJObject(B);throw"Failed to convert runtime object to Json token: "+t}},{key:"ContainerToJArray",value:function(t){var e=this.ListToJArray(t.content),n=t.namedOnlyContent,i=t.countFlags;if(null!=n&&n.length>0||i>0||null!=t.name){var a;if(null!=n){a=this.DictionaryRuntimeObjsToJObject(n);for(var r in a){var o=a[r];if(null!=o){var s=o[o.length-1];null!=s&&(delete s["#n"],0==Object.keys(s).length&&(o[o.length-1]=null))}}}else a={};i>0&&(a["#f"]=i),null!=t.name&&(a["#n"]=t.name),e.push(a)}else e.push(null);return e}},{key:"JArrayToContainer",value:function(t){var e=new T;e.content=this.JArrayToRuntimeObjList(t,!0);var n=t[t.length-1];if(null!=n){var i={};for(var a in n)if("#f"==a)e.countFlags=parseInt(n[a]);else if("#n"==a)e.name=n[a].toString();else{var r=this.JTokenToRuntimeObject(n[a]),o=r;o instanceof T&&(o.name=a),i[a]=r}e.namedOnlyContent=i}return e}},{key:"JObjectToChoice",value:function(t){var e=new j;return e.text=t.text.toString(),e.index=parseInt(t.index),e.originalChoicePath=t.originalChoicePath.toString(),e.originalThreadIndex=parseInt(t.originalThreadIndex),e}},{key:"ChoiceToJObject",value:function(t){var e={};return e.text=t.text,e.index=t.index,e.originalChoicePath=t.originalChoicePath,e.originalThreadIndex=t.originalThreadIndex,e}},{key:"InkListToJObject",value:function(t){var e=t.value,n={},i={};return e.forEach(function(t){var e=t.Key,n=t.Value;i[e.toString()]=n}),n.list=i,0==e.Count&&null!=e.originNames&&e.originNames.length>0&&(n.origins=e.originNames),n}},{key:"ListDefinitionsToJToken",value:function(t){var e={};return t.lists.forEach(function(t){var n={};t.items.forEach(function(t){var e=t.Key,i=t.Value;n[e.itemName]=i}),e[t.name]=n}),e}},{key:"JTokenToListDefinitions",value:function(t){var e=t,n=[];for(var i in e){var a=i.toString(),r=e[i],o={};for(var s in r){var u=r[s];o[s]=parseInt(u)}var l=new R(a,o);n.push(l)}return new D(n)}}]),t}(),G=[];G[E.CommandType.EvalStart]="ev",G[E.CommandType.EvalOutput]="out",G[E.CommandType.EvalEnd]="/ev",G[E.CommandType.Duplicate]="du",G[E.CommandType.PopEvaluatedValue]="pop",G[E.CommandType.PopFunction]="~ret",G[E.CommandType.PopTunnel]="->->",G[E.CommandType.BeginString]="str",G[E.CommandType.EndString]="/str",G[E.CommandType.NoOp]="nop",G[E.CommandType.ChoiceCount]="choiceCnt",G[E.CommandType.TurnsSince]="turns",G[E.CommandType.ReadCount]="readc",G[E.CommandType.Random]="rnd",G[E.CommandType.SeedRandom]="srnd",G[E.CommandType.VisitIndex]="visit",G[E.CommandType.SequenceShuffleIndex]="seq",G[E.CommandType.StartThread]="thread",G[E.CommandType.Done]="done",G[E.CommandType.End]="end",G[E.CommandType.ListFromInt]="listInt",G[E.CommandType.ListRange]="range";for(var J=0;J<E.CommandType.TOTAL_VALUES;++J)if(null==G[J])throw"Control command not accounted for in serialisation";var M=function(){function t(e,i,a,r){n(this,t),this.currentContainer=i,this.currentContentIndex=a,this.inExpressionEvaluation=r||!1,this.temporaryVariables={},this.type=e}return a(t,[{key:"Copy",value:function(){var e=new t(this.type,this.currentContainer,this.currentContentIndex,this.inExpressionEvaluation);return r(e.temporaryVariables,this.temporaryVariables),e}},{key:"currentObject",get:function(){return this.currentContainer&&this.currentContentIndex<this.currentContainer.content.length?this.currentContainer.content[this.currentContentIndex]:null},set:function(t){var e=t;if(null==e)return this.currentContainer=null,void(this.currentContentIndex=0);this.currentContainer=e.parent,this.currentContainer instanceof T&&(this.currentContentIndex=this.currentContainer.content.indexOf(e)),this.currentContainer instanceof T!=!1&&-1!=this.currentContentIndex||(this.currentContainer=e,this.currentContentIndex=0)}}]),t}(),W=function(){function t(e,i){var a=this;if(n(this,t),this.callstack=[],this.threadIndex=0,this.previousContentObject=null,e&&i){var r=e;this.threadIndex=parseInt(r.threadIndex),r.callstack.forEach(function(t){var e=t,n=parseInt(e.type),r=null,o=0,s=null,l=e.cPath;void 0!==l&&(s=l.toString(),r=i.ContentAtPath(new u(s)),o=parseInt(e.idx));var h=!!e.exp,c=new M(n,r,o,h),f=e.temp;c.temporaryVariables=B.JObjectToDictionaryRuntimeObjs(f),a.callstack.push(c)});var o=r.previousContentObject;if(void 0!==o){var s=new u(o.toString());this.previousContentObject=i.ContentAtPath(s)}}}return a(t,[{key:"Copy",value:function(){var e=new t;return e.threadIndex=this.threadIndex,this.callstack.forEach(function(t){e.callstack.push(t.Copy())}),e.previousContentObject=this.previousContentObject,e}},{key:"jsonToken",get:function(){var t={},e=[];return this.callstack.forEach(function(t){var n={};t.currentContainer&&(n.cPath=t.currentContainer.path.componentsString,n.idx=t.currentContentIndex),n.exp=t.inExpressionEvaluation,n.type=parseInt(t.type),n.temp=B.DictionaryRuntimeObjsToJObject(t.temporaryVariables),e.push(n)}),t.callstack=e,t.threadIndex=this.threadIndex,null!=this.previousContentObject&&(t.previousContentObject=this.previousContentObject.path.toString()),t}}]),t}(),q=function(){function t(e){var i=this;n(this,t),this._threads=[],this._threadCounter=0,this._threads.push(new W),e instanceof t?(this._threads=[],e._threads.forEach(function(t){i._threads.push(t.Copy())})):this._threads[0].callstack.push(new M(x.Tunnel,e,0))}return a(t,[{key:"CanPop",value:function(t){return!!this.canPop&&(null==t||this.currentElement.type==t)}},{key:"Pop",value:function(t){if(!this.CanPop(t))throw"Mismatched push/pop in Callstack";this.callStack.pop()}},{key:"Push",value:function(t){this.callStack.push(new M(t,this.currentElement.currentContainer,this.currentElement.currentContentIndex,!1))}},{key:"PushThread",value:function(){var t=this.currentThread.Copy();this._threadCounter++,t.threadIndex=this._threadCounter,this._threads.push(t)}},{key:"PopThread",value:function(){if(!this.canPopThread)throw"Can't pop thread";this._threads.splice(this._threads.indexOf(this.currentThread),1)}},{key:"SetJsonToken",value:function(t,e){var n=this;this._threads.length=0;var i=t;i.threads.forEach(function(t){var i=new W(t,e);n._threads.push(i)}),this._threadCounter=parseInt(i.threadCounter)}},{key:"GetJsonToken",value:function(){var t={},e=[];return this._threads.forEach(function(t){e.push(t.jsonToken)}),t.threads=e,t.threadCounter=this._threadCounter,t}},{key:"GetTemporaryVariableWithName",value:function(t,e){-1==(e=void 0===e?-1:e)&&(e=this.currentElementIndex+1);var n=null;return(n=this.callStack[e-1].temporaryVariables[t])?n:null}},{key:"SetTemporaryVariable",value:function(t,e,n,i){-1==(i=void 0===i?-1:i)&&(i=this.currentElementIndex+1);var a=this.callStack[i-1];if(!n&&!a.temporaryVariables[t])throw new b("Could not find temporary variable to set: "+t);var r;(r=a.temporaryVariables[t])&&S.RetainListOriginsForAssignment(r,e),a.temporaryVariables[t]=e}},{key:"ContextForVariableNamed",value:function(t){return this.currentElement.temporaryVariables[t]?this.currentElementIndex+1:0}},{key:"ThreadWithIndex",value:function(t){return this._threads.filter(function(e){if(e.threadIndex==t)return e})[0]}},{key:"currentThread",get:function(){return this._threads[this._threads.length-1]},set:function(t){1!=this._threads.length&&console.warn("Shouldn't be directly setting the current thread when we have a stack of them"),this._threads.length=0,this._threads.push(t)}},{key:"callStack",get:function(){return this.currentThread.callstack}},{key:"elements",get:function(){return this.callStack}},{key:"depth",get:function(){return this.elements.length}},{key:"currentElement",get:function(){return this.callStack[this.callStack.length-1]}},{key:"currentElementIndex",get:function(){return this.callStack.length-1}},{key:"canPop",get:function(){return this.callStack.length>1}},{key:"canPopThread",get:function(){return this._threads.length>1}}]),t}(),K=function(){function t(e,i){n(this,t),this._globalVariables={},this._callStack=e,this._listDefsOrigin=i,this._batchObservingVariableChanges=null,this._changedVariables=null,this.variableChangedEvent=null,this.variableChangedEventCallbacks=[];try{return new Proxy(this,{get:function(t,e){return e in t?t[e]:t.$(e)},set:function(t,e,n){return e in t?t[e]=n:t.$(e,n),!0}})}catch(t){}}return a(t,[{key:"ObserveVariableChange",value:function(t){var e=this;null==this.variableChangedEvent&&(this.variableChangedEvent=function(t,n){e.variableChangedEventCallbacks.forEach(function(e){e(t,n)})}),this.variableChangedEventCallbacks.push(t)}},{key:"CopyFrom",value:function(t){this._globalVariables=r({},t._globalVariables),this.variableChangedEvent=t.variableChangedEvent,t.batchObservingVariableChanges!=this.batchObservingVariableChanges&&(t.batchObservingVariableChanges?(this._batchObservingVariableChanges=!0,this._changedVariables=t._changedVariables):(this._batchObservingVariableChanges=!1,this._changedVariables=null))}},{key:"GetVariableWithName",value:function(t,e){void 0===e&&(e=-1);var n=this.GetRawVariableWithName(t,e),i=n;return i instanceof C&&(n=this.ValueAtVariablePointer(i)),n}},{key:"GetRawVariableWithName",value:function(t,e){var n=null;if(0==e||-1==e){if(n=this._globalVariables[t])return n;var i=this._listDefsOrigin.FindSingleItemListWithName(t);if(i)return i}if(null==(n=this._callStack.GetTemporaryVariableWithName(t,e)))throw"RUNTIME ERROR: Variable '"+t+"' could not be found in context '"+e+"'. This shouldn't be possible so is a bug in the ink engine. Please try to construct a minimal story that reproduces the problem and report to inkle, thank you!";return n}},{key:"ValueAtVariablePointer",value:function(t){return this.GetVariableWithName(t.variableName,t.contextIndex)}},{key:"Assign",value:function(t,e){var n=t.variableName,i=-1,a=!1;if(a=t.isNewDeclaration?t.isGlobal:!!this._globalVariables[n],t.isNewDeclaration){var r=e;r instanceof C&&(e=this.ResolveVariablePointer(r))}else{var o=null;do{(o=this.GetRawVariableWithName(n,i))instanceof C&&(n=o.variableName,a=0==(i=o.contextIndex))}while(o instanceof C)}a?this.SetGlobal(n,e):this._callStack.SetTemporaryVariable(n,e,t.isNewDeclaration,i)}},{key:"RetainListOriginsForAssignment",value:function(t,e){var n=t,i=e;n instanceof S&&i instanceof S&&0==i.value.Count&&i.value.SetInitialOriginNames(n.value.originNames)}},{key:"SetGlobal",value:function(t,e){var n=null;n=this._globalVariables[t],S.RetainListOriginsForAssignment(n,e),this._globalVariables[t]=e,null!=this.variableChangedEvent&&e!==n&&(this.batchObservingVariableChanges?this._changedVariables.push(t):this.variableChangedEvent(t,e))}},{key:"ResolveVariablePointer",value:function(t){var e=t.contextIndex;-1==e&&(e=this.GetContextIndexOfVariableNamed(t.variableName));var n=this.GetRawVariableWithName(t.variableName,e);return n instanceof C?n:new C(t.variableName,e)}},{key:"GetContextIndexOfVariableNamed",value:function(t){return this._globalVariables[t]?0:this._callStack.currentElementIndex}},{key:"$",value:function(t,e){if(void 0===e){var n=this._globalVariables[t];return void 0!==n?n.valueObject:null}if(void 0===this._globalVariables[t])throw new b("Variable '"+t+"' doesn't exist, so can't be set.");var i=p.Create(e);if(null==i)throw new b(null==e?"Cannot pass null to VariableState":"Invalid value passed to VariableState: "+e.toString());this.SetGlobal(t,i)}},{key:"callStack",get:function(){return this._callStack},set:function(t){this._callStack=t}},{key:"batchObservingVariableChanges",get:function(){return this._batchObservingVariableChanges},set:function(t){var e=this;t=!!t,this._batchObservingVariableChanges=t,t?this._changedVariables=[]:(null!=this._changedVariables&&this._changedVariables.forEach(function(t){var n=e._globalVariables[t];e.variableChangedEvent(t,n)}),this._changedVariables=null)}},{key:"jsonToken",get:function(){return B.DictionaryRuntimeObjsToJObject(this._globalVariables)},set:function(t){this._globalVariables=B.JObjectToDictionaryRuntimeObjs(t)}}]),t}(),U=function(){function t(e){n(this,t),this._seed=e%2147483647,this._seed<=0&&(this._seed+=2147483646)}return a(t,[{key:"next",value:function(){return this._seed=16807*this._seed%2147483647}},{key:"nextFloat",value:function(){return(this.next()-1)/2147483646}}]),t}(),H=function(){function t(e){n(this,t),this.story=e,this._outputStream=[],this._outputStreamTextDirty=!0,this._outputStreamTagsDirty=!0,this.OutputStreamDirty(),this._evaluationStack=[],this.callStack=new q(e.rootContentContainer),this._variablesState=new K(this.callStack,e.listDefinitions),this._visitCounts={},this._turnIndices={},this._currentTurnIndex=-1,this.divertedTargetObject=null;var i=(new Date).getTime();this.storySeed=new U(i).next()%100,this.previousRandom=0,this._currentChoices=[],this._currentText=null,this._currentTags=null,this._currentErrors=null,this.didSafeExit=!1,this._isExternalFunctionEvaluation=!1,this._originalCallstack=null,this._originalEvaluationStackHeight=0,this.GoToStart()}return a(t,[{key:"MatchRightGlueForLeftGlue",value:function(t){if(!t.isLeft)return null;for(var e=this._outputStream.length-1;e>=0;e--){var n=this._outputStream[e],i=n;if(i instanceof _&&i.isRight&&i.parent==t.parent)return i;if(n instanceof E)break}return null}},{key:"GoToStart",value:function(){this.callStack.currentElement.currentContainer=this.story.mainContentContainer,this.callStack.currentElement.currentContentIndex=0}},{key:"ResetErrors",value:function(){this._currentErrors=null}},{key:"ResetOutput",value:function(){this._outputStream.length=0,this.OutputStreamDirty()}},{key:"PushEvaluationStack",value:function(t){var e=this,n=t;if(n instanceof S){var i=n.value,a=i.originNames;if(null!=a){var r=[];a.forEach(function(t){var n=null;n=e.story.listDefinitions.TryGetDefinition(t,n),r.indexOf(n)<0&&r.push(n)}),i.origins=r}}this.evaluationStack.push(t)}},{key:"PopEvaluationStack",value:function(t){if(t){if(t>this.evaluationStack.length)throw"trying to pop too many objects";return this.evaluationStack.splice(this.evaluationStack.length-t,t)}return this.evaluationStack.pop()}},{key:"PeekEvaluationStack",value:function(){return this.evaluationStack[this.evaluationStack.length-1]}},{key:"PushToOutputStream",value:function(t){var e=this,n=t;if(n instanceof g){var i=this.TrySplittingHeadTailWhitespace(n);if(null!=i)return void i.forEach(function(t){e.PushToOutputStreamIndividual(t)})}this.PushToOutputStreamIndividual(t),this.OutputStreamDirty()}},{key:"TrySplittingHeadTailWhitespace",value:function(t){for(var e=t.value,n=-1,i=-1,a=0;a<e.length;++a){if("\n"!=(s=e[a])){if(" "==s||"\t"==s)continue;break}-1==n&&(n=a),i=a}for(var r=-1,o=-1,a=0;a<e.length;++a){var s=e[a];if("\n"!=s){if(" "==s||"\t"==s)continue;break}-1==r&&(r=a),o=a}if(-1==n&&-1==r)return null;var u=[],l=0,h=e.length;if(-1!=n){if(n>0){var c=e.substring(0,n);u.push(c)}u.push(new g("\n")),l=i+1}if(-1!=r&&(h=o),h>l){var f=e.substring(l,h-l);u.push(new g(f))}if(-1!=r&&o>i&&(u.push(new g("\n")),r<e.length-1)){var v=e.Length-r-1,d=new g(e.substring(r+1,v));u.push(d)}return u}},{key:"PushToOutputStreamIndividual",value:function(t){var e=t,n=t,i=!0;if(e instanceof _){var a=this.currentRightGlue,r=(!e.isLeft||!a||(e.parent,a.parent),null);e.isLeft&&(r=this.MatchRightGlueForLeftGlue(e)),(e.isLeft||e.isBi)&&this.TrimNewlinesFromOutputStream(r),i=e.isBi||e.isRight}else n instanceof g&&(-1!=this.currentGlueIndex?n.isNewline?(this.TrimFromExistingGlue(),i=!1):n.isNonWhitespace&&this.RemoveExistingGlue():n.isNewline&&(!this.outputStreamEndsInNewline&&this.outputStreamContainsContent||(i=!1)));i&&(this._outputStream.push(t),this.OutputStreamDirty())}},{key:"TrimNewlinesFromOutputStream",value:function(t){for(var e=-1,n=-1,i=!1,a=this._outputStream.length-1;a>=0;){var r=this._outputStream[a],o=r,s=r;if(r instanceof E||o instanceof g&&o.isNonWhitespace){if(i=!0,null==t)break}else{if(t&&s instanceof _&&s==t){n=a;break}o instanceof g&&o.isNewline&&!i&&(e=a)}a--}if(e>=0)for(a=e;a<this._outputStream.length;)this._outputStream[a]instanceof g?this._outputStream.splice(a,1):a++;if(t&&n>-1)for(a=n;a<this._outputStream.length;)this._outputStream[a]instanceof _&&this._outputStream[a].isRight?this.outputStream.splice(a,1):a++;this.OutputStreamDirty()}},{key:"TrimFromExistingGlue",value:function(){for(var t=this.currentGlueIndex;t<this._outputStream.length;){var e=this._outputStream[t];e instanceof g&&!e.isNonWhitespace?this._outputStream.splice(t,1):t++}this.OutputStreamDirty()}},{key:"RemoveExistingGlue",value:function(){for(var t=this._outputStream.length-1;t>=0;t--){var e=this._outputStream[t];if(e instanceof _)this._outputStream.splice(t,1);else if(e instanceof E)break}this.OutputStreamDirty()}},{key:"ForceEnd",value:function(){for(;this.callStack.canPopThread;)this.callStack.PopThread();for(;this.callStack.canPop;)this.callStack.Pop();this._currentChoices.length=0,this.currentContentObject=null,this.previousContentObject=null,this.didSafeExit=!0}},{key:"SetChosenPath",value:function(t){this._currentChoices.length=0,this.currentPath=t,this._currentTurnIndex++}},{key:"StartExternalFunctionEvaluation",value:function(t,e){this._originalCallstack=this.callStack,this._originalEvaluationStackHeight=this.evaluationStack.length,this.callStack=new q(t),this.callStack.currentElement.type=x.Function,this._variablesState.callStack=this.callStack,this._isExternalFunctionEvaluation=!0,this.PassArgumentsToEvaluationStack(e)}},{key:"PassArgumentsToEvaluationStack",value:function(t){if(null!=t)for(var e=0;e<t.length;e++){if("number"!=typeof t[e]&&"string"!=typeof t[e])throw"ink arguments when calling EvaluateFunction / ChoosePathStringWithParameters  must be int, float or string";this.PushEvaluationStack(p.Create(t[e]))}}},{key:"TryExitExternalFunctionEvaluation",value:function(){return!(!this._isExternalFunctionEvaluation||1!=this.callStack.elements.length||this.callStack.currentElement.type!=x.Function)&&(this.currentContentObject=null,this.didSafeExit=!0,!0)}},{key:"CompleteExternalFunctionEvaluation",value:function(){for(var t=null;this.evaluationStack.length>this._originalEvaluationStackHeight;){var e=this.PopEvaluationStack();null==t&&(t=e)}if(this.callStack=this._originalCallstack,this._originalCallstack=null,this._originalEvaluationStackHeight=0,this._variablesState.callStack=this.callStack,t){if(t instanceof N)return null;var n=t;return n.valueType==d.DivertTarget?n.valueObject.toString():n.valueObject}return null}},{key:"AddError",value:function(t){null==this._currentErrors&&(this._currentErrors=[]),this._currentErrors.push(t)}},{key:"OutputStreamDirty",value:function(){this._outputStreamTextDirty=!0,this._outputStreamTagsDirty=!0}},{key:"VisitCountAtPathString",value:function(t){var e;return(e=this.visitCounts[t])?e:0}},{key:"Copy",value:function(){var e=new t(this.story);e.outputStream.push.apply(e.outputStream,this._outputStream),this.OutputStreamDirty(),e._currentChoices.push.apply(e._currentChoices,this._currentChoices),this.hasError&&(e.currentErrors=[],e.currentErrors.push.apply(e.currentErrors,this.currentErrors)),e.callStack=new q(this.callStack),this._originalCallstack&&(e._originalCallstack=new q(this._originalCallstack)),e._variablesState=new K(e.callStack,this.story.listDefinitions),e.variablesState.CopyFrom(this.variablesState),e.evaluationStack.push.apply(e.evaluationStack,this.evaluationStack),e._originalEvaluationStackHeight=this._originalEvaluationStackHeight,null!=this.divertedTargetObject&&(e.divertedTargetObject=this.divertedTargetObject),e.previousContentObject=this.previousContentObject,e._isExternalFunctionEvaluation=this._isExternalFunctionEvaluation,e._visitCounts={};for(var n in this._visitCounts)e._visitCounts[n]=this._visitCounts[n];e._turnIndices={};for(var n in this._turnIndices)e._turnIndices[n]=this._turnIndices[n];return e._currentTurnIndex=this.currentTurnIndex,e.storySeed=this.storySeed,e.previousRandom=this.previousRandom,e.didSafeExit=this.didSafeExit,e}},{key:"toJson",value:function(t){return JSON.stringify(this.jsonToken,null,t?2:0)}},{key:"LoadJson",value:function(t){this.jsonToken=JSON.parse(t)}},{key:"currentChoices",get:function(){return this.canContinue?[]:this._currentChoices}},{key:"generatedChoices",get:function(){return this._currentChoices}},{key:"currentErrors",get:function(){return this._currentErrors}},{key:"visitCounts",get:function(){return this._visitCounts}},{key:"turnIndices",get:function(){return this._turnIndices}},{key:"currentTurnIndex",get:function(){return this._currentTurnIndex}},{key:"variablesState",get:function(){return this._variablesState}},{key:"currentContentObject",get:function(){return this.callStack.currentElement.currentObject},set:function(t){this.callStack.currentElement.currentObject=t}},{key:"canContinue",get:function(){return null!=this.currentContentObject&&!this.hasError}},{key:"hasError",get:function(){return null!=this.currentErrors&&this.currentErrors.length>0}},{key:"inExpressionEvaluation",get:function(){return this.callStack.currentElement.inExpressionEvaluation},set:function(t){this.callStack.currentElement.inExpressionEvaluation=t}},{key:"evaluationStack",get:function(){return this._evaluationStack}},{key:"outputStreamEndsInNewline",get:function(){if(this._outputStream.length>0)for(var t=this._outputStream.length-1;t>=0&&!(this._outputStream[t]instanceof E);t--){var e=this._outputStream[t];if(e instanceof g){if(e.isNewline)return!0;if(e.isNonWhitespace)break}}return!1}},{key:"outputStreamContainsContent",get:function(){for(var t=0;t<this._outputStream.length;t++)if(this._outputStream[t]instanceof g)return!0;return!1}},{key:"currentGlueIndex",get:function(){for(var t=this._outputStream.length-1;t>=0;t--){var e=this._outputStream[t];if(e instanceof _)return t;if(e instanceof E)break}return-1}},{key:"currentRightGlue",get:function(){for(var t=this._outputStream.length-1;t>=0;t--){var e=this._outputStream[t],n=e;if(n instanceof _&&n.isRight)return n;if(e instanceof E)break}return null}},{key:"inStringEvaluation",get:function(){for(var t=this._outputStream.length-1;t>=0;t--){var e=this._outputStream[t];if(e instanceof E&&e.commandType==E.CommandType.BeginString)return!0}return!1}},{key:"currentText",get:function(){if(this._outputStreamTextDirty){var t=new c;this._outputStream.forEach(function(e){var n=e;n instanceof g&&t.Append(n.value)}),this._currentText=t.toString(),this._outputStreamTextDirty=!1}return this._currentText}},{key:"currentTags",get:function(){var t=this;return this._outputStreamTagsDirty&&(this._currentTags=[],this._outputStream.forEach(function(e){var n=e;n instanceof L&&t._currentTags.push(n.text)}),this._outputStreamTagsDirty=!1),this._currentTags}},{key:"outputStream",get:function(){return this._outputStream}},{key:"currentPath",get:function(){return null==this.currentContentObject?null:this.currentContentObject.path},set:function(t){this.currentContentObject=null!=t?this.story.ContentAtPath(t):null}},{key:"currentContainer",get:function(){return this.callStack.currentElement.currentContainer}},{key:"previousContentObject",get:function(){return this.callStack.currentThread.previousContentObject},set:function(t){this.callStack.currentThread.previousContentObject=t}},{key:"callstackDepth",get:function(){return this.callStack.depth}},{key:"jsonToken",get:function(){var e=this,n={},i=null;return this._currentChoices.forEach(function(t){t.originalChoicePath=t.choicePoint.path.componentsString,t.originalThreadIndex=t.threadAtGeneration.threadIndex,null==e.callStack.ThreadWithIndex(t.originalThreadIndex)&&(null==i&&(i={}),i[t.originalThreadIndex.toString()]=t.threadAtGeneration.jsonToken)}),null!=this.choiceThreads&&(n.choiceThreads=this.choiceThreads),n.callstackThreads=this.callStack.GetJsonToken(),n.variablesState=this.variablesState.jsonToken,n.evalStack=B.ListToJArray(this.evaluationStack),n.outputStream=B.ListToJArray(this._outputStream),n.currentChoices=B.ListToJArray(this._currentChoices),null!=this.divertedTargetObject&&(n.currentDivertTarget=this.divertedTargetObject.path.componentsString),n.visitCounts=B.IntDictionaryToJObject(this.visitCounts),n.turnIndices=B.IntDictionaryToJObject(this.turnIndices),n.turnIdx=this.currentTurnIndex,n.storySeed=this.storySeed,n.inkSaveVersion=t.kInkSaveStateVersion,n.inkFormatVersion=this.story.inkVersionCurrent,n},set:function(e){var n=this,i=e,a=i.inkSaveVersion;if(null==a)throw new b("ink save format incorrect, can't load.");if(parseInt(a)<t.kMinCompatibleLoadVersion)throw new b("Ink save format isn't compatible with the current version (saw '"+a+"', but minimum is "+t.kMinCompatibleLoadVersion+"), so can't load.");this.callStack.SetJsonToken(i.callstackThreads,this.story),this.variablesState.jsonToken=i.variablesState,this._evaluationStack=B.JArrayToRuntimeObjList(i.evalStack),this._outputStream=B.JArrayToRuntimeObjList(i.outputStream),this.OutputStreamDirty(),this._currentChoices=B.JArrayToRuntimeObjList(i.currentChoices);var r=i.currentDivertTarget;if(null!=r){var o=new u(r.toString());this.divertedTargetObject=this.story.ContentAtPath(o)}this._visitCounts=B.JObjectToIntDictionary(i.visitCounts),this._turnIndices=B.JObjectToIntDictionary(i.turnIndices),this._currentTurnIndex=parseInt(i.turnIdx),this.storySeed=parseInt(i.storySeed);var s=i.choiceThreads;this._currentChoices.forEach(function(t){t.choicePoint=n.story.ContentAtPath(new u(t.originalChoicePath));var e=n.callStack.ThreadWithIndex(t.originalThreadIndex);if(null!=e)t.threadAtGeneration=e;else{var i=s[t.originalThreadIndex.toString()];t.threadAtGeneration=new q.Thread(i,n.story)}})}}]),t}();H.kInkSaveStateVersion=7,H.kMinCompatibleLoadVersion=6,Number.isInteger||(Number.isInteger=function(t){return"number"==typeof t&&isFinite(t)&&t>-9007199254740992&&t<9007199254740992&&Math.floor(t)===t});var X=function(t){function i(t,e){n(this,i);var a=s(this,(i.__proto__||Object.getPrototypeOf(i)).call(this));if(e=e||null,a.inkVersionCurrent=17,a.inkVersionMinimumCompatible=16,a._variableObservers=null,a._externals={},a._prevContainerSet=null,a._listDefinitions=null,t instanceof T)a._mainContentContainer=t,null!=e&&(a._listDefinitions=new D(e));else{var r="string"==typeof t?JSON.parse(t):t,o=r.inkVersion;if(null==o)throw"ink version number not found. Are you sure it's a valid .ink.json file?";var u=parseInt(o);if(u>a.inkVersionCurrent)throw"Version of ink used to build story was newer than the current verison of the engine";if(u<a.inkVersionMinimumCompatible)throw"Version of ink used to build story is too old to be loaded by this verison of the engine";u!=a.inkVersionCurrent&&console.warn("WARNING: Version of ink used to build story doesn't match current version of engine. Non-critical, but recommend synchronising.");var l=r.root;if(null==l)throw"Root node for ink not found. Are you sure it's a valid .ink.json file?";var h;(h=r.listDefs)&&(a._listDefinitions=B.JTokenToListDefinitions(h)),a._mainContentContainer=B.JTokenToRuntimeObject(l),a._hasValidatedExternals=null,a.allowExternalFunctionFallbacks=!1,a.ResetState()}return a}return o(i,t),a(i,[{key:"ToJsonString",value:function(){var t=B.RuntimeObjectToJToken(this._mainContentContainer),e={};return e.inkVersion=this.inkVersionCurrent,e.root=t,null!=this._listDefinitions&&(e.listDefs=B.ListDefinitionsToJToken(this._listDefinitions)),JSON.stringify(e)}},{key:"ResetState",value:function(){this._state=new H(this),this._state.variablesState.ObserveVariableChange(this.VariableStateDidChangeEvent.bind(this)),this.ResetGlobals()}},{key:"ResetErrors",value:function(){this._state.ResetErrors()}},{key:"ResetCallstack",value:function(){this._state.ForceEnd()}},{key:"ResetGlobals",value:function(){if(this._mainContentContainer.namedContent["global decl"]){var t=this.state.currentPath;this.ChoosePathString("global decl"),this.ContinueInternal(),this.state.currentPath=t}}},{key:"Continue",value:function(){return this._hasValidatedExternals||this.ValidateExternalBindings(),this.ContinueInternal()}},{key:"ContinueInternal",value:function(){if(!this.canContinue)throw new b("Can't continue - should check canContinue before calling Continue");this._state.ResetOutput(),this._state.didSafeExit=!1,this._state.variablesState.batchObservingVariableChanges=!0;try{var t=null;do{if(this.Step(),this.canContinue||this.TryFollowDefaultInvisibleChoice(),!this.state.inStringEvaluation){if(null!=t){var e=this.currentText,n=t.currentText.length,i=t.currentTags.length;if(e!==t.currentText||i!=this.currentTags.length){if(e.length>=n&&"\n"==e[n-1]){this.RestoreStateSnapshot(t);break}t=null}}this.state.outputStreamEndsInNewline&&(this.canContinue?null==t&&(t=this.StateSnapshot()):t=null)}}while(this.canContinue);null!=t&&this.RestoreStateSnapshot(t),this.canContinue||(this.state.callStack.canPopThread&&this.Error("Thread available to pop, threads should always be flat by the end of evaluation?"),0!=this.state.generatedChoices.length||this.state.didSafeExit||null!=this._temporaryEvaluationContainer||(this.state.callStack.CanPop(x.Tunnel)?this.Error("unexpectedly reached end of content. Do you need a '->->' to return from a tunnel?"):this.state.callStack.CanPop(x.Function)?this.Error("unexpectedly reached end of content. Do you need a '~ return'?"):this.state.callStack.canPop?this.Error("unexpectedly reached end of content for unknown reason. Please debug compiler!"):this.Error("ran out of content. Do you need a '-> DONE' or '-> END'?")))}catch(t){throw t}finally{this.state.didSafeExit=!1,this._state.variablesState.batchObservingVariableChanges=!1}return this.currentText}},{key:"ContinueMaximally",value:function(){for(var t=new c;this.canContinue;)t.Append(this.Continue());return t.toString()}},{key:"ContentAtPath",value:function(t){return this.mainContentContainer.ContentAtPath(t)}},{key:"StateSnapshot",value:function(){return this.state.Copy()}},{key:"RestoreStateSnapshot",value:function(t){this._state=t}},{key:"Step",value:function(){var t=!0,e=this.state.currentContentObject;if(null!=e){for(var n=e;n instanceof T&&(this.VisitContainer(n,!0),0!=n.content.length);)e=n.content[0],this.state.callStack.currentElement.currentContentIndex=0,this.state.callStack.currentElement.currentContainer=n,n=e;n=this.state.callStack.currentElement.currentContainer;var i=this.PerformLogicAndFlowControl(e);if(null!=this.state.currentContentObject){i&&(t=!1);var a=e;if(a instanceof P){var r=this.ProcessChoice(a);r&&this.state.generatedChoices.push(r),e=null,t=!1}if(e instanceof T&&(t=!1),t){var o=e;if(o instanceof C&&-1==o.contextIndex){var s=this.state.callStack.ContextForVariableNamed(o.variableName);e=new C(o.variableName,s)}this.state.inExpressionEvaluation?this.state.PushEvaluationStack(e):this.state.PushToOutputStream(e)}this.NextContent();var u=e;u instanceof E&&u.commandType==E.CommandType.StartThread&&this.state.callStack.PushThread()}}}},{key:"VisitContainer",value:function(t,e){t.countingAtStartOnly&&!e||(t.visitsShouldBeCounted&&this.IncrementVisitCountForContainer(t),t.turnIndexShouldBeCounted&&this.RecordTurnIndexVisitToContainer(t))}},{key:"VisitChangedContainersDueToDivert",value:function(){var t=this.state.previousContentObject,e=this.state.currentContentObject;if(e){if(this._prevContainerSet=[],t)for(var n=t instanceof T?t:t.parent;n instanceof T;)this._prevContainerSet.push(n),n=n.parent;for(var i=e,a=i.parent;a instanceof T&&this._prevContainerSet.indexOf(a)<0;){var r=a.content.length>0&&i==a.content[0];this.VisitContainer(a,r),i=a,a=a.parent}}}},{key:"ProcessChoice",value:function(t){var e=!0;if(t.hasCondition){var n=this.state.PopEvaluationStack();this.IsTruthy(n)||(e=!1)}var i="",a="";t.hasChoiceOnlyContent&&(a=this.state.PopEvaluationStack().value),t.hasStartContent&&(i=this.state.PopEvaluationStack().value),t.onceOnly&&this.VisitCountForContainer(t.choiceTarget)>0&&(e=!1);var r=new j(t);return r.threadAtGeneration=this.state.callStack.currentThread.Copy(),e?(r.text=i+a,r):null}},{key:"IsTruthy",value:function(t){if(t instanceof p){var e=t;if(e instanceof k){var n=e;return this.Error("Shouldn't use a divert target (to "+n.targetPath+") as a conditional value. Did you intend a function call 'likeThis()' or a read count check 'likeThis'? (no arrows)"),!1}return e.isTruthy}return!1}},{key:"PerformLogicAndFlowControl",value:function(t){if(null==t)return!1;if(t instanceof I){var e=t;if(e.isConditional){var n=this.state.PopEvaluationStack();if(!this.IsTruthy(n))return!0}if(e.hasVariableTarget){var i=e.variableDivertName,a=this.state.variablesState.GetVariableWithName(i);if(!(a instanceof k)){var r=a,o="Tried to divert to a target from a variable, but the variable ("+i+") didn't contain a divert target, it ";r instanceof y&&0==r.value?o+="was empty/null (the value 0).":o+="contained '"+a+"'.",this.Error(o)}var s=a;this.state.divertedTargetObject=this.ContentAtPath(s.targetPath)}else{if(e.isExternal)return this.CallExternalFunction(e.targetPathString,e.externalArgs),!0;this.state.divertedTargetObject=e.targetContent}return e.pushesToStack&&this.state.callStack.Push(e.stackPushType),null!=this.state.divertedTargetObject||e.isExternal||(e&&null!=e.debugMetadata.sourceName?this.Error("Divert target doesn't exist: "+e.debugMetadata.sourceName):this.Error("Divert resolution failed: "+e)),!0}if(t instanceof E){var u=t;switch(u.commandType){case E.CommandType.EvalStart:this.state.inExpressionEvaluation&&console.warn("Already in expression evaluation?"),this.state.inExpressionEvaluation=!0;break;case E.CommandType.EvalEnd:this.state.inExpressionEvaluation||console.warn("Not in expression evaluation mode"),this.state.inExpressionEvaluation=!1;break;case E.CommandType.EvalOutput:if(this.state.evaluationStack.length>0){var l=this.state.PopEvaluationStack();if(null!=l&&!(l instanceof N)){var h=new g(l.toString());this.state.PushToOutputStream(h)}}break;case E.CommandType.NoOp:break;case E.CommandType.Duplicate:this.state.PushEvaluationStack(this.state.PeekEvaluationStack());break;case E.CommandType.PopEvaluatedValue:this.state.PopEvaluationStack();break;case E.CommandType.PopFunction:case E.CommandType.PopTunnel:var f=u.commandType==E.CommandType.PopFunction?x.Function:x.Tunnel,v=null;if(f==x.Tunnel){var d=this.state.PopEvaluationStack();if((v=d)instanceof k==!1){if(d instanceof N==!1)throw"Expected void if ->-> doesn't override target";v=null}}if(this.state.TryExitExternalFunctionEvaluation())break;if(this.state.callStack.currentElement.type==f&&this.state.callStack.canPop)this.state.callStack.Pop(),v&&(this.state.divertedTargetObject=this.ContentAtPath(v.targetPath));else{var p={};p[x.Function]="function return statement (~ return)",p[x.Tunnel]="tunnel onwards statement (->->)";var m=p[this.state.callStack.currentElement.type];this.state.callStack.canPop||(m="end of flow (-> END or choice)");var C="Found "+p[f]+", when expected "+m;this.Error(C)}break;case E.CommandType.BeginString:this.state.PushToOutputStream(u),this.state.inExpressionEvaluation||console.warn("Expected to be in an expression when evaluating a string"),this.state.inExpressionEvaluation=!1;break;case E.CommandType.EndString:for(var T=[],_=0,O=this.state.outputStream.length-1;O>=0;--O){var w=this.state.outputStream[O];_++;var P=w;if(P instanceof E&&P.commandType==E.CommandType.BeginString)break;w instanceof g&&T.push(w)}this.state.outputStream.splice(this.state.outputStream.length-_,_),T=T.reverse();var L=new c;T.forEach(function(t){L.Append(t.toString())}),this.state.inExpressionEvaluation=!0,this.state.PushEvaluationStack(new g(L.toString()));break;case E.CommandType.ChoiceCount:var j=this.state.generatedChoices.length;this.state.PushEvaluationStack(new y(j));break;case E.CommandType.TurnsSince:case E.CommandType.ReadCount:if(!((s=this.state.PopEvaluationStack())instanceof k)){var R="";s instanceof y&&(R=". Did you accidentally pass a read count ('knot_name') instead of a target ('-> knot_name')?"),this.Error("TURNS_SINCE / READ_COUNT expected a divert target (knot, stitch, label name), but saw "+s+R);break}var D,B=s,G=this.ContentAtPath(B.targetPath);D=u.commandType==E.CommandType.TurnsSince?this.TurnsSinceForContainer(G):this.VisitCountForContainer(G),this.state.PushEvaluationStack(new y(D));break;case E.CommandType.Random:var J=this.state.PopEvaluationStack(),M=this.state.PopEvaluationStack();null!=M&&M instanceof y!=!1||this.Error("Invalid value for minimum parameter of RANDOM(min, max)"),null!=J&&M instanceof y!=!1||this.Error("Invalid value for maximum parameter of RANDOM(min, max)");var W=J.value-M.value+1;W<=0&&this.Error("RANDOM was called with minimum as "+M.value+" and maximum as "+J.value+". The maximum must be larger");var q=this.state.storySeed+this.state.previousRandom,K=new U(q).next(),H=K%W+M.value;this.state.PushEvaluationStack(new y(H)),this.state.previousRandom=K;break;case E.CommandType.SeedRandom:var X=this.state.PopEvaluationStack();null!=X&&X instanceof y!=!1||this.Error("Invalid value passed to SEED_RANDOM"),this.state.storySeed=X.value,this.state.previousRandom=0,this.state.PushEvaluationStack(new N);break;case E.CommandType.VisitIndex:vt=this.VisitCountForContainer(this.state.currentContainer)-1;this.state.PushEvaluationStack(new y(vt));break;case E.CommandType.SequenceShuffleIndex:var $=this.NextSequenceShuffleIndex();this.state.PushEvaluationStack(new y($));break;case E.CommandType.StartThread:break;case E.CommandType.Done:this.state.callStack.canPopThread?this.state.callStack.PopThread():(this.state.didSafeExit=!0,this.state.currentContentObject=null);break;case E.CommandType.End:this.state.ForceEnd();break;case E.CommandType.ListFromInt:var z,Q=parseInt(this.state.PopEvaluationStack()),Y=this.state.PopEvaluationStack().toString(),Z=null;if(!(z=this.listDefinitions.TryGetDefinition(Y,z)))throw new b("Failed to find LIST called "+Y.value);var tt=z.TryGetItemWithValue(Q.value);tt.exists&&(Z=new S(tt.item,Q.value)),null==Z&&(Z=new S),this.state.PushEvaluationStack(Z);break;case E.CommandType.ListRange:var et=this.state.PopEvaluationStack(),nt=this.state.PopEvaluationStack(),it=this.state.PopEvaluationStack();if(it instanceof S==!1||null==it||null==nt||null==et)throw new b("Expected list, minimum and maximum for LIST_RANGE");var at=function(t){var e=t;if(e instanceof S)return parseInt(e.value.maxItem.Value);var n=t;return n instanceof y?n.value:-1},rt=at(nt),ot=at(et);if(-1==rt)throw new b("Invalid min range bound passed to LIST_VALUE(): "+nt);if(-1==ot)throw new b("Invalid max range bound passed to LIST_VALUE(): "+et);var st=new S,ut=it.value.origins;null!=ut&&ut.forEach(function(t){t.ListRange(rt,ot).value.forEach(function(t){st.value.Add(t.Key,t.Value)})}),this.state.PushEvaluationStack(st);break;default:this.Error("unhandled ControlCommand: "+u)}return!0}if(t instanceof V){var lt=t,ht=this.state.PopEvaluationStack();return this.state.variablesState.Assign(lt,ht),!0}if(t instanceof A){var ct=t,ft=null;if(null!=ct.pathForCount){var G=ct.containerForCount,vt=this.VisitCountForContainer(G);ft=new y(vt)}else null==(ft=this.state.variablesState.GetVariableWithName(ct.name))&&(this.Error("Uninitialised variable: "+ct.name),ft=new y(0));return this.state.PushEvaluationStack(ft),!0}if(t instanceof F){var dt=t,pt=this.state.PopEvaluationStack(dt.numberOfParameters),st=dt.Call(pt);return this.state.PushEvaluationStack(st),!0}return!1}},{key:"ChoosePathString",value:function(t,e){e=e||[],this.state.PassArgumentsToEvaluationStack(e),this.ChoosePath(new u(t))}},{key:"ChoosePath",value:function(t){this.state.SetChosenPath(t),this.VisitChangedContainersDueToDivert()}},{key:"ChooseChoiceIndex",value:function(t){t=t;var e=this.currentChoices;(t<0||t>e.length)&&console.warn("choice out of range");var n=e[t];this.state.callStack.currentThread=n.threadAtGeneration,this.ChoosePath(n.choicePoint.choiceTarget.path)}},{key:"HasFunction",value:function(t){try{return this.ContentAtPath(new u(t))instanceof T}catch(t){return!1}}},{key:"EvaluateFunction",value:function(t,e,n){if(n=!!n,null==t)throw"Function is null";if(""==t||""==t.trim())throw"Function is empty or white space.";var i=null;try{i=this.ContentAtPath(new u(t))}catch(e){throw e.message.indexOf("not found")>=0?"Function doesn't exist: '"+t+"'":e}this.state.StartExternalFunctionEvaluation(i,e);for(var a=new c;this.canContinue;)a.Append(this.Continue());var r=a.toString(),o=this.state.CompleteExternalFunctionEvaluation();return n?{returned:o,output:r}:o}},{key:"EvaluateExpression",value:function(t){var e=this.state.callStack.elements.length;this.state.callStack.Push(x.Tunnel),this._temporaryEvaluationContainer=t,this.state.GoToStart();var n=this.state.evaluationStack.length;return this.Continue(),this._temporaryEvaluationContainer=null,this.state.callStack.elements.length>e&&this.state.callStack.Pop(),this.state.evaluationStack.length>n?this.state.PopEvaluationStack():null}},{key:"CallExternalFunction",value:function(t,n){var i=this._externals[t],a=null;if(!(void 0!==i)){if(this.allowExternalFunctionFallbacks)return(a=this.ContentAtPath(new u(t)))instanceof T||console.warn("Trying to call EXTERNAL function '"+t+"' which has not been bound, and fallback ink function could not be found."),this.state.callStack.Push(x.Function),void(this.state.divertedTargetObject=a);console.warn("Trying to call EXTERNAL function '"+t+"' which has not been bound (and ink fallbacks disabled).")}for(var r=[],o=0;o<n;++o){var s=this.state.PopEvaluationStack().valueObject;r.push(s)}r.reverse();var l=i(r),h=null;null!=l?null==(h=p.Create(l))&&console.warn("Could not create ink value from returned object of type "+(void 0===l?"undefined":e(l))):h=new N,this.state.PushEvaluationStack(h)}},{key:"TryCoerce",value:function(t){return t}},{key:"BindExternalFunctionGeneral",value:function(t,e){this._externals[t]&&console.warn("Function '"+t+"' has already been bound."),this._externals[t]=e}},{key:"BindExternalFunction",value:function(t,e){var n=this;e||console.warn("Can't bind a null function"),this.BindExternalFunctionGeneral(t,function(t){t.length<e.length&&console.warn("External function expected "+e.length+" arguments");for(var i=[],a=0,r=t.length;a<r;a++)i[a]=n.TryCoerce(t[a]);return e.apply(null,i)})}},{key:"UnbindExternalFunction",value:function(t){void 0===this._externals[t]&&console.warn("Function '"+t+"' has not been bound."),delete this._externals[t]}},{key:"ValidateExternalBindings",value:function(t,e){var n=this;if(t)if(t instanceof T){var i=t;i.content.forEach(function(t){n.ValidateExternalBindings(t,e)});for(var a in i.namedContent)this.ValidateExternalBindings(i.namedContent[a],e)}else{var r=t;if(r instanceof I&&r.isExternal){var o=r.targetPathString;this._externals[o]||(this.allowExternalFunctionFallbacks?!!this.mainContentContainer.namedContent[o]||e.push(o):e.push(o))}}else{var e=[];if(this.ValidateExternalBindings(this._mainContentContainer,e),this._hasValidatedExternals=!0,0==e.length)this._hasValidatedExternals=!0;else{var s="Error: Missing function binding for external";s+=e.length>1?"s":"",s+=": '",s+=e.join("', '"),s+="' ",s+=this.allowExternalFunctionFallbacks?", and no fallback ink function found.":" (ink fallbacks disabled)",this.Error(s)}}}},{key:"ObserveVariable",value:function(t,e){null==this._variableObservers&&(this._variableObservers={}),this._variableObservers[t]?this._variableObservers[t].push(e):this._variableObservers[t]=[e]}},{key:"ObserveVariables",value:function(t,e){for(var n=0,i=t.length;n<i;n++)this.ObserveVariable(t[n],e[n])}},{key:"RemoveVariableObserver",value:function(t,e){if(null!=this._variableObservers)if(void 0!==e)this._variableObservers[e]&&this._variableObservers[e].splice(this._variableObservers[e].indexOf(t),1);else for(var n in this._variableObservers)this._variableObservers[n].splice(this._variableObservers[n].indexOf(t),1)}},{key:"VariableStateDidChangeEvent",value:function(t,e){if(null!=this._variableObservers){var n=this._variableObservers[t];if(void 0!==n){if(!(e instanceof p))throw"Tried to get the value of a variable that isn't a standard type";var i=e;n.forEach(function(e){e(t,i.valueObject)})}}}},{key:"TagsForContentAtPath",value:function(t){return this.TagsAtStartOfFlowContainerWithPathString(t)}},{key:"TagsAtStartOfFlowContainerWithPathString",value:function(t){for(var e=new u(t),n=this.ContentAtPath(e);;){var i=n.content[0];if(!(i instanceof T))break;n=i}var a=null;return n.content.every(function(t){var e=t;return e instanceof L&&(null==a&&(a=[]),a.push(e.text),!0)}),a}},{key:"BuildStringOfHierarchy",value:function(){var t=new c;return this.mainContentContainer.BuildStringOfHierarchy(t,0,this.state.currentContentObject),t.toString()}},{key:"BuildStringOfContainer",value:function(t){var e=new c;return t.BuildStringOfHierarchy(e,0,this.state.currentContentObject),e.toString()}},{key:"NextContent",value:function(){if(this.state.previousContentObject=this.state.currentContentObject,(null==this.state.divertedTargetObject||(this.state.currentContentObject=this.state.divertedTargetObject,this.state.divertedTargetObject=null,this.VisitChangedContainersDueToDivert(),null==this.state.currentContentObject))&&!this.IncrementContentPointer()){var t=!1;this.state.callStack.CanPop(x.Function)?(this.state.callStack.Pop(x.Function),this.state.inExpressionEvaluation&&this.state.PushEvaluationStack(new N),t=!0):this.state.callStack.canPopThread?(this.state.callStack.PopThread(),t=!0):this.state.TryExitExternalFunctionEvaluation(),t&&null!=this.state.currentContentObject&&this.NextContent()}}},{key:"IncrementContentPointer",value:function(){var t=!0,e=this.state.callStack.currentElement;for(e.currentContentIndex++;e.currentContentIndex>=e.currentContainer.content.length;){t=!1;var n=e.currentContainer.parent;if(n instanceof T==!1)break;var i=n.content.indexOf(e.currentContainer);if(-1==i)break;e.currentContainer=n,e.currentContentIndex=i+1,t=!0}return t||(e.currentContainer=null),t}},{key:"TryFollowDefaultInvisibleChoice",value:function(){var t=this._state.currentChoices,e=t.filter(function(t){return t.choicePoint.isInvisibleDefault});if(0==e.length||t.length>e.length)return!1;var n=e[0];return this.ChoosePath(n.choicePoint.choiceTarget.path),!0}},{key:"VisitCountForContainer",value:function(t){if(!t.visitsShouldBeCounted)return console.warn("Read count for target ("+t.name+" - on "+t.debugMetadata+") unknown. The story may need to be compiled with countAllVisits flag (-c)."),0;var e=0,n=t.path.toString();return e=this.state.visitCounts[n]||e}},{key:"IncrementVisitCountForContainer",value:function(t){var e=0,n=t.path.toString();this.state.visitCounts[n]&&(e=this.state.visitCounts[n]),e++,this.state.visitCounts[n]=e}},{key:"RecordTurnIndexVisitToContainer",value:function(t){var e=t.path.toString();this.state.turnIndices[e]=this.state.currentTurnIndex}},{key:"TurnsSinceForContainer",value:function(t){t.turnIndexShouldBeCounted||this.Error("TURNS_SINCE() for target ("+t.name+" - on "+t.debugMetadata+") unknown. The story may need to be compiled with countAllVisits flag (-c).");var e=t.path.toString(),n=this.state.turnIndices[e];return void 0!==n?this.state.currentTurnIndex-n:-1}},{key:"NextSequenceShuffleIndex",value:function(){var t=this.state.PopEvaluationStack();if(!(t instanceof y))return this.Error("expected number of elements in sequence for shuffle index"),0;for(var e=this.state.currentContainer,n=t.value,i=this.state.PopEvaluationStack().value,a=i/n,r=i%n,o=e.path.toString(),s=0,u=0,l=o.length;u<l;u++)s+=o.charCodeAt[u]||0;for(var h=s+a+this.state.storySeed,c=new U(parseInt(h)),f=[],u=0;u<n;++u)f.push(u);for(u=0;u<=r;++u){var v=c.next()%f.length,d=f[v];if(f.splice(v,1),u==r)return d}throw"Should never reach here"}},{key:"Error",value:function(t,e){throw new b(t)}},{key:"AddError",value:function(t,e){t="RUNTIME ERROR: "+t,this.state.AddError(t),this.state.ForceEnd()}},{key:"currentChoices",get:function(){var t=[];return this._state.currentChoices.forEach(function(e){e.choicePoint.isInvisibleDefault||(e.index=t.length,t.push(e))}),t}},{key:"currentText",get:function(){return this.state.currentText}},{key:"currentTags",get:function(){return this.state.currentTags}},{key:"currentErrors",get:function(){return this.state.currentErrors}},{key:"hasError",get:function(){return this.state.hasError}},{key:"variablesState",get:function(){return this.state.variablesState}},{key:"listDefinitions",get:function(){return this._listDefinitions}},{key:"state",get:function(){return this._state}},{key:"mainContentContainer",get:function(){return this._temporaryEvaluationContainer?this._temporaryEvaluationContainer:this._mainContentContainer}},{key:"canContinue",get:function(){return this.state.canContinue}},{key:"globalTags",get:function(){return this.TagsAtStartOfFlowContainerWithPathString("")}}]),i}(h);t.Story=X,Object.defineProperty(t,"__esModule",{value:!0})});
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define('inkjs', ['exports'], factory) :
+  (factory((global.inkjs = global.inkjs || {})));
+}(this, (function (exports) { 'use strict';
+
+  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+  };
+
+
+
+
+
+
+
+
+
+
+
+  var classCallCheck = function (instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  };
+
+  var createClass = function () {
+    function defineProperties(target, props) {
+      for (var i = 0; i < props.length; i++) {
+        var descriptor = props[i];
+        descriptor.enumerable = descriptor.enumerable || false;
+        descriptor.configurable = true;
+        if ("value" in descriptor) descriptor.writable = true;
+        Object.defineProperty(target, descriptor.key, descriptor);
+      }
+    }
+
+    return function (Constructor, protoProps, staticProps) {
+      if (protoProps) defineProperties(Constructor.prototype, protoProps);
+      if (staticProps) defineProperties(Constructor, staticProps);
+      return Constructor;
+    };
+  }();
+
+
+
+
+
+
+
+  var _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
+
+
+
+  var inherits = function (subClass, superClass) {
+    if (typeof superClass !== "function" && superClass !== null) {
+      throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+    }
+
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+    if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+  };
+
+
+
+
+
+
+
+
+
+
+
+  var possibleConstructorReturn = function (self, call) {
+    if (!self) {
+      throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+    }
+
+    return call && (typeof call === "object" || typeof call === "function") ? call : self;
+  };
+
+  var Path$1 = function () {
+  	function Path() /*polymorphic constructor*/{
+  		classCallCheck(this, Path);
+
+  		this._isRelative;
+  		this._components = [];
+
+  		if (typeof arguments[0] == 'string') {
+  			this.componentsString = arguments[0];
+  		} else if (arguments[0] instanceof Component && arguments[1] instanceof Path) {
+  			this._components.push(arguments[0]);
+  			this._components = this._components.concat(arguments[1]);
+  		} else if (arguments[0] instanceof Array) {
+  			this._components = this._components.concat(arguments[0]);
+  			this._isRelative = !!arguments[1];
+  		}
+  	}
+
+  	createClass(Path, [{
+  		key: "PathByAppendingPath",
+  		value: function PathByAppendingPath(pathToAppend) {
+  			var p = new Path();
+
+  			var upwardMoves = 0;
+  			for (var i = 0; i < pathToAppend.components.length; ++i) {
+  				if (pathToAppend.components[i].isParent) {
+  					upwardMoves++;
+  				} else {
+  					break;
+  				}
+  			}
+
+  			for (var i = 0; i < this.components.length - upwardMoves; ++i) {
+  				p.components.push(this.components[i]);
+  			}
+
+  			for (var i = upwardMoves; i < pathToAppend.components.length; ++i) {
+  				p.components.push(pathToAppend.components[i]);
+  			}
+
+  			return p;
+  		}
+  	}, {
+  		key: "toString",
+  		value: function toString() {
+  			return this.componentsString;
+  		}
+  	}, {
+  		key: "Equals",
+  		value: function Equals(otherPath) {
+  			if (otherPath == null) return false;
+
+  			if (otherPath.components.length != this.components.length) return false;
+
+  			if (otherPath.isRelative != this.isRelative) return false;
+
+  			//the original code uses SequenceEqual here, so we need to iterate over the components manually.
+  			for (var i = 0, l = otherPath.components.length; i < l; i++) {
+  				//it's not quite clear whether this test should use Equals or a simple == operator, see https://github.com/y-lohse/inkjs/issues/22
+  				if (!otherPath.components[i].Equals(this.components[i])) return false;
+  			}
+
+  			return true;
+  		}
+  	}, {
+  		key: "isRelative",
+  		get: function get$$1() {
+  			return this._isRelative;
+  		}
+  	}, {
+  		key: "components",
+  		get: function get$$1() {
+  			return this._components;
+  		}
+  	}, {
+  		key: "head",
+  		get: function get$$1() {
+  			if (this.components.length > 0) {
+  				return this.components[0];
+  			} else {
+  				return null;
+  			}
+  		}
+  	}, {
+  		key: "tail",
+  		get: function get$$1() {
+  			if (this.components.length >= 2) {
+  				var tailComps = this.components.slice(1, this.components.length); //careful, the original code uses length-1 here. This is because the second argument of List.GetRange is a number of elements to extract, wherease Array.slice uses an index
+  				return new Path(tailComps);
+  			} else {
+  				return Path.self;
+  			}
+  		}
+  	}, {
+  		key: "length",
+  		get: function get$$1() {
+  			return this.components.length;
+  		}
+  	}, {
+  		key: "lastComponent",
+  		get: function get$$1() {
+  			if (this.components.length > 0) {
+  				return this.components[this.components.length - 1];
+  			} else {
+  				return null;
+  			}
+  		}
+  	}, {
+  		key: "containsNamedComponent",
+  		get: function get$$1() {
+  			for (var i = 0, l = this.components.length; i < l; i++) {
+  				if (!this.components[i].isIndex) {
+  					return true;
+  				}
+  			}
+  			return false;
+  		}
+  	}, {
+  		key: "componentsString",
+  		get: function get$$1() {
+  			var compsStr = this.components.join(".");
+  			if (this.isRelative) return "." + compsStr;else return compsStr;
+  		},
+  		set: function set$$1(value) {
+  			var _this = this;
+
+  			this.components.length = 0;
+
+  			var componentsStr = value;
+
+  			if (componentsStr == null || componentsStr == '') return;
+
+  			// When components start with ".", it indicates a relative path, e.g.
+  			//   .^.^.hello.5
+  			// is equivalent to file system style path:
+  			//  ../../hello/5
+  			if (componentsStr[0] == '.') {
+  				this._isRelative = true;
+  				componentsStr = componentsStr.substring(1);
+  			}
+
+  			var componentStrings = componentsStr.split('.');
+  			componentStrings.forEach(function (str) {
+  				//we need to distinguish between named components that start with a number, eg "42somewhere", and indexed components
+  				//the normal parseInt won't do for the detection because it's too relaxed.
+  				//see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
+  				if (/^(\-|\+)?([0-9]+|Infinity)$/.test(str)) {
+  					_this.components.push(new Component(parseInt(str)));
+  				} else {
+  					_this.components.push(new Component(str));
+  				}
+  			});
+  		}
+  	}], [{
+  		key: "self",
+  		get: function get$$1() {
+  			var path = new Path();
+  			path._isRelative = true;
+  			return path;
+  		}
+  	}]);
+  	return Path;
+  }();
+
+  var Component = function () {
+  	function Component(indexOrName) {
+  		classCallCheck(this, Component);
+
+  		if (typeof indexOrName == 'string') {
+  			this._index = -1;
+  			this._name = indexOrName;
+  		} else {
+  			this._index = parseInt(indexOrName);
+  			this._name = null;
+  		}
+  	}
+
+  	createClass(Component, [{
+  		key: "toString",
+  		value: function toString() {
+  			if (this.isIndex) {
+  				return this.index.toString();
+  			} else {
+  				return this.name;
+  			}
+  		}
+  	}, {
+  		key: "Equals",
+  		value: function Equals(otherComp) {
+  			if (otherComp != null && otherComp.isIndex == this.isIndex) {
+  				if (this.isIndex) {
+  					return this.index == otherComp.index;
+  				} else {
+  					return this.name == otherComp.name;
+  				}
+  			}
+
+  			return false;
+  		}
+  	}, {
+  		key: "index",
+  		get: function get$$1() {
+  			return this._index;
+  		}
+  	}, {
+  		key: "name",
+  		get: function get$$1() {
+  			return this._name;
+  		}
+  	}, {
+  		key: "isIndex",
+  		get: function get$$1() {
+  			return this.index >= 0;
+  		}
+  	}, {
+  		key: "isParent",
+  		get: function get$$1() {
+  			return this.name == Path$1.parentId;
+  		}
+  	}], [{
+  		key: "ToParent",
+  		value: function ToParent() {
+  			return new Component(Path$1.parentId);
+  		}
+  	}]);
+  	return Component;
+  }();
+
+  Path$1.parentId = "^";
+  Path$1.Component = Component;
+
+  var Object$1 = function () {
+  	function Object() {
+  		classCallCheck(this, Object);
+
+  		this.parent = null;
+  		this._path = null;
+  	}
+
+  	createClass(Object, [{
+  		key: 'ResolvePath',
+  		value: function ResolvePath(path) {
+  			if (path.isRelative) {
+  				var nearestContainer = this;
+
+  				if (nearestContainer instanceof Container === false) {
+  					if (this.parent == null) console.warn("Can't resolve relative path because we don't have a parent");
+
+  					nearestContainer = this.parent;
+  					if (nearestContainer.constructor.name !== 'Container') console.warn("Expected parent to be a container");
+
+  					//Debug.Assert (path.components [0].isParent);
+  					path = path.tail;
+  				}
+
+  				return nearestContainer.ContentAtPath(path);
+  			} else {
+  				return this.rootContentContainer.ContentAtPath(path);
+  			}
+  		}
+  	}, {
+  		key: 'ConvertPathToRelative',
+  		value: function ConvertPathToRelative(globalPath) {
+  			var ownPath = this.path;
+
+  			var minPathLength = Math.min(globalPath.components.length, ownPath.components.length);
+  			var lastSharedPathCompIndex = -1;
+
+  			for (var i = 0; i < minPathLength; ++i) {
+  				var ownComp = ownPath.components[i];
+  				var otherComp = globalPath.components[i];
+
+  				if (ownComp.Equals(otherComp)) {
+  					lastSharedPathCompIndex = i;
+  				} else {
+  					break;
+  				}
+  			}
+
+  			// No shared path components, so just use global path
+  			if (lastSharedPathCompIndex == -1) return globalPath;
+
+  			var numUpwardsMoves = ownPath.components.length - 1 - lastSharedPathCompIndex;
+
+  			var newPathComps = [];
+
+  			for (var up = 0; up < numUpwardsMoves; ++up) {
+  				newPathComps.push(Path$1.Component.ToParent());
+  			}for (var down = lastSharedPathCompIndex + 1; down < globalPath.components.length; ++down) {
+  				newPathComps.push(globalPath.components[down]);
+  			}var relativePath = new Path$1(newPathComps, true);
+  			return relativePath;
+  		}
+  	}, {
+  		key: 'CompactPathString',
+  		value: function CompactPathString(otherPath) {
+  			var globalPathStr = null;
+  			var relativePathStr = null;
+
+  			if (otherPath.isRelative) {
+  				relativePathStr = otherPath.componentsString;
+  				globalPathStr = this.path.PathByAppendingPath(otherPath).componentsString;
+  			} else {
+  				var relativePath = this.ConvertPathToRelative(otherPath);
+  				relativePathStr = relativePath.componentsString;
+  				globalPathStr = otherPath.componentsString;
+  			}
+
+  			if (relativePathStr.Length < globalPathStr.Length) return relativePathStr;else return globalPathStr;
+  		}
+  	}, {
+  		key: 'Copy',
+  		value: function Copy() {
+  			throw "Not Implemented";
+  		}
+  		//SetCHild works slightly diferently in the js implementation. SInce we can't pass an objets property by reference, we instead pass the object and the property string.
+
+  	}, {
+  		key: 'SetChild',
+  		value: function SetChild(obj, prop, value) {
+  			if (obj[prop]) obj[prop] = null;
+
+  			obj[prop] = value;
+
+  			if (obj[prop]) obj[prop].parent = this;
+  		}
+  	}, {
+  		key: 'path',
+  		get: function get$$1() {
+  			if (this._path == null) {
+
+  				if (this.parent == null) {
+  					this._path = new Path$1();
+  				} else {
+  					// Maintain a Stack so that the order of the components
+  					// is reversed when they're added to the Path.
+  					// We're iterating up the hierarchy from the leaves/children to the root.
+  					var comps = [];
+
+  					var child = this;
+  					//				Container container = child.parent as Container;
+  					var container = child.parent;
+
+  					while (container instanceof Container) {
+
+  						var namedChild = child;
+  						if (namedChild.name && namedChild.hasValidName) {
+  							comps.unshift(new Path$1.Component(namedChild.name));
+  						} else {
+  							comps.unshift(new Path$1.Component(container.content.indexOf(child)));
+  						}
+
+  						child = container;
+  						//					container = container.parent as Container;
+  						container = container.parent;
+  					}
+
+  					this._path = new Path$1(comps);
+  				}
+  			}
+
+  			return this._path;
+  		}
+  	}, {
+  		key: 'rootContentContainer',
+  		get: function get$$1() {
+  			var ancestor = this;
+  			while (ancestor.parent) {
+  				ancestor = ancestor.parent;
+  			}
+  			return ancestor;
+  		}
+  	}]);
+  	return Object;
+  }();
+
+  var StringBuilder = function () {
+  	function StringBuilder(str) {
+  		classCallCheck(this, StringBuilder);
+
+  		str = typeof str !== 'undefined' ? str.toString() : '';
+  		this._string = str;
+  	}
+
+  	createClass(StringBuilder, [{
+  		key: 'Append',
+  		value: function Append(str) {
+  			this._string += str;
+  		}
+  	}, {
+  		key: 'AppendLine',
+  		value: function AppendLine(str) {
+  			if (typeof str !== 'undefined') this.Append(str);
+  			this._string += "\n";
+  		}
+  	}, {
+  		key: 'AppendFormat',
+  		value: function AppendFormat(format) {
+  			//taken from http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
+  			var args = Array.prototype.slice.call(arguments, 1);
+  			return format.replace(/{(\d+)}/g, function (match, number) {
+  				return typeof args[number] != 'undefined' ? args[number] : match;
+  			});
+  		}
+  	}, {
+  		key: 'toString',
+  		value: function toString() {
+  			return this._string;
+  		}
+  	}, {
+  		key: 'Length',
+  		get: function get$$1() {
+  			return this._string.length;
+  		}
+  	}]);
+  	return StringBuilder;
+  }();
+
+  var InkListItem = function () {
+  	function InkListItem(fullNameOrOriginName, itemName) {
+  		classCallCheck(this, InkListItem);
+
+  		if (itemName !== undefined) {
+  			this.originName = fullNameOrOriginName;
+  			this.itemName = itemName;
+  		} else {
+  			var nameParts = fullNameOrOriginName.toString().split('.');
+  			this.originName = nameParts[0];
+  			this.itemName = nameParts[1];
+  		}
+  	}
+
+  	createClass(InkListItem, [{
+  		key: 'isNull',
+  		value: function isNull() {
+  			return this.originName == null && this.itemName == null;
+  		}
+  	}, {
+  		key: 'toString',
+  		value: function toString() {
+  			return this.fullname;
+  		}
+  	}, {
+  		key: 'Equals',
+  		value: function Equals(obj) {
+  			if (obj instanceof InkListItem) {
+  				//			var otherItem = (InkListItem)obj;
+  				var otherItem = obj;
+  				return otherItem.itemName == this.itemName && otherItem.originName == this.originName;
+  			}
+
+  			return false;
+  		}
+  		//GetHashCode not implemented
+
+  	}, {
+  		key: 'toString',
+  		value: function toString() {
+  			//WARNING: experimental. InkListItem are structs and are used as keys inside hashes. In js, we can't use an object as a key, as the key needs to be a string. C# gets around that with the internal GetHashCode, and the js equivalent to that is toString. So here, toString acts as C#'s GetHashCode
+  			var originCode = '0';
+  			var itemCode = this.itemName ? this.itemName.toString() : 'null';
+  			if (this.originName != null) originCode = this.originName.toString();
+
+  			return originCode + itemCode;
+  		}
+  	}, {
+  		key: 'fullName',
+  		get: function get$$1() {
+  			return (this.originName !== null ? this.originName : "?") + "." + this.itemName;
+  		}
+  	}], [{
+  		key: 'Null',
+  		value: function Null() {
+  			return new InkListItem(null, null);
+  		}
+  	}]);
+  	return InkListItem;
+  }();
+
+  //in C#, rawlists are based on dictionnary; the equivalent of a dictionnary in js is Object, but we can't use that or it will conflate dictionnary items and InkList class properties.
+  //instead InkList-js has a special _values property wich contains the actual "Dictionnary", and a few Dictionnary methods are re-implemented on InkList. This also means directly iterating over the InkList won't work as expected. Maybe we can return a proxy if that's required.
+  //@TODO: actually we could use a Map for this.
+  var InkList = function () {
+  	function InkList(polymorphicArgument, originStory) {
+  		var _this = this;
+
+  		classCallCheck(this, InkList);
+
+  		this._keys = {};
+  		this._values = {};
+  		this.origins = null;
+  		this._originNames = null;
+
+  		//polymorphioc constructor
+  		if (polymorphicArgument) {
+  			if (polymorphicArgument instanceof InkList) {
+  				var otherList = polymorphicArgument;
+  				otherList.forEach(function (kv) {
+  					_this.Add(kv.Key, kv.Value);
+  				});
+
+  				this._originNames = otherList._originNames;
+  			} else if (typeof polymorphicArgument === 'string') {
+  				this.SetInitialOriginName(polymorphicArgument);
+
+  				var def = null;
+  				if (def = originStory.listDefinitions.TryGetDefinition(polymorphicArgument, def)) {
+  					this.origins = [def];
+  				} else {
+  					throw new Error("InkList origin could not be found in story when constructing new list: " + singleOriginListName);
+  				}
+  			} else if (polymorphicArgument.hasOwnProperty('Key') && polymorphicArgument.hasOwnProperty('Value')) {
+  				var singleElement = polymorphicArgument;
+  				this.Add(singleElement.Key, singleElement.Value);
+  			}
+  		}
+  	}
+
+  	createClass(InkList, [{
+  		key: 'forEach',
+  		value: function forEach(fn) {
+  			for (var key in this._values) {
+  				fn({
+  					Key: this._keys[key],
+  					Value: this._values[key]
+  				});
+  			}
+  		}
+  	}, {
+  		key: 'AddItem',
+  		value: function AddItem(itemOrItemName) {
+  			var _this2 = this;
+
+  			if (itemOrItemName instanceof InkListItem) {
+  				var item = itemOrItemName;
+
+  				if (item.originName == null) {
+  					this.AddItem(item.itemName);
+  					return;
+  				}
+
+  				this.origins.forEach(function (origin) {
+  					if (origin.name == item.originName) {
+  						var intVal;
+  						intVal = origin.TryGetValueForItem(item, intVal);
+  						if (intVal !== undefined) {
+  							_this2.Add(item, intVal);
+  							return;
+  						} else {
+  							throw "Could not add the item " + item + " to this list because it doesn't exist in the original list definition in ink.";
+  						}
+  					}
+  				});
+
+  				throw "Failed to add item to list because the item was from a new list definition that wasn't previously known to this list. Only items from previously known lists can be used, so that the int value can be found.";
+  			} else {
+  				var itemName = itemOrItemName;
+
+  				var foundListDef = null;
+
+  				this.origins.forEach(function (origin) {
+  					if (origin.ContainsItemWithName(itemName)) {
+  						if (foundListDef != null) {
+  							throw "Could not add the item " + itemName + " to this list because it could come from either " + origin.name + " or " + foundListDef.name;
+  						} else {
+  							foundListDef = origin;
+  						}
+  					}
+  				});
+
+  				if (foundListDef == null) throw "Could not add the item " + itemName + " to this list because it isn't known to any list definitions previously associated with this list.";
+
+  				var item = new InkListItem(foundListDef.name, itemName);
+  				var itemVal = foundListDef.ValueForItem(item);
+  				this.Add(item, itemVal);
+  			}
+  		}
+  	}, {
+  		key: 'ContainsItemNamed',
+  		value: function ContainsItemNamed(itemName) {
+  			var contains = false;
+  			this.forEach(function (itemWithValue) {
+  				if (itemWithValue.Key.itemName == itemName) contains = true;
+  			});
+  			return contains;
+  		}
+  	}, {
+  		key: 'ContainsKey',
+  		value: function ContainsKey(key) {
+  			return key in this._values;
+  		}
+  	}, {
+  		key: 'Add',
+  		value: function Add(key, value) {
+  			this._keys[key] = key;
+  			this._values[key] = value;
+  		}
+  	}, {
+  		key: 'Remove',
+  		value: function Remove(key) {
+  			delete this._values[key];
+  			delete this._keys[key];
+  		}
+  	}, {
+  		key: 'SetInitialOriginName',
+  		value: function SetInitialOriginName(initialOriginName) {
+  			this._originNames = [initialOriginName];
+  		}
+  	}, {
+  		key: 'SetInitialOriginNames',
+  		value: function SetInitialOriginNames(initialOriginNames) {
+  			if (initialOriginNames == null) this._originNames = null;else this._originNames = initialOriginNames.slice(); //store a copy
+  		}
+  	}, {
+  		key: 'Union',
+  		value: function Union(otherList) {
+  			var union = new InkList(this);
+  			otherList.forEach(function (kv) {
+  				union.Add(kv.Key, kv.Value);
+  			});
+  			return union;
+  		}
+  	}, {
+  		key: 'Intersect',
+  		value: function Intersect(otherList) {
+  			var intersection = new InkList();
+  			this.forEach(function (kv) {
+  				if (otherList.ContainsKey(kv.Key)) intersection.Add(kv.Key, kv.Value);
+  			});
+  			return intersection;
+  		}
+  	}, {
+  		key: 'Without',
+  		value: function Without(listToRemove) {
+  			var result = new InkList(this);
+  			listToRemove.forEach(function (kv) {
+  				result.Remove(kv.Key);
+  			});
+  			return result;
+  		}
+  	}, {
+  		key: 'Contains',
+  		value: function Contains(otherList) {
+  			var _this3 = this;
+
+  			var contains = true;
+  			otherList.forEach(function (kv) {
+  				if (!_this3.ContainsKey(kv.Key)) contains = false;
+  			});
+  			return contains;
+  		}
+  	}, {
+  		key: 'GreaterThan',
+  		value: function GreaterThan(otherList) {
+  			if (this.Count == 0) return false;
+  			if (otherList.Count == 0) return true;
+
+  			// All greater
+  			return this.minItem.Value > otherList.maxItem.Value;
+  		}
+  	}, {
+  		key: 'GreaterThanOrEquals',
+  		value: function GreaterThanOrEquals(otherList) {
+  			if (this.Count == 0) return false;
+  			if (otherList.Count == 0) return true;
+
+  			return this.minItem.Value >= otherList.minItem.Value && this.maxItem.Value >= otherList.maxItem.Value;
+  		}
+  	}, {
+  		key: 'LessThan',
+  		value: function LessThan(otherList) {
+  			if (otherList.Count == 0) return false;
+  			if (this.Count == 0) return true;
+
+  			return this.maxItem.Value < otherList.minItem.Value;
+  		}
+  	}, {
+  		key: 'LessThanOrEquals',
+  		value: function LessThanOrEquals(otherList) {
+  			if (otherList.Count == 0) return false;
+  			if (this.Count == 0) return true;
+
+  			return this.maxItem.Value <= otherList.maxItem.Value && this.minItem.Value <= otherList.minItem.Value;
+  		}
+  	}, {
+  		key: 'MaxAsList',
+  		value: function MaxAsList() {
+  			if (this.Count > 0) return new InkList(this.maxItem);else return new InkList();
+  		}
+  	}, {
+  		key: 'MinAsList',
+  		value: function MinAsList() {
+  			if (this.Count > 0) return new InkList(this.minItem);else return new InkList();
+  		}
+  	}, {
+  		key: 'Equals',
+  		value: function Equals(other) {
+  			//		var otherInkList = other as InkList;
+  			var otherInkList = other;
+  			if (otherInkList instanceof InkList === false) return false;
+  			if (otherInkList.Count != this.Count) return false;
+
+  			var equals = true;
+  			this.forEach(function (kv) {
+  				if (!otherInkList.ContainsKey(kv.Key)) equals = false;
+  			});
+
+  			return equals;
+  		}
+  		//GetHashCode not implemented
+
+  	}, {
+  		key: 'toString',
+  		value: function toString() {
+  			var ordered = [];
+  			this.forEach(function (kv) {
+  				ordered.push(kv);
+  			});
+  			ordered = ordered.sort(function (a, b) {
+  				return a.Value === b.Value ? 0 : a.Value > b.Value ? 1 : -1;
+  			});
+
+  			var sb = new StringBuilder();
+  			for (var i = 0; i < ordered.length; i++) {
+  				if (i > 0) sb.Append(", ");
+
+  				var item = ordered[i].Key;
+  				sb.Append(item.itemName);
+  			}
+
+  			return sb.toString();
+  		}
+  		//casting a InkList to a Number, for somereason, actually gives a number. This messes up the type detection when creating a Value from a InkList. Returning NaN here prevents that.
+
+  	}, {
+  		key: 'valueOf',
+  		value: function valueOf() {
+  			return NaN;
+  		}
+  	}, {
+  		key: 'Count',
+  		get: function get$$1() {
+  			return Object.keys(this._values).length;
+  		}
+  	}, {
+  		key: 'originOfMaxItem',
+  		get: function get$$1() {
+  			if (this.origins == null) return null;
+
+  			var maxOriginName = this.maxItem.Key.originName;
+  			var result = null;
+  			this.origins.every(function (origin) {
+  				if (origin.name == maxOriginName) {
+  					result = origin;
+  					return false;
+  				} else return true;
+  			});
+
+  			return result;
+  		}
+  	}, {
+  		key: 'originNames',
+  		get: function get$$1() {
+  			var _this4 = this;
+
+  			if (this.Count > 0) {
+  				if (this._originNames == null && this.Count > 0) this._originNames = [];else this._originNames.length = 0;
+
+  				this.forEach(function (itemAndValue) {
+  					_this4._originNames.push(itemAndValue.Key.originName);
+  				});
+  			}
+
+  			return this._originNames;
+  		}
+  	}, {
+  		key: 'maxItem',
+  		get: function get$$1() {
+  			var max = {
+  				Key: null,
+  				Value: null
+  			};
+  			this.forEach(function (kv) {
+  				if (max.Key === null || kv.Value > max.Value) max = kv;
+  			});
+
+  			return max;
+  		}
+  	}, {
+  		key: 'minItem',
+  		get: function get$$1() {
+  			var min = {
+  				Key: null,
+  				Value: null
+  			};
+  			this.forEach(function (kv) {
+  				if (min.Key === null || kv.Value < min.Value) min = kv;
+  			});
+
+  			return min;
+  		}
+  	}, {
+  		key: 'inverse',
+  		get: function get$$1() {
+  			var _this5 = this;
+
+  			var list = new InkList();
+  			if (this.origins != null) {
+  				this.origins.forEach(function (origin) {
+  					origin.items.forEach(function (itemAndValue) {
+  						if (!_this5.ContainsKey(itemAndValue.Key)) list.Add(itemAndValue.Key, itemAndValue.Value);
+  					});
+  				});
+  			}
+  			return list;
+  		}
+  	}, {
+  		key: 'all',
+  		get: function get$$1() {
+  			var list = new InkList();
+  			if (this.origins != null) {
+  				this.origins.forEach(function (origin) {
+  					origin.items.forEach(function (itemAndValue) {
+  						list.Add(itemAndValue.Key, itemAndValue.Value);
+  					});
+  				});
+  			}
+  			return list;
+  		}
+  	}]);
+  	return InkList;
+  }();
+
+  var ValueType = {
+  	// Used in coersion
+  	Int: 0,
+  	Float: 1,
+  	List: 2,
+  	String: 3,
+
+  	// Not used for coersion described above
+  	DivertTarget: 4,
+  	VariablePointer: 5
+  };
+
+  var AbstractValue = function (_InkObject) {
+  	inherits(AbstractValue, _InkObject);
+
+  	function AbstractValue(val) {
+  		classCallCheck(this, AbstractValue);
+
+  		var _this = possibleConstructorReturn(this, (AbstractValue.__proto__ || Object.getPrototypeOf(AbstractValue)).call(this));
+
+  		_this._valueType;
+  		_this._isTruthy;
+  		_this._valueObject;
+  		return _this;
+  	}
+
+  	createClass(AbstractValue, [{
+  		key: 'Cast',
+  		value: function Cast(newType) {
+  			throw "Trying to casting an AbstractValue";
+  		}
+  	}, {
+  		key: 'Copy',
+  		value: function Copy(val) {
+  			return AbstractValue.Create(val);
+  		}
+  	}, {
+  		key: 'valueType',
+  		get: function get$$1() {
+  			return this._valueType;
+  		}
+  	}, {
+  		key: 'isTruthy',
+  		get: function get$$1() {
+  			return this._isTruthy;
+  		}
+  	}, {
+  		key: 'valueObject',
+  		get: function get$$1() {
+  			return this._valueObject;
+  		}
+  	}], [{
+  		key: 'Create',
+  		value: function Create(val) {
+  			// Implicitly convert bools into ints
+  			if (typeof val === 'boolean') {
+  				var b = !!val;
+  				val = b ? 1 : 0;
+  			}
+
+  			if (Number.isInteger(Number(val))) {
+  				return new IntValue(val);
+  			} else if (!isNaN(val)) {
+  				return new FloatValue(val);
+  			} else if (typeof val === 'string') {
+  				return new StringValue(val);
+  			} else if (val instanceof Path$1) {
+  				return new DivertTargetValue(val);
+  			} else if (val instanceof InkList) {
+  				return new ListValue(val);
+  			}
+
+  			return null;
+  		}
+  	}]);
+  	return AbstractValue;
+  }(Object$1);
+
+  var Value = function (_AbstractValue) {
+  	inherits(Value, _AbstractValue);
+
+  	function Value(val) {
+  		classCallCheck(this, Value);
+
+  		var _this2 = possibleConstructorReturn(this, (Value.__proto__ || Object.getPrototypeOf(Value)).call(this));
+
+  		_this2.value = val;
+  		return _this2;
+  	}
+
+  	createClass(Value, [{
+  		key: 'toString',
+  		value: function toString() {
+  			return this.value.toString();
+  		}
+  	}, {
+  		key: 'value',
+  		get: function get$$1() {
+  			return this._value;
+  		},
+  		set: function set$$1(value) {
+  			this._value = value;
+  		}
+  	}, {
+  		key: 'valueObject',
+  		get: function get$$1() {
+  			return this.value;
+  		}
+  	}]);
+  	return Value;
+  }(AbstractValue);
+
+  var IntValue = function (_Value) {
+  	inherits(IntValue, _Value);
+
+  	function IntValue(val) {
+  		classCallCheck(this, IntValue);
+
+  		var _this3 = possibleConstructorReturn(this, (IntValue.__proto__ || Object.getPrototypeOf(IntValue)).call(this, val || 0));
+
+  		_this3._valueType = ValueType.Int;
+  		return _this3;
+  	}
+
+  	createClass(IntValue, [{
+  		key: 'Cast',
+  		value: function Cast(newType) {
+  			if (newType == this.valueType) {
+  				return this;
+  			}
+
+  			if (newType == ValueType.Float) {
+  				return new FloatValue(parseFloat(this.value));
+  			}
+
+  			if (newType == ValueType.String) {
+  				return new StringValue("" + this.value);
+  			}
+
+  			throw "Unexpected type cast of Value to new ValueType";
+  		}
+  	}, {
+  		key: 'isTruthy',
+  		get: function get$$1() {
+  			return this.value != 0;
+  		}
+  	}, {
+  		key: 'valueType',
+  		get: function get$$1() {
+  			return ValueType.Int;
+  		}
+  	}]);
+  	return IntValue;
+  }(Value);
+
+  var FloatValue = function (_Value2) {
+  	inherits(FloatValue, _Value2);
+
+  	function FloatValue(val) {
+  		classCallCheck(this, FloatValue);
+
+  		var _this4 = possibleConstructorReturn(this, (FloatValue.__proto__ || Object.getPrototypeOf(FloatValue)).call(this, val || 0.0));
+
+  		_this4._valueType = ValueType.Float;
+  		return _this4;
+  	}
+
+  	createClass(FloatValue, [{
+  		key: 'Cast',
+  		value: function Cast(newType) {
+  			if (newType == this.valueType) {
+  				return this;
+  			}
+
+  			if (newType == ValueType.Int) {
+  				return new IntValue(parseInt(this.value));
+  			}
+
+  			if (newType == ValueType.String) {
+  				return new StringValue("" + this.value);
+  			}
+
+  			throw "Unexpected type cast of Value to new ValueType";
+  		}
+  	}, {
+  		key: 'isTruthy',
+  		get: function get$$1() {
+  			return this._value != 0.0;
+  		}
+  	}, {
+  		key: 'valueType',
+  		get: function get$$1() {
+  			return ValueType.Float;
+  		}
+  	}]);
+  	return FloatValue;
+  }(Value);
+
+  var StringValue = function (_Value3) {
+  	inherits(StringValue, _Value3);
+
+  	function StringValue(val) {
+  		classCallCheck(this, StringValue);
+
+  		var _this5 = possibleConstructorReturn(this, (StringValue.__proto__ || Object.getPrototypeOf(StringValue)).call(this, val || ''));
+
+  		_this5._valueType = ValueType.String;
+
+  		_this5._isNewline = _this5.value == "\n";
+  		_this5._isInlineWhitespace = true;
+
+  		_this5.value.split().every(function (c) {
+  			if (c != ' ' && c != '\t') {
+  				_this5._isInlineWhitespace = false;
+  				return false;
+  			}
+
+  			return true;
+  		});
+  		return _this5;
+  	}
+
+  	createClass(StringValue, [{
+  		key: 'Cast',
+  		value: function Cast(newType) {
+  			if (newType == this.valueType) {
+  				return this;
+  			}
+
+  			if (newType == ValueType.Int) {
+
+  				var parsedInt;
+  				if (parsedInt = parseInt(value)) {
+  					return new IntValue(parsedInt);
+  				} else {
+  					return null;
+  				}
+  			}
+
+  			if (newType == ValueType.Float) {
+  				var parsedFloat;
+  				if (parsedFloat = parsedFloat(value)) {
+  					return new FloatValue(parsedFloat);
+  				} else {
+  					return null;
+  				}
+  			}
+
+  			throw "Unexpected type cast of Value to new ValueType";
+  		}
+  	}, {
+  		key: 'valueType',
+  		get: function get$$1() {
+  			return ValueType.String;
+  		}
+  	}, {
+  		key: 'isTruthy',
+  		get: function get$$1() {
+  			return this.value.length > 0;
+  		}
+  	}, {
+  		key: 'isNewline',
+  		get: function get$$1() {
+  			return this._isNewline;
+  		}
+  	}, {
+  		key: 'isInlineWhitespace',
+  		get: function get$$1() {
+  			return this._isInlineWhitespace;
+  		}
+  	}, {
+  		key: 'isNonWhitespace',
+  		get: function get$$1() {
+  			return !this.isNewline && !this.isInlineWhitespace;
+  		}
+  	}]);
+  	return StringValue;
+  }(Value);
+
+  var DivertTargetValue = function (_Value4) {
+  	inherits(DivertTargetValue, _Value4);
+
+  	function DivertTargetValue(targetPath) {
+  		classCallCheck(this, DivertTargetValue);
+
+  		var _this6 = possibleConstructorReturn(this, (DivertTargetValue.__proto__ || Object.getPrototypeOf(DivertTargetValue)).call(this, targetPath));
+
+  		_this6._valueType = ValueType.DivertTarget;
+  		return _this6;
+  	}
+
+  	createClass(DivertTargetValue, [{
+  		key: 'Cast',
+  		value: function Cast(newType) {
+  			if (newType == this.valueType) return this;
+
+  			throw "Unexpected type cast of Value to new ValueType";
+  		}
+  	}, {
+  		key: 'toString',
+  		value: function toString() {
+  			return "DivertTargetValue(" + this.targetPath + ")";
+  		}
+  	}, {
+  		key: 'targetPath',
+  		get: function get$$1() {
+  			return this.value;
+  		},
+  		set: function set$$1(value) {
+  			this.value = value;
+  		}
+  	}, {
+  		key: 'isTruthy',
+  		get: function get$$1() {
+  			throw "Shouldn't be checking the truthiness of a divert target";
+  		}
+  	}]);
+  	return DivertTargetValue;
+  }(Value);
+
+  var VariablePointerValue = function (_Value5) {
+  	inherits(VariablePointerValue, _Value5);
+
+  	function VariablePointerValue(variableName, contextIndex) {
+  		classCallCheck(this, VariablePointerValue);
+
+  		var _this7 = possibleConstructorReturn(this, (VariablePointerValue.__proto__ || Object.getPrototypeOf(VariablePointerValue)).call(this, variableName));
+
+  		_this7._valueType = ValueType.VariablePointer;
+  		_this7.contextIndex = typeof contextIndex !== 'undefined' ? contextIndex : -1;
+  		return _this7;
+  	}
+
+  	createClass(VariablePointerValue, [{
+  		key: 'Cast',
+  		value: function Cast(newType) {
+  			if (newType == this.valueType) return this;
+
+  			throw "Unexpected type cast of Value to new ValueType";
+  		}
+  	}, {
+  		key: 'toString',
+  		value: function toString() {
+  			return "VariablePointerValue(" + this.variableName + ")";
+  		}
+  	}, {
+  		key: 'Copy',
+  		value: function Copy() {
+  			return new VariablePointerValue(this.variableName, this.contextIndex);
+  		}
+  	}, {
+  		key: 'variableName',
+  		get: function get$$1() {
+  			return this.value;
+  		},
+  		set: function set$$1(value) {
+  			this.value = value;
+  		}
+  	}, {
+  		key: 'isTruthy',
+  		get: function get$$1() {
+  			throw "Shouldn't be checking the truthiness of a variable pointer";
+  		}
+  	}]);
+  	return VariablePointerValue;
+  }(Value);
+
+  var ListValue = function (_Value6) {
+  	inherits(ListValue, _Value6);
+  	createClass(ListValue, [{
+  		key: 'Cast',
+  		value: function Cast(newType) {
+  			if (newType == ValueType.Int) {
+  				var max = this.value.maxItem;
+  				if (max.Key.isNull) return new IntValue(0);else return new IntValue(max.Value);
+  			} else if (newType == ValueType.Float) {
+  				var max = this.value.maxItem;
+  				if (max.Key.isNull) return new FloatValue(0.0);else return new FloatValue(parseFloat(max.Value));
+  			} else if (newType == ValueType.String) {
+  				var max = value.maxItem;
+  				if (max.Key.isNull) return new StringValue("");else {
+  					return new StringValue(max.Key.toString());
+  				}
+  			}
+
+  			if (newType == this.valueType) return this;
+
+  			throw "Unexpected type cast of Value to new ValueType";
+  		}
+  	}, {
+  		key: 'valueType',
+  		get: function get$$1() {
+  			return ValueType.List;
+  		}
+  	}, {
+  		key: 'isTruthy',
+  		get: function get$$1() {
+  			var isTruthy = false;
+  			this.value.forEach(function (kv) {
+  				var listItemIntValue = kv.Value;
+  				if (listItemIntValue != 0) isTruthy = true;
+  			});
+  			return isTruthy;
+  		}
+  	}]);
+
+  	function ListValue(listOrSingleItem, singleValue) {
+  		classCallCheck(this, ListValue);
+
+  		var _this8 = possibleConstructorReturn(this, (ListValue.__proto__ || Object.getPrototypeOf(ListValue)).call(this, null));
+
+  		_this8._valueType = ValueType.List;
+
+  		if (listOrSingleItem instanceof InkList) {
+  			_this8.value = new InkList(listOrSingleItem);
+  		} else if (listOrSingleItem !== undefined && singleValue !== undefined) {
+  			_this8.value = new InkList({
+  				Key: listOrSingleItem,
+  				Value: singleValue
+  			});
+  		} else {
+  			_this8.value = new InkList();
+  		}
+  		return _this8;
+  	}
+
+  	createClass(ListValue, null, [{
+  		key: 'RetainListOriginsForAssignment',
+  		value: function RetainListOriginsForAssignment(oldValue, newValue) {
+  			//		var oldList = oldValue as ListValue;
+  			var oldList = oldValue;
+  			//		var newList = newValue as ListValue;
+  			var newList = newValue;
+
+  			// When assigning the emtpy list, try to retain any initial origin names
+  			if (oldList instanceof ListValue && newList instanceof ListValue && newList.value.Count == 0) newList.value.SetInitialOriginNames(oldList.value.originNames);
+  		}
+  	}]);
+  	return ListValue;
+  }(Value);
+
+  var StoryException = function (_Error) {
+  	inherits(StoryException, _Error);
+
+  	function StoryException(message) {
+  		classCallCheck(this, StoryException);
+
+  		var _this = possibleConstructorReturn(this, (StoryException.__proto__ || Object.getPrototypeOf(StoryException)).call(this, message));
+
+  		_this.message = message;
+  		_this.name = 'StoryException';
+  		return _this;
+  	}
+
+  	return StoryException;
+  }(Error);
+
+  var Container = function (_InkObject) {
+  	inherits(Container, _InkObject);
+
+  	//also implements INamedContent. Not sure how to do it cleanly in JS.
+  	function Container() {
+  		classCallCheck(this, Container);
+
+  		var _this = possibleConstructorReturn(this, (Container.__proto__ || Object.getPrototypeOf(Container)).call(this));
+
+  		_this.name = '';
+
+  		_this._content = [];
+  		_this.namedContent = {};
+
+  		_this.visitsShouldBeCounted = false;
+  		_this.turnIndexShouldBeCounted = false;
+  		_this.countingAtStartOnly = false;
+
+  		_this.CountFlags = {
+  			Visits: 1,
+  			Turns: 2,
+  			CountStartOnly: 4
+  		};
+
+  		_this._pathToFirstLeafContent = null;
+  		return _this;
+  	}
+
+  	createClass(Container, [{
+  		key: 'AddContent',
+  		value: function AddContent(contentObj) {
+  			var _this2 = this;
+
+  			if (contentObj instanceof Array) {
+  				contentObj.forEach(function (c) {
+  					_this2.AddContent(c);
+  				});
+  			} else {
+  				this._content.push(contentObj);
+
+  				if (contentObj.parent) {
+  					throw "content is already in " + contentObj.parent;
+  				}
+
+  				contentObj.parent = this;
+
+  				this.TryAddNamedContent(contentObj);
+  			}
+  		}
+  	}, {
+  		key: 'TryAddNamedContent',
+  		value: function TryAddNamedContent(contentObj) {
+  			//so here, in the reference implementation, contentObj is casted to an INamedContent
+  			//but here we use js-style duck typing: if it implements the same props as the interface, we treat it as valid
+  			if (contentObj.hasValidName && contentObj.name) {
+  				this.AddToNamedContentOnly(contentObj);
+  			}
+  		}
+  	}, {
+  		key: 'AddToNamedContentOnly',
+  		value: function AddToNamedContentOnly(namedContentObj) {
+  			if (namedContentObj instanceof Object$1 === false) console.warn("Can only add Runtime.Objects to a Runtime.Container");
+  			namedContentObj.parent = this;
+
+  			this.namedContent[namedContentObj.name] = namedContentObj;
+  		}
+  	}, {
+  		key: 'ContentAtPath',
+  		value: function ContentAtPath(path, partialPathLength) {
+  			partialPathLength = typeof partialPathLength !== 'undefined' ? partialPathLength : path.components.length;
+
+  			var currentContainer = this;
+  			var currentObj = this;
+
+  			for (var i = 0; i < partialPathLength; ++i) {
+  				var comp = path.components[i];
+  				if (!(currentContainer instanceof Container)) throw "Path continued, but previous object wasn't a container: " + currentObj;
+
+  				currentObj = currentContainer.ContentWithPathComponent(comp);
+  				//			currentContainer = currentObj as Container;
+  				currentContainer = currentObj;
+  			}
+
+  			return currentObj;
+  		}
+  	}, {
+  		key: 'InsertContent',
+  		value: function InsertContent(contentObj, index) {
+  			this.content[i] = contentObj;
+
+  			if (contentObj.parent) {
+  				throw "content is already in " + contentObj.parent;
+  			}
+
+  			contentObj.parent = this;
+
+  			this.TryAddNamedContent(contentObj);
+  		}
+  	}, {
+  		key: 'AddContentsOfContainer',
+  		value: function AddContentsOfContainer(otherContainer) {
+  			var _this3 = this;
+
+  			this.content = this.content.concat(otherContainer.content);
+
+  			otherContainer.content.forEach(function (obj) {
+  				obj.parent = _this3;
+  				_this3.TryAddNamedContent(obj);
+  			});
+  		}
+  	}, {
+  		key: 'ContentWithPathComponent',
+  		value: function ContentWithPathComponent(component) {
+  			if (component.isIndex) {
+
+  				if (component.index >= 0 && component.index < this.content.length) {
+  					return this.content[component.index];
+  				}
+
+  				// When path is out of range, quietly return nil
+  				// (useful as we step/increment forwards through content)
+  				else {
+  						return null;
+  					}
+  			} else if (component.isParent) {
+  				return this.parent;
+  			} else {
+  				var foundContent = null;
+  				if (foundContent = this.namedContent[component.name]) {
+  					return foundContent;
+  				} else {
+  					throw new StoryException("Content '" + component.name + "' not found at path: '" + this.path + "'");
+  				}
+  			}
+  		}
+  	}, {
+  		key: 'BuildStringOfHierarchy',
+  		value: function BuildStringOfHierarchy(sb, indentation, pointedObj) {
+  			if (arguments.length == 0) {
+  				var sb = new StringBuilder();
+  				this.BuildStringOfHierarchy(sb, 0, null);
+  				return sb.toString();
+  			}
+
+  			function appendIndentation() {
+  				var spacesPerIndent = 4;
+  				for (var i = 0; i < spacesPerIndent * indentation; ++i) {
+  					sb.Append(" ");
+  				}
+  			}
+
+  			appendIndentation();
+  			sb.Append("[");
+
+  			if (this.hasValidName) {
+  				sb.AppendFormat(" ({0})", this.name);
+  			}
+
+  			if (this == pointedObj) {
+  				sb.Append("  <---");
+  			}
+
+  			sb.AppendLine();
+
+  			indentation++;
+
+  			for (var i = 0; i < this.content.length; ++i) {
+
+  				var obj = this.content[i];
+
+  				if (obj instanceof Container) {
+
+  					var container = obj;
+
+  					container.BuildStringOfHierarchy(sb, indentation, pointedObj);
+  				} else {
+  					appendIndentation();
+  					if (obj instanceof StringValue) {
+  						sb.Append("\"");
+  						sb.Append(obj.toString().replace("\n", "\\n"));
+  						sb.Append("\"");
+  					} else {
+  						sb.Append(obj.toString());
+  					}
+  				}
+
+  				if (i != this.content.length - 1) {
+  					sb.Append(",");
+  				}
+
+  				if (!(obj instanceof Container) && obj == pointedObj) {
+  					sb.Append("  <---");
+  				}
+
+  				sb.AppendLine();
+  			}
+
+  			var onlyNamed = {};
+
+  			for (var key in this.namedContent) {
+  				if (this.content.indexOf(this.namedContent[key]) >= 0) {
+  					continue;
+  				} else {
+  					onlyNamed[key] = this.namedContent[key];
+  				}
+  			}
+
+  			if (Object.keys(onlyNamed).length > 0) {
+  				appendIndentation();
+  				sb.AppendLine("-- named: --");
+
+  				for (var key in onlyNamed) {
+  					if (!(onlyNamed[key] instanceof Container)) console.warn("Can only print out named Containers");
+
+  					var container = onlyNamed[key];
+  					container.BuildStringOfHierarchy(sb, indentation, pointedObj);
+  					sb.Append("\n");
+  				}
+  			}
+
+  			indentation--;
+
+  			appendIndentation();
+  			sb.Append("]");
+  		}
+  	}, {
+  		key: 'hasValidName',
+  		get: function get$$1() {
+  			return this.name != null && this.name.length > 0;
+  		}
+  	}, {
+  		key: 'content',
+  		get: function get$$1() {
+  			return this._content;
+  		},
+  		set: function set$$1(value) {
+  			this.AddContent(value);
+  		}
+  	}, {
+  		key: 'namedOnlyContent',
+  		get: function get$$1() {
+  			var namedOnlyContentDict = {};
+
+  			for (var key in this.namedContent) {
+  				namedOnlyContentDict[key] = this.namedContent[key];
+  			}
+
+  			this.content.forEach(function (c) {
+  				//			var named = c as INamedContent;
+  				var named = c;
+  				if (named.name && named.hasValidName) {
+  					delete namedOnlyContentDict[named.name];
+  				}
+  			});
+
+  			if (Object.keys(namedOnlyContentDict).length == 0) namedOnlyContentDict = null;
+
+  			return namedOnlyContentDict;
+  		},
+  		set: function set$$1(value) {
+  			var existingNamedOnly = this.namedOnlyContent;
+  			if (existingNamedOnly != null) {
+  				for (var key in existingNamedOnly) {
+  					delete this.namedContent[key];
+  				}
+  			}
+
+  			if (value == null) return;
+
+  			for (var key in value) {
+  				//			var named = kvPair.Value as INamedContent;
+  				var named = value[key];
+  				if (named.name && typeof named.hasValidName !== 'undefined') this.AddToNamedContentOnly(named);
+  			}
+  		}
+  	}, {
+  		key: 'countFlags',
+  		get: function get$$1() {
+  			var flags = 0;
+  			if (this.visitsShouldBeCounted) flags |= this.CountFlags.Visits;
+  			if (this.turnIndexShouldBeCounted) flags |= this.CountFlags.Turns;
+  			if (this.countingAtStartOnly) flags |= this.CountFlags.CountStartOnly;
+
+  			// If we're only storing CountStartOnly, it serves no purpose,
+  			// since it's dependent on the other two to be used at all.
+  			// (e.g. for setting the fact that *if* a gather or choice's
+  			// content is counted, then is should only be counter at the start)
+  			// So this is just an optimisation for storage.
+  			if (flags == this.CountFlags.CountStartOnly) {
+  				flags = 0;
+  			}
+
+  			return flags;
+  		},
+  		set: function set$$1(value) {
+  			var flag = value;
+  			if ((flag & this.CountFlags.Visits) > 0) this.visitsShouldBeCounted = true;
+  			if ((flag & this.CountFlags.Turns) > 0) this.turnIndexShouldBeCounted = true;
+  			if ((flag & this.CountFlags.CountStartOnly) > 0) this.countingAtStartOnly = true;
+  		}
+  	}, {
+  		key: 'pathToFirstLeafContent',
+  		get: function get$$1() {
+  			if (this._pathToFirstLeafContent == null) this._pathToFirstLeafContent = this.path.PathByAppendingPath(this.internalPathToFirstLeafContent);
+
+  			return this._pathToFirstLeafContent;
+  		}
+  	}, {
+  		key: 'internalPathToFirstLeafContent',
+  		get: function get$$1() {
+  			var path = new Path();
+  			var container = this;
+  			while (container instanceof Container) {
+  				if (container.content.length > 0) {
+  					path.components.push(new Path.Component(0));
+  					//				container = container.content [0] as Container;
+  					container = container.content[0];
+  				}
+  			}
+  			return path;
+  		}
+  	}]);
+  	return Container;
+  }(Object$1);
+
+  var Glue = function (_InkObject) {
+  	inherits(Glue, _InkObject);
+
+  	function Glue(type) {
+  		classCallCheck(this, Glue);
+
+  		var _this = possibleConstructorReturn(this, (Glue.__proto__ || Object.getPrototypeOf(Glue)).call(this));
+
+  		_this.glueType = type;
+  		return _this;
+  	}
+
+  	createClass(Glue, [{
+  		key: "toString",
+  		value: function toString() {
+  			switch (this.glueType) {
+  				case GlueType.Bidirectional:
+  					return "BidirGlue";
+  				case GlueType.Left:
+  					return "LeftGlue";
+  				case GlueType.Right:
+  					return "RightGlue";
+  			}
+
+  			return "UnexpectedGlueType";
+  		}
+  	}, {
+  		key: "isLeft",
+  		get: function get$$1() {
+  			return this.glueType == GlueType.Left;
+  		}
+  	}, {
+  		key: "isBi",
+  		get: function get$$1() {
+  			return this.glueType == GlueType.Bidirectional;
+  		}
+  	}, {
+  		key: "isRight",
+  		get: function get$$1() {
+  			return this.glueType == GlueType.Right;
+  		}
+  	}]);
+  	return Glue;
+  }(Object$1);
+
+  var GlueType = {
+  	Bidirectional: 0,
+  	Left: 1,
+  	Right: 2
+  };
+
+  var ControlCommand = function (_InkObject) {
+  	inherits(ControlCommand, _InkObject);
+
+  	function ControlCommand(commandType) {
+  		classCallCheck(this, ControlCommand);
+
+  		var _this = possibleConstructorReturn(this, (ControlCommand.__proto__ || Object.getPrototypeOf(ControlCommand)).call(this));
+
+  		_this._commandType = typeof commandType != 'undefined' ? commandType : CommandType.NotSet;
+  		return _this;
+  	}
+
+  	createClass(ControlCommand, [{
+  		key: 'copy',
+  		value: function copy() {
+  			return new ControlCommand(this.commandType);
+  		}
+  	}, {
+  		key: 'toString',
+  		value: function toString() {
+  			return this.commandType.toString();
+  		}
+  	}, {
+  		key: 'commandType',
+  		get: function get$$1() {
+  			return this._commandType;
+  		}
+  	}], [{
+  		key: 'EvalStart',
+  		value: function EvalStart() {
+  			return new ControlCommand(CommandType.EvalStart);
+  		}
+  	}, {
+  		key: 'EvalOutput',
+  		value: function EvalOutput() {
+  			return new ControlCommand(CommandType.EvalOutput);
+  		}
+  	}, {
+  		key: 'EvalEnd',
+  		value: function EvalEnd() {
+  			return new ControlCommand(CommandType.EvalEnd);
+  		}
+  	}, {
+  		key: 'Duplicate',
+  		value: function Duplicate() {
+  			return new ControlCommand(CommandType.Duplicate);
+  		}
+  	}, {
+  		key: 'PopEvaluatedValue',
+  		value: function PopEvaluatedValue() {
+  			return new ControlCommand(CommandType.PopEvaluatedValue);
+  		}
+  	}, {
+  		key: 'PopFunction',
+  		value: function PopFunction() {
+  			return new ControlCommand(CommandType.PopFunction);
+  		}
+  	}, {
+  		key: 'PopTunnel',
+  		value: function PopTunnel() {
+  			return new ControlCommand(CommandType.PopTunnel);
+  		}
+  	}, {
+  		key: 'BeginString',
+  		value: function BeginString() {
+  			return new ControlCommand(CommandType.BeginString);
+  		}
+  	}, {
+  		key: 'EndString',
+  		value: function EndString() {
+  			return new ControlCommand(CommandType.EndString);
+  		}
+  	}, {
+  		key: 'NoOp',
+  		value: function NoOp() {
+  			return new ControlCommand(CommandType.NoOp);
+  		}
+  	}, {
+  		key: 'ChoiceCount',
+  		value: function ChoiceCount() {
+  			return new ControlCommand(CommandType.ChoiceCount);
+  		}
+  	}, {
+  		key: 'TurnsSince',
+  		value: function TurnsSince() {
+  			return new ControlCommand(CommandType.TurnsSince);
+  		}
+  	}, {
+  		key: 'ReadCount',
+  		value: function ReadCount() {
+  			return new ControlCommand(CommandType.ReadCount);
+  		}
+  	}, {
+  		key: 'Random',
+  		value: function Random() {
+  			return new ControlCommand(CommandType.Random);
+  		}
+  	}, {
+  		key: 'SeedRandom',
+  		value: function SeedRandom() {
+  			return new ControlCommand(CommandType.SeedRandom);
+  		}
+  	}, {
+  		key: 'VisitIndex',
+  		value: function VisitIndex() {
+  			return new ControlCommand(CommandType.VisitIndex);
+  		}
+  	}, {
+  		key: 'SequenceShuffleIndex',
+  		value: function SequenceShuffleIndex() {
+  			return new ControlCommand(CommandType.SequenceShuffleIndex);
+  		}
+  	}, {
+  		key: 'StartThread',
+  		value: function StartThread() {
+  			return new ControlCommand(CommandType.StartThread);
+  		}
+  	}, {
+  		key: 'Done',
+  		value: function Done() {
+  			return new ControlCommand(CommandType.Done);
+  		}
+  	}, {
+  		key: 'End',
+  		value: function End() {
+  			return new ControlCommand(CommandType.End);
+  		}
+  	}, {
+  		key: 'ListFromInt',
+  		value: function ListFromInt() {
+  			return new ControlCommand(CommandType.ListFromInt);
+  		}
+  	}, {
+  		key: 'ListRange',
+  		value: function ListRange() {
+  			return new ControlCommand(CommandType.ListRange);
+  		}
+  	}]);
+  	return ControlCommand;
+  }(Object$1);
+
+  var CommandType = {
+  	NotSet: -1,
+  	EvalStart: 0,
+  	EvalOutput: 1,
+  	EvalEnd: 2,
+  	Duplicate: 3,
+  	PopEvaluatedValue: 4,
+  	PopFunction: 5,
+  	PopTunnel: 6,
+  	BeginString: 7,
+  	EndString: 8,
+  	NoOp: 9,
+  	ChoiceCount: 10,
+  	TurnsSince: 11,
+  	Random: 12,
+  	SeedRandom: 13,
+  	VisitIndex: 14,
+  	SequenceShuffleIndex: 15,
+  	StartThread: 16,
+  	Done: 17,
+  	End: 18,
+  	ListFromInt: 19,
+  	ListRange: 20,
+  	ReadCount: 21
+  };
+  CommandType.TOTAL_VALUES = Object.keys(CommandType).length - 1; //-1 because NotSet shoudn't count
+  ControlCommand.CommandType = CommandType;
+
+  var PushPopType = {
+  	Tunnel: 0,
+  	Function: 1
+  };
+
+  var Divert = function (_InkObject) {
+  	inherits(Divert, _InkObject);
+
+  	function Divert(stackPushType) {
+  		classCallCheck(this, Divert);
+
+  		var _this = possibleConstructorReturn(this, (Divert.__proto__ || Object.getPrototypeOf(Divert)).call(this));
+
+  		_this._targetPath;
+  		_this._targetContent;
+
+  		_this.variableDivertName;
+  		_this.pushesToStack;
+  		_this.stackPushType;
+
+  		_this.isExternal;
+  		_this.isConditional;
+  		_this.externalArgs;
+
+  		//actual constructor
+  		_this.pushesToStack = false;
+  		if (stackPushType) {
+  			_this.pushesToStack = true;
+  			_this.stackPushType = stackPushType;
+  		}
+  		return _this;
+  	}
+
+  	createClass(Divert, [{
+  		key: 'Equals',
+  		value: function Equals(obj) {
+  			//		var otherDivert = obj as Divert;
+  			var otherDivert = obj;
+  			if (otherDivert instanceof Divert) {
+  				if (this.hasVariableTarget == otherDivert.hasVariableTarget) {
+  					if (this.hasVariableTarget) {
+  						return this.variableDivertName == otherDivert.variableDivertName;
+  					} else {
+  						return this.targetPath.Equals(otherDivert.targetPath);
+  					}
+  				}
+  			}
+  			return false;
+  		}
+  	}, {
+  		key: 'toString',
+  		value: function toString() {
+  			if (this.hasVariableTarget) {
+  				return "Divert(variable: " + this.variableDivertName + ")";
+  			} else if (this.targetPath == null) {
+  				return "Divert(null)";
+  			} else {
+
+  				var sb = new StringBuilder();
+
+  				var targetStr = this.targetPath.toString();
+  				//			int? targetLineNum = DebugLineNumberOfPath (targetPath);
+  				var targetLineNum = null;
+  				if (targetLineNum != null) {
+  					targetStr = "line " + targetLineNum;
+  				}
+
+  				sb.Append("Divert");
+  				if (this.pushesToStack) {
+  					if (this.stackPushType == PushPopType.Function) {
+  						sb.Append(" function");
+  					} else {
+  						sb.Append(" tunnel");
+  					}
+  				}
+
+  				sb.Append(" (");
+  				sb.Append(targetStr);
+  				sb.Append(")");
+
+  				return sb.toString();
+  			}
+  		}
+  	}, {
+  		key: 'targetPath',
+  		get: function get$$1() {
+  			// Resolve any relative paths to global ones as we come across them
+  			if (this._targetPath != null && this._targetPath.isRelative) {
+  				var targetObj = this.targetContent;
+  				if (targetObj) {
+  					this._targetPath = targetObj.path;
+  				}
+  			}
+
+  			return this._targetPath;
+  		},
+  		set: function set$$1(value) {
+  			this._targetPath = value;
+  			this._targetContent = null;
+  		}
+  	}, {
+  		key: 'targetContent',
+  		get: function get$$1() {
+  			if (this._targetContent == null) {
+  				this._targetContent = this.ResolvePath(this._targetPath);
+  			}
+
+  			return this._targetContent;
+  		}
+  	}, {
+  		key: 'targetPathString',
+  		get: function get$$1() {
+  			if (this.targetPath == null) return null;
+
+  			return this.CompactPathString(this.targetPath);
+  		},
+  		set: function set$$1(value) {
+  			if (value == null) {
+  				this.targetPath = null;
+  			} else {
+  				this.targetPath = new Path$1(value);
+  			}
+  		}
+  	}, {
+  		key: 'hasVariableTarget',
+  		get: function get$$1() {
+  			return this.variableDivertName != null;
+  		}
+  	}]);
+  	return Divert;
+  }(Object$1);
+
+  var ChoicePoint = function (_InkObject) {
+  	inherits(ChoicePoint, _InkObject);
+
+  	function ChoicePoint(onceOnly) {
+  		classCallCheck(this, ChoicePoint);
+
+  		var _this = possibleConstructorReturn(this, (ChoicePoint.__proto__ || Object.getPrototypeOf(ChoicePoint)).call(this));
+
+  		_this._pathOnChoice;
+  		_this.hasCondition;
+  		_this.hasStartContent;
+  		_this.hasChoiceOnlyContent;
+  		_this.onceOnly;
+  		_this.isInvisibleDefault;
+
+  		_this.onceOnly = !!onceOnly;
+  		return _this;
+  	}
+
+  	createClass(ChoicePoint, [{
+  		key: 'toString',
+  		value: function toString() {
+  			//		int? targetLineNum = DebugLineNumberOfPath (pathOnChoice);
+  			var targetLineNum = null;
+  			var targetString = this.pathOnChoice.toString();
+
+  			if (targetLineNum != null) {
+  				targetString = " line " + targetLineNum;
+  			}
+
+  			return "Choice: -> " + targetString;
+  		}
+  	}, {
+  		key: 'pathOnChoice',
+  		get: function get$$1() {
+  			if (this._pathOnChoice != null && this._pathOnChoice.isRelative) {
+  				var choiceTargetObj = this.choiceTarget;
+  				if (choiceTargetObj) {
+  					this._pathOnChoice = choiceTargetObj.path;
+  				}
+  			}
+  			return this._pathOnChoice;
+  		},
+  		set: function set$$1(value) {
+  			this._pathOnChoice = value;
+  		}
+  	}, {
+  		key: 'choiceTarget',
+  		get: function get$$1() {
+  			//return this.ResolvePath (_pathOnChoice) as Container;
+  			return this.ResolvePath(this._pathOnChoice);
+  		}
+  	}, {
+  		key: 'pathStringOnChoice',
+  		get: function get$$1() {
+  			return this.CompactPathString(this.pathOnChoice);
+  		},
+  		set: function set$$1(value) {
+  			this.pathOnChoice = new Path$1(value);
+  		}
+  	}, {
+  		key: 'flags',
+  		get: function get$$1() {
+  			var flags = 0;
+  			if (this.hasCondition) flags |= 1;
+  			if (this.hasStartContent) flags |= 2;
+  			if (this.hasChoiceOnlyContent) flags |= 4;
+  			if (this.isInvisibleDefault) flags |= 8;
+  			if (this.onceOnly) flags |= 16;
+  			return flags;
+  		},
+  		set: function set$$1(value) {
+  			this.hasCondition = (value & 1) > 0;
+  			this.hasStartContent = (value & 2) > 0;
+  			this.hasChoiceOnlyContent = (value & 4) > 0;
+  			this.isInvisibleDefault = (value & 8) > 0;
+  			this.onceOnly = (value & 16) > 0;
+  		}
+  	}]);
+  	return ChoicePoint;
+  }(Object$1);
+
+  var VariableReference = function (_InkObject) {
+  	inherits(VariableReference, _InkObject);
+
+  	function VariableReference(name) {
+  		classCallCheck(this, VariableReference);
+
+  		var _this = possibleConstructorReturn(this, (VariableReference.__proto__ || Object.getPrototypeOf(VariableReference)).call(this));
+
+  		_this.name = name;
+  		_this.pathForCount;
+  		return _this;
+  	}
+
+  	createClass(VariableReference, [{
+  		key: 'toString',
+  		value: function toString() {
+  			if (this.name != null) {
+  				return "var(" + this.name + ")";
+  			} else {
+  				var pathStr = this.pathStringForCount;
+  				return "read_count(" + pathStr + ")";
+  			}
+  		}
+  	}, {
+  		key: 'containerForCount',
+  		get: function get$$1() {
+  			return this.ResolvePath(this.pathForCount);
+  		}
+  	}, {
+  		key: 'pathStringForCount',
+  		get: function get$$1() {
+  			if (this.pathForCount == null) return null;
+
+  			return this.CompactPathString(this.pathForCount);
+  		},
+  		set: function set$$1(value) {
+  			if (value == null) this.pathForCount = null;else this.pathForCount = new Path$1(value);
+  		}
+  	}]);
+  	return VariableReference;
+  }(Object$1);
+
+  var VariableAssignment = function (_InkObject) {
+  	inherits(VariableAssignment, _InkObject);
+
+  	function VariableAssignment(variableName, isNewDeclaration) {
+  		classCallCheck(this, VariableAssignment);
+
+  		var _this = possibleConstructorReturn(this, (VariableAssignment.__proto__ || Object.getPrototypeOf(VariableAssignment)).call(this));
+
+  		_this._variableName = variableName || null;
+  		_this._isNewDeclaration = !!isNewDeclaration;
+  		_this.isGlobal;
+  		return _this;
+  	}
+
+  	createClass(VariableAssignment, [{
+  		key: "toString",
+  		value: function toString() {
+  			return "VarAssign to " + this.variableName;
+  		}
+  	}, {
+  		key: "variableName",
+  		get: function get$$1() {
+  			return this._variableName;
+  		}
+  	}, {
+  		key: "isNewDeclaration",
+  		get: function get$$1() {
+  			return this._isNewDeclaration;
+  		}
+  	}]);
+  	return VariableAssignment;
+  }(Object$1);
+
+  var Void = function (_InkObject) {
+    inherits(Void, _InkObject);
+
+    function Void() {
+      classCallCheck(this, Void);
+      return possibleConstructorReturn(this, (Void.__proto__ || Object.getPrototypeOf(Void)).apply(this, arguments));
+    }
+
+    return Void;
+  }(Object$1);
+
+  //misses delegates, probably the returns from function calls
+  var NativeFunctionCall = function (_InkObject) {
+  	inherits(NativeFunctionCall, _InkObject);
+
+  	function NativeFunctionCall(name) {
+  		classCallCheck(this, NativeFunctionCall);
+
+  		var _this = possibleConstructorReturn(this, (NativeFunctionCall.__proto__ || Object.getPrototypeOf(NativeFunctionCall)).call(this));
+
+  		_this.name = name;
+  		_this._numberOfParameters;
+
+  		_this._prototype;
+  		_this._isPrototype;
+  		_this._operationFuncs = null;
+
+  		NativeFunctionCall.GenerateNativeFunctionsIfNecessary();
+  		return _this;
+  	}
+
+  	createClass(NativeFunctionCall, [{
+  		key: 'Call',
+  		value: function Call(parameters) {
+  			if (this._prototype) {
+  				return this._prototype.Call(parameters);
+  			}
+
+  			if (this.numberOfParameters != parameters.length) {
+  				throw "Unexpected number of parameters";
+  			}
+
+  			var hasList = false;
+  			parameters.forEach(function (p) {
+  				if (p instanceof Void) throw new StoryException("Attempting to perform operation on a void value. Did you forget to 'return' a value from a function you called here?");
+  				if (p instanceof ListValue) hasList = true;
+  			});
+
+  			if (parameters.length == 2 && hasList) {
+  				return this.CallBinaryListOperation(parameters);
+  			}
+
+  			var coercedParams = this.CoerceValuesToSingleType(parameters);
+  			var coercedType = coercedParams[0].valueType;
+
+  			//Originally CallType gets a type parameter that is used to do some casting, but we can do without.
+  			if (coercedType == ValueType.Int) {
+  				return this.CallType(coercedParams);
+  			} else if (coercedType == ValueType.Float) {
+  				return this.CallType(coercedParams);
+  			} else if (coercedType == ValueType.String) {
+  				return this.CallType(coercedParams);
+  			} else if (coercedType == ValueType.DivertTarget) {
+  				return this.CallType(coercedParams);
+  			} else if (coercedType == ValueType.List) {
+  				return this.CallType(coercedParams);
+  			}
+
+  			return null;
+  		}
+  	}, {
+  		key: 'CallType',
+  		value: function CallType(parametersOfSingleType) {
+  			var param1 = parametersOfSingleType[0];
+  			var valType = param1.valueType;
+
+  			var val1 = param1;
+
+  			var paramCount = parametersOfSingleType.length;
+
+  			if (paramCount == 2 || paramCount == 1) {
+
+  				var opForTypeObj = this._operationFuncs[valType];
+  				if (!opForTypeObj) {
+  					throw new StoryException("Cannot perform operation '" + this.name + "' on " + valType);
+  				}
+
+  				// Binary
+  				if (paramCount == 2) {
+  					var param2 = parametersOfSingleType[1];
+
+  					var val2 = param2;
+
+  					var opForType = opForTypeObj;
+
+  					// Return value unknown until it's evaluated
+  					var resultVal = opForType(val1.value, val2.value);
+
+  					return Value.Create(resultVal);
+  				}
+
+  				// Unary
+  				else {
+
+  						var opForType = opForTypeObj;
+
+  						var resultVal = opForType(val1.value);
+
+  						return Value.Create(resultVal);
+  					}
+  			} else {
+  				throw "Unexpected number of parameters to NativeFunctionCall: " + parametersOfSingleType.length;
+  			}
+  		}
+  	}, {
+  		key: 'CallBinaryListOperation',
+  		value: function CallBinaryListOperation(parameters) {
+  			// List-Int addition/subtraction returns a List (e.g. "alpha" + 1 = "beta")
+  			if ((this.name == "+" || this.name == "-") && parameters[0] instanceof ListValue && parameters[1] instanceof IntValue) return this.CallListIncrementOperation(parameters);
+
+  			//		var v1 = parameters [0] as Value;
+  			var v1 = parameters[0];
+  			//		var v2 = parameters [1] as Value;
+  			var v2 = parameters[1];
+
+  			// And/or with any other type requires coerscion to bool (int)
+  			if ((this.name == "&&" || this.name == "||") && (v1.valueType != ValueType.List || v2.valueType != ValueType.List)) {
+  				//			var op = _operationFuncs [ValueType.Int] as BinaryOp<int>;
+  				var op = this._operationFuncs[ValueType.Int];
+  				var result = op(v1.isTruthy ? 1 : 0, v2.isTruthy ? 1 : 0);
+  				return new IntValue(result);
+  			}
+
+  			// Normal (list • list) operation
+  			if (v1.valueType == ValueType.List && v2.valueType == ValueType.List) return this.CallType([v1, v2]);
+
+  			throw new StoryException("Can not call use '" + this.name + "' operation on " + v1.valueType + " and " + v2.valueType);
+  		}
+  	}, {
+  		key: 'CallListIncrementOperation',
+  		value: function CallListIncrementOperation(listIntParams) {
+  			var _this2 = this;
+
+  			var listVal = listIntParams[0];
+  			var intVal = listIntParams[1];
+
+  			var resultInkList = new InkList();
+
+  			listVal.value.forEach(function (listItemWithValue) {
+  				var listItem = listItemWithValue.Key;
+  				var listItemValue = listItemWithValue.Value;
+
+  				// Find + or - operation
+  				var intOp = _this2._operationFuncs[ValueType.Int];
+
+  				// Return value unknown until it's evaluated
+  				var targetInt = intOp(listItemValue, intVal.value);
+
+  				// Find this item's origin (linear search should be ok, should be short haha)
+  				var itemOrigin = null;
+  				listVal.value.origins.forEach(function (origin) {
+  					if (origin.name == listItem.originName) {
+  						itemOrigin = origin;
+  						return false;
+  					}
+  				});
+  				if (itemOrigin != null) {
+  					var incrementedItem = itemOrigin.TryGetItemWithValue(targetInt);
+  					if (incrementedItem.exists) resultInkList.Add(incrementedItem.item, targetInt);
+  				}
+  			});
+
+  			return new ListValue(resultInkList);
+  		}
+  	}, {
+  		key: 'CoerceValuesToSingleType',
+  		value: function CoerceValuesToSingleType(parametersIn) {
+  			var valType = ValueType.Int;
+
+  			var specialCaseList = null;
+
+  			// Find out what the output type is
+  			// "higher level" types infect both so that binary operations
+  			// use the same type on both sides. e.g. binary operation of
+  			// int and float causes the int to be casted to a float.
+  			parametersIn.forEach(function (obj) {
+  				var val = obj;
+  				if (val.valueType > valType) {
+  					valType = val.valueType;
+  				}
+
+  				if (val.valueType == ValueType.List) {
+  					//				 specialCaseList = val as ListValue;
+  					specialCaseList = val;
+  				}
+  			});
+
+  			// Coerce to this chosen type
+  			var parametersOut = [];
+
+  			if (valType == ValueType.List) {
+  				parametersIn.forEach(function (val) {
+  					if (val.valueType == ValueType.List) {
+  						parametersOut.push(val);
+  					} else if (val.valueType == ValueType.Int) {
+  						var intVal = parseInt(val.valueObject);
+  						var list = specialCaseList.value.originOfMaxItem;
+
+  						var item = list.TryGetItemWithValue(intVal);
+  						if (item.exists) {
+  							var castedValue = new ListValue(item.item, intVal);
+  							parametersOut.push(castedValue);
+  						} else throw new StoryException("Could not find List item with the value " + intVal + " in " + list.name);
+  					} else throw new StoryException("Cannot mix Lists and " + val.valueType + " values in this operation");
+  				});
+  			}
+
+  			// Normal Coercing (with standard casting)
+  			else {
+  					parametersIn.forEach(function (val) {
+  						var castedValue = val.Cast(valType);
+  						parametersOut.push(castedValue);
+  					});
+  				}
+
+  			return parametersOut;
+  		}
+  	}, {
+  		key: 'AddOpFuncForType',
+  		value: function AddOpFuncForType(valType, op) {
+  			if (this._operationFuncs == null) {
+  				this._operationFuncs = {};
+  			}
+
+  			this._operationFuncs[valType] = op;
+  		}
+  	}, {
+  		key: 'toString',
+  		value: function toString() {
+  			return "Native '" + this.name + "'";
+  		}
+  	}, {
+  		key: 'name',
+  		get: function get$$1() {
+  			return this._name;
+  		},
+  		set: function set$$1(value) {
+  			this._name = value;
+  			if (!this._isPrototype) this._prototype = NativeFunctionCall._nativeFunctions[this._name];
+  		}
+  	}, {
+  		key: 'numberOfParameters',
+  		get: function get$$1() {
+  			if (this._prototype) {
+  				return this._prototype.numberOfParameters;
+  			} else {
+  				return this._numberOfParameters;
+  			}
+  		},
+  		set: function set$$1(value) {
+  			this._numberOfParameters = value;
+  		}
+  	}], [{
+  		key: 'internalConstructor',
+  		value: function internalConstructor(name, numberOfParamters) {
+  			var nativeFunc = new NativeFunctionCall(name);
+  			nativeFunc._isPrototype = true;
+  			nativeFunc.numberOfParameters = numberOfParamters;
+  			return nativeFunc;
+  		}
+  	}, {
+  		key: 'CallWithName',
+  		value: function CallWithName(functionName) {
+  			return new NativeFunctionCall(functionName);
+  		}
+  	}, {
+  		key: 'CallExistsWithName',
+  		value: function CallExistsWithName(functionName) {
+  			this.GenerateNativeFunctionsIfNecessary();
+  			return this._nativeFunctions[functionName];
+  		}
+  	}, {
+  		key: 'GenerateNativeFunctionsIfNecessary',
+  		value: function GenerateNativeFunctionsIfNecessary() {
+  			if (this._nativeFunctions == null) {
+  				this._nativeFunctions = {};
+
+  				// Int operations
+  				this.AddIntBinaryOp(this.Add, function (x, y) {
+  					return x + y;
+  				});
+  				this.AddIntBinaryOp(this.Subtract, function (x, y) {
+  					return x - y;
+  				});
+  				this.AddIntBinaryOp(this.Multiply, function (x, y) {
+  					return x * y;
+  				});
+  				this.AddIntBinaryOp(this.Divide, function (x, y) {
+  					return parseInt(x / y);
+  				});
+  				this.AddIntBinaryOp(this.Mod, function (x, y) {
+  					return x % y;
+  				});
+  				this.AddIntUnaryOp(this.Negate, function (x) {
+  					return -x;
+  				});
+
+  				this.AddIntBinaryOp(this.Equal, function (x, y) {
+  					return x == y ? 1 : 0;
+  				});
+  				this.AddIntBinaryOp(this.Greater, function (x, y) {
+  					return x > y ? 1 : 0;
+  				});
+  				this.AddIntBinaryOp(this.Less, function (x, y) {
+  					return x < y ? 1 : 0;
+  				});
+  				this.AddIntBinaryOp(this.GreaterThanOrEquals, function (x, y) {
+  					return x >= y ? 1 : 0;
+  				});
+  				this.AddIntBinaryOp(this.LessThanOrEquals, function (x, y) {
+  					return x <= y ? 1 : 0;
+  				});
+  				this.AddIntBinaryOp(this.NotEquals, function (x, y) {
+  					return x != y ? 1 : 0;
+  				});
+  				this.AddIntUnaryOp(this.Not, function (x) {
+  					return x == 0 ? 1 : 0;
+  				});
+
+  				this.AddIntBinaryOp(this.And, function (x, y) {
+  					return x != 0 && y != 0 ? 1 : 0;
+  				});
+  				this.AddIntBinaryOp(this.Or, function (x, y) {
+  					return x != 0 || y != 0 ? 1 : 0;
+  				});
+
+  				this.AddIntBinaryOp(this.Max, function (x, y) {
+  					return Math.max(x, y);
+  				});
+  				this.AddIntBinaryOp(this.Min, function (x, y) {
+  					return Math.min(x, y);
+  				});
+
+  				// Float operations
+  				this.AddFloatBinaryOp(this.Add, function (x, y) {
+  					return x + y;
+  				});
+  				this.AddFloatBinaryOp(this.Subtract, function (x, y) {
+  					return x - y;
+  				});
+  				this.AddFloatBinaryOp(this.Multiply, function (x, y) {
+  					return x * y;
+  				});
+  				this.AddFloatBinaryOp(this.Divide, function (x, y) {
+  					return x / y;
+  				});
+  				this.AddFloatBinaryOp(this.Mod, function (x, y) {
+  					return x % y;
+  				}); // TODO: Is this the operation we want for floats?
+  				this.AddFloatUnaryOp(this.Negate, function (x) {
+  					return -x;
+  				});
+
+  				this.AddFloatBinaryOp(this.Equal, function (x, y) {
+  					return x == y ? 1 : 0;
+  				});
+  				this.AddFloatBinaryOp(this.Greater, function (x, y) {
+  					return x > y ? 1 : 0;
+  				});
+  				this.AddFloatBinaryOp(this.Less, function (x, y) {
+  					return x < y ? 1 : 0;
+  				});
+  				this.AddFloatBinaryOp(this.GreaterThanOrEquals, function (x, y) {
+  					return x >= y ? 1 : 0;
+  				});
+  				this.AddFloatBinaryOp(this.LessThanOrEquals, function (x, y) {
+  					return x <= y ? 1 : 0;
+  				});
+  				this.AddFloatBinaryOp(this.NotEquals, function (x, y) {
+  					return x != y ? 1 : 0;
+  				});
+  				this.AddFloatUnaryOp(this.Not, function (x) {
+  					return x == 0.0 ? 1 : 0;
+  				});
+
+  				this.AddFloatBinaryOp(this.And, function (x, y) {
+  					return x != 0.0 && y != 0.0 ? 1 : 0;
+  				});
+  				this.AddFloatBinaryOp(this.Or, function (x, y) {
+  					return x != 0.0 || y != 0.0 ? 1 : 0;
+  				});
+
+  				this.AddFloatBinaryOp(this.Max, function (x, y) {
+  					return Math.max(x, y);
+  				});
+  				this.AddFloatBinaryOp(this.Min, function (x, y) {
+  					return Math.min(x, y);
+  				});
+
+  				// String operations
+  				this.AddStringBinaryOp(this.Add, function (x, y) {
+  					return x + y;
+  				}); // concat
+  				this.AddStringBinaryOp(this.Equal, function (x, y) {
+  					return x === y ? 1 : 0;
+  				});
+  				this.AddStringBinaryOp(this.NotEquals, function (x, y) {
+  					return !(x === y) ? 1 : 0;
+  				});
+
+  				this.AddListBinaryOp(this.Add, function (x, y) {
+  					return x.Union(y);
+  				});
+  				this.AddListBinaryOp(this.Subtract, function (x, y) {
+  					return x.Without(y);
+  				});
+  				this.AddListBinaryOp(this.Has, function (x, y) {
+  					return x.Contains(y) ? 1 : 0;
+  				});
+  				this.AddListBinaryOp(this.Hasnt, function (x, y) {
+  					return x.Contains(y) ? 0 : 1;
+  				});
+  				this.AddListBinaryOp(this.Intersect, function (x, y) {
+  					return x.Intersect(y);
+  				});
+
+  				this.AddListBinaryOp(this.Equal, function (x, y) {
+  					return x.Equals(y) ? 1 : 0;
+  				});
+  				this.AddListBinaryOp(this.Greater, function (x, y) {
+  					return x.GreaterThan(y) ? 1 : 0;
+  				});
+  				this.AddListBinaryOp(this.Less, function (x, y) {
+  					return x.LessThan(y) ? 1 : 0;
+  				});
+  				this.AddListBinaryOp(this.GreaterThanOrEquals, function (x, y) {
+  					return x.GreaterThanOrEquals(y) ? 1 : 0;
+  				});
+  				this.AddListBinaryOp(this.LessThanOrEquals, function (x, y) {
+  					return x.LessThanOrEquals(y) ? 1 : 0;
+  				});
+  				this.AddListBinaryOp(this.NotEquals, function (x, y) {
+  					return !x.Equals(y) ? 1 : 0;
+  				});
+
+  				this.AddListBinaryOp(this.And, function (x, y) {
+  					return x.Count > 0 && y.Count > 0 ? 1 : 0;
+  				});
+  				this.AddListBinaryOp(this.Or, function (x, y) {
+  					return x.Count > 0 || y.Count > 0 ? 1 : 0;
+  				});
+
+  				this.AddListUnaryOp(this.Not, function (x) {
+  					return x.Count == 0 ? 1 : 0;
+  				});
+
+  				this.AddListUnaryOp(this.Invert, function (x) {
+  					return x.inverse;
+  				});
+  				this.AddListUnaryOp(this.All, function (x) {
+  					return x.all;
+  				});
+  				this.AddListUnaryOp(this.ListMin, function (x) {
+  					return x.MinAsList();
+  				});
+  				this.AddListUnaryOp(this.ListMax, function (x) {
+  					return x.MaxAsList();
+  				});
+  				this.AddListUnaryOp(this.Count, function (x) {
+  					return x.Count;
+  				});
+  				this.AddListUnaryOp(this.ValueOfList, function (x) {
+  					return x.maxItem.Value;
+  				});
+
+  				// Special case: The only operation you can do on divert target values
+  				var divertTargetsEqual = function divertTargetsEqual(d1, d2) {
+  					return d1.Equals(d2) ? 1 : 0;
+  				};
+  				this.AddOpToNativeFunc(this.Equal, 2, ValueType.DivertTarget, divertTargetsEqual);
+  			}
+  		}
+  	}, {
+  		key: 'AddOpToNativeFunc',
+  		value: function AddOpToNativeFunc(name, args, valType, op) {
+  			var nativeFunc = this._nativeFunctions[name];
+  			if (!nativeFunc) {
+  				nativeFunc = NativeFunctionCall.internalConstructor(name, args);
+  				this._nativeFunctions[name] = nativeFunc;
+  			}
+
+  			nativeFunc.AddOpFuncForType(valType, op);
+  		}
+  	}, {
+  		key: 'AddIntBinaryOp',
+  		value: function AddIntBinaryOp(name, op) {
+  			this.AddOpToNativeFunc(name, 2, ValueType.Int, op);
+  		}
+  	}, {
+  		key: 'AddIntUnaryOp',
+  		value: function AddIntUnaryOp(name, op) {
+  			this.AddOpToNativeFunc(name, 1, ValueType.Int, op);
+  		}
+  	}, {
+  		key: 'AddFloatBinaryOp',
+  		value: function AddFloatBinaryOp(name, op) {
+  			this.AddOpToNativeFunc(name, 2, ValueType.Float, op);
+  		}
+  	}, {
+  		key: 'AddFloatUnaryOp',
+  		value: function AddFloatUnaryOp(name, op) {
+  			this.AddOpToNativeFunc(name, 1, ValueType.Float, op);
+  		}
+  	}, {
+  		key: 'AddStringBinaryOp',
+  		value: function AddStringBinaryOp(name, op) {
+  			this.AddOpToNativeFunc(name, 2, ValueType.String, op);
+  		}
+  	}, {
+  		key: 'AddListBinaryOp',
+  		value: function AddListBinaryOp(name, op) {
+  			this.AddOpToNativeFunc(name, 2, ValueType.List, op);
+  		}
+  	}, {
+  		key: 'AddListUnaryOp',
+  		value: function AddListUnaryOp(name, op) {
+  			this.AddOpToNativeFunc(name, 1, ValueType.List, op);
+  		}
+  	}]);
+  	return NativeFunctionCall;
+  }(Object$1);
+
+  NativeFunctionCall.Add = "+";
+  NativeFunctionCall.Subtract = "-";
+  NativeFunctionCall.Divide = "/";
+  NativeFunctionCall.Multiply = "*";
+  NativeFunctionCall.Mod = "%";
+  NativeFunctionCall.Negate = "_";
+
+  NativeFunctionCall.Equal = "==";
+  NativeFunctionCall.Greater = ">";
+  NativeFunctionCall.Less = "<";
+  NativeFunctionCall.GreaterThanOrEquals = ">=";
+  NativeFunctionCall.LessThanOrEquals = "<=";
+  NativeFunctionCall.NotEquals = "!=";
+  NativeFunctionCall.Not = "!";
+
+  NativeFunctionCall.And = "&&";
+  NativeFunctionCall.Or = "||";
+
+  NativeFunctionCall.Min = "MIN";
+  NativeFunctionCall.Max = "MAX";
+
+  NativeFunctionCall.Has = "?";
+  NativeFunctionCall.Hasnt = "!?";
+  NativeFunctionCall.Intersect = "^";
+
+  NativeFunctionCall.ListMin = "LIST_MIN";
+  NativeFunctionCall.ListMax = "LIST_MAX";
+  NativeFunctionCall.All = "LIST_ALL";
+  NativeFunctionCall.Count = "LIST_COUNT";
+  NativeFunctionCall.ValueOfList = "LIST_VALUE";
+  NativeFunctionCall.Invert = "LIST_INVERT";
+
+  NativeFunctionCall._nativeFunctions = null;
+
+  var Tag = function (_InkObject) {
+  	inherits(Tag, _InkObject);
+
+  	function Tag(tagText) {
+  		classCallCheck(this, Tag);
+
+  		var _this = possibleConstructorReturn(this, (Tag.__proto__ || Object.getPrototypeOf(Tag)).call(this));
+
+  		_this._text = tagText.toString() || '';
+  		return _this;
+  	}
+
+  	createClass(Tag, [{
+  		key: 'toString',
+  		value: function toString() {
+  			return "# " + this._text;
+  		}
+  	}, {
+  		key: 'text',
+  		get: function get$$1() {
+  			return this._text;
+  		}
+  	}]);
+  	return Tag;
+  }(Object$1);
+
+  var Choice = function () {
+  	function Choice(choice) {
+  		classCallCheck(this, Choice);
+
+  		this.text;
+  		this.index;
+  		this.choicePoint;
+  		this.threadAtGeneration;
+
+  		this._originalThreadIndex;
+  		this._originalChoicePath;
+
+  		if (choice) this.choicePoint = choice;
+  	}
+
+  	createClass(Choice, [{
+  		key: "pathStringOnChoice",
+  		get: function get$$1() {
+  			return this.choicePoint.pathStringOnChoice;
+  		}
+  	}, {
+  		key: "sourcePath",
+  		get: function get$$1() {
+  			return this.choicePoint.path.componentsString;
+  		}
+  	}]);
+  	return Choice;
+  }();
+
+  var ListDefinition = function () {
+  	function ListDefinition(name, items) {
+  		classCallCheck(this, ListDefinition);
+
+  		this._name = name || '';
+  		this._items = null;
+  		this._rawListItemsKeys = null;
+  		this._itemNameToValues = items || {};
+  	}
+
+  	createClass(ListDefinition, [{
+  		key: 'forEachItems',
+  		value: function forEachItems(fn) {
+  			for (var key in this._rawListItemsKeys) {
+  				fn({
+  					Key: this._rawListItemsKeys[key],
+  					Value: this._items[key]
+  				});
+  			}
+  		}
+  	}, {
+  		key: 'ValueForItem',
+  		value: function ValueForItem(item) {
+  			var intVal = this._itemNameToValues[item.itemName];
+  			if (intVal !== undefined) return intVal;else return 0;
+  		}
+  	}, {
+  		key: 'ContainsItem',
+  		value: function ContainsItem(item) {
+  			if (item.originName != this.name) return false;
+
+  			return item.itemName in this._itemNameToValues;
+  		}
+  	}, {
+  		key: 'ContainsItemWithName',
+  		value: function ContainsItemWithName(itemName) {
+  			return this._itemNameToValues[itemName] !== undefined;
+  		}
+  	}, {
+  		key: 'TryGetItemWithValue',
+  		value: function TryGetItemWithValue(val, item) {
+  			//item was an out
+  			//the original function returns a boolean and has a second parameter called item that is an `out`. Both are needed and we can't just return the item because it'll always be truthy. Instead, we return an object containing the bool and the item
+  			for (var key in this._itemNameToValues) {
+  				if (this._itemNameToValues[key] == val) {
+  					item = new InkListItem(this.name, key);
+  					return {
+  						item: item,
+  						exists: true
+  					};
+  				}
+  			}
+
+  			item = InkListItem.Null;
+  			return {
+  				item: item,
+  				exists: false
+  			};
+  		}
+  	}, {
+  		key: 'TryGetValueForItem',
+  		value: function TryGetValueForItem(item, intval) {
+  			//intval is an out
+  			intVal = this._itemNameToValues[item.itemName];
+  			return intVal;
+  		}
+  	}, {
+  		key: 'ListRange',
+  		value: function ListRange(min, max) {
+  			var rawList = new InkList();
+  			for (var key in this._itemNameToValues) {
+  				if (this._itemNameToValues[key] >= min && this._itemNameToValues[key] <= max) {
+  					var item = new InkListItem(this.name, key);
+  					rawList.Add(item, this._itemNameToValues[key]);
+  				}
+  			}
+  			return new ListValue(rawList);
+  		}
+  	}, {
+  		key: 'name',
+  		get: function get$$1() {
+  			return this._name;
+  		}
+  	}, {
+  		key: 'items',
+  		get: function get$$1() {
+  			if (this._items == null) {
+  				this._items = {};
+  				this._rawListItemsKeys = {};
+  				for (var key in this._itemNameToValues) {
+  					var item = new InkListItem(this.name, key);
+  					this._rawListItemsKeys[item] = item;
+  					this._items[item] = this._itemNameToValues[key];
+  				}
+  			}
+  			this._items.forEach = this.forEachItems.bind(this);
+
+  			return this._items;
+  		}
+  	}]);
+  	return ListDefinition;
+  }();
+
+  var ListDefinitionsOrigin = function () {
+  	function ListDefinitionsOrigin(lists) {
+  		var _this = this;
+
+  		classCallCheck(this, ListDefinitionsOrigin);
+
+  		this._lists = {};
+
+  		lists.forEach(function (list) {
+  			_this._lists[list.name] = list;
+  		});
+  	}
+
+  	createClass(ListDefinitionsOrigin, [{
+  		key: 'TryGetDefinition',
+  		value: function TryGetDefinition(name, def) {
+  			//initially, this function returns a boolean and the second parameter is an out.
+  			return name in this._lists ? this._lists[name] : def;
+  		}
+  	}, {
+  		key: 'FindSingleItemListWithName',
+  		value: function FindSingleItemListWithName(name) {
+  			var item = InkListItem.Null;
+  			var list = null;
+
+  			var nameParts = name.split('.');
+  			if (nameParts.length == 2) {
+  				item = new InkListItem(nameParts[0], nameParts[1]);
+  				list = this.TryGetDefinition(item.originName, list);
+  			} else {
+  				for (var key in this._lists) {
+  					var listWithItem = this._lists[key];
+  					item = new InkListItem(key, name);
+  					if (listWithItem.ContainsItem(item)) {
+  						list = listWithItem;
+  						break;
+  					}
+  				}
+  			}
+
+  			if (list != null) {
+  				var itemValue = list.ValueForItem(item);
+  				return new ListValue(item, itemValue);
+  			}
+
+  			return null;
+  		}
+  	}, {
+  		key: 'lists',
+  		get: function get$$1() {
+  			var listOfLists = [];
+
+  			for (var key in this._lists) {
+  				listOfLists.push(this._lists[key]);
+  			}
+  			return listOfLists;
+  		}
+  	}]);
+  	return ListDefinitionsOrigin;
+  }();
+
+  var JsonSerialisation = function () {
+  	function JsonSerialisation() {
+  		classCallCheck(this, JsonSerialisation);
+  	}
+
+  	createClass(JsonSerialisation, null, [{
+  		key: 'ListToJArray',
+  		value: function ListToJArray(serialisables) {
+  			var _this = this;
+
+  			var jArray = [];
+  			serialisables.forEach(function (s) {
+  				jArray.push(_this.RuntimeObjectToJToken(s));
+  			});
+  			return jArray;
+  		}
+  	}, {
+  		key: 'JArrayToRuntimeObjList',
+  		value: function JArrayToRuntimeObjList(jArray, skipLast) {
+  			var count = jArray.length;
+  			if (skipLast) count--;
+
+  			var list = [];
+
+  			for (var i = 0; i < count; i++) {
+  				var jTok = jArray[i];
+  				var runtimeObj = this.JTokenToRuntimeObject(jTok);
+  				list.push(runtimeObj);
+  			}
+
+  			return list;
+  		}
+  	}, {
+  		key: 'JObjectToDictionaryRuntimeObjs',
+  		value: function JObjectToDictionaryRuntimeObjs(jObject) {
+  			var dict = {};
+
+  			for (var key in jObject) {
+  				dict[key] = this.JTokenToRuntimeObject(jObject[key]);
+  			}
+
+  			return dict;
+  		}
+  	}, {
+  		key: 'DictionaryRuntimeObjsToJObject',
+  		value: function DictionaryRuntimeObjsToJObject(dictionary) {
+  			var jsonObj = {};
+
+  			for (var key in dictionary) {
+  				//			var runtimeObj = keyVal.Value as Runtime.Object;
+  				var runtimeObj = dictionary[key];
+  				if (runtimeObj instanceof Object$1) jsonObj[key] = this.RuntimeObjectToJToken(runtimeObj);
+  			}
+
+  			return jsonObj;
+  		}
+  	}, {
+  		key: 'JObjectToIntDictionary',
+  		value: function JObjectToIntDictionary(jObject) {
+  			var dict = {};
+  			for (var key in jObject) {
+  				dict[key] = parseInt(jObject[key]);
+  			}
+  			return dict;
+  		}
+  	}, {
+  		key: 'IntDictionaryToJObject',
+  		value: function IntDictionaryToJObject(dict) {
+  			var jObj = {};
+  			for (var key in dict) {
+  				jObj[key] = dict[key];
+  			}
+  			return jObj;
+  		}
+  	}, {
+  		key: 'JTokenToRuntimeObject',
+  		value: function JTokenToRuntimeObject(token) {
+  			//@TODO probably find a more robust way to detect numbers, isNaN seems happy to accept things that really aren't numberish.
+  			if (!isNaN(token) && token !== "\n") {
+  				//JS thinks "\n" is a number
+  				return Value.Create(token);
+  			}
+
+  			if (typeof token === 'string') {
+  				var str = token.toString();
+
+  				// String value
+  				var firstChar = str[0];
+  				if (firstChar == '^') return new StringValue(str.substring(1));else if (firstChar == "\n" && str.length == 1) return new StringValue("\n");
+
+  				// Glue
+  				if (str == "<>") return new Glue(GlueType.Bidirectional);else if (str == "G<") return new Glue(GlueType.Left);else if (str == "G>") return new Glue(GlueType.Right);
+
+  				// Control commands (would looking up in a hash set be faster?)
+  				for (var i = 0; i < _controlCommandNames.length; ++i) {
+  					var cmdName = _controlCommandNames[i];
+  					if (str == cmdName) {
+  						return new ControlCommand(i);
+  					}
+  				}
+
+  				// Native functions
+  				if (str == "L^") str = "^";
+  				if (NativeFunctionCall.CallExistsWithName(str)) return NativeFunctionCall.CallWithName(str);
+
+  				// Pop
+  				if (str == "->->") return ControlCommand.PopTunnel();else if (str == "~ret") return ControlCommand.PopFunction();
+
+  				// Void
+  				if (str == "void") return new Void();
+  			}
+
+  			if ((typeof token === 'undefined' ? 'undefined' : _typeof(token)) === 'object' && token instanceof Array === false) {
+  				var obj = token;
+  				var propValue;
+
+  				// Divert target value to path
+  				if (obj["^->"]) {
+  					propValue = obj["^->"];
+  					return new DivertTargetValue(new Path$1(propValue.toString()));
+  				}
+
+  				// VariablePointerValue
+  				if (obj["^var"]) {
+  					propValue = obj["^var"];
+  					var varPtr = new VariablePointerValue(propValue.toString());
+  					if (obj["ci"]) {
+  						propValue = obj["ci"];
+  						varPtr.contextIndex = parseInt(propValue);
+  					}
+  					return varPtr;
+  				}
+
+  				// Divert
+  				var isDivert = false;
+  				var pushesToStack = false;
+  				var divPushType = PushPopType.Function;
+  				var external = false;
+  				if (propValue = obj["->"]) {
+  					isDivert = true;
+  				} else if (propValue = obj["f()"]) {
+  					isDivert = true;
+  					pushesToStack = true;
+  					divPushType = PushPopType.Function;
+  				} else if (propValue = obj["->t->"]) {
+  					isDivert = true;
+  					pushesToStack = true;
+  					divPushType = PushPopType.Tunnel;
+  				} else if (propValue = obj["x()"]) {
+  					isDivert = true;
+  					external = true;
+  					pushesToStack = false;
+  					divPushType = PushPopType.Function;
+  				}
+
+  				if (isDivert) {
+  					var divert = new Divert();
+  					divert.pushesToStack = pushesToStack;
+  					divert.stackPushType = divPushType;
+  					divert.isExternal = external;
+
+  					var target = propValue.toString();
+
+  					if (propValue = obj["var"]) divert.variableDivertName = target;else divert.targetPathString = target;
+
+  					divert.isConditional = !!obj["c"];
+
+  					if (external) {
+  						if (propValue = obj["exArgs"]) divert.externalArgs = parseInt(propValue);
+  					}
+
+  					return divert;
+  				}
+
+  				// Choice
+  				if (propValue = obj["*"]) {
+  					var choice = new ChoicePoint();
+  					choice.pathStringOnChoice = propValue.toString();
+
+  					if (propValue = obj["flg"]) choice.flags = parseInt(propValue);
+
+  					return choice;
+  				}
+
+  				// Variable reference
+  				if (propValue = obj["VAR?"]) {
+  					return new VariableReference(propValue.toString());
+  				} else if (propValue = obj["CNT?"]) {
+  					var readCountVarRef = new VariableReference();
+  					readCountVarRef.pathStringForCount = propValue.toString();
+  					return readCountVarRef;
+  				}
+
+  				// Variable assignment
+  				var isVarAss = false;
+  				var isGlobalVar = false;
+  				if (propValue = obj["VAR="]) {
+  					isVarAss = true;
+  					isGlobalVar = true;
+  				} else if (propValue = obj["temp="]) {
+  					isVarAss = true;
+  					isGlobalVar = false;
+  				}
+  				if (isVarAss) {
+  					var varName = propValue.toString();
+  					var isNewDecl = !obj["re"];
+  					var varAss = new VariableAssignment(varName, isNewDecl);
+  					varAss.isGlobal = isGlobalVar;
+  					return varAss;
+  				}
+  				if (obj["#"] !== undefined) {
+  					propValue = obj["#"];
+  					return new Tag(propValue.toString());
+  				}
+  				//list value
+  				if (propValue = obj["list"]) {
+  					//				var listContent = (Dictionary<string, object>)propValue;
+  					var listContent = propValue;
+  					var rawList = new InkList();
+  					if (propValue = obj["origins"]) {
+  						//					var namesAsObjs = (List<object>)propValue;
+  						var namesAsObjs = propValue;
+  						//					rawList.SetInitialOriginNames(namesAsObjs.Cast<string>().ToList());
+  						rawList.SetInitialOriginNames(namesAsObjs);
+  					}
+
+  					for (var key in listContent) {
+  						var nameToVal = listContent[key];
+  						var item = new InkListItem(key);
+  						var val = parseInt(nameToVal);
+  						rawList.Add(item, val);
+  					}
+
+  					return new ListValue(rawList);
+  				}
+
+  				if (obj["originalChoicePath"] != null) return this.JObjectToChoice(obj);
+  			}
+
+  			// Array is always a Runtime.Container
+  			if (token instanceof Array) {
+  				return this.JArrayToContainer(token);
+  			}
+
+  			if (token == null) return null;
+
+  			throw "Failed to convert token to runtime object: " + JSON.stringify(token);
+  		}
+  	}, {
+  		key: 'RuntimeObjectToJToken',
+  		value: function RuntimeObjectToJToken(obj) {
+  			//		var container = obj as Container;
+  			var container = obj;
+  			if (container instanceof Container) {
+  				return this.ContainerToJArray(container);
+  			}
+
+  			//		var divert = obj as Divert;
+  			var divert = obj;
+  			if (divert instanceof Divert) {
+  				var divTypeKey = "->";
+  				if (divert.isExternal) divTypeKey = "x()";else if (divert.pushesToStack) {
+  					if (divert.stackPushType == PushPopType.Function) divTypeKey = "f()";else if (divert.stackPushType == PushPopType.Tunnel) divTypeKey = "->t->";
+  				}
+
+  				var targetStr;
+  				if (divert.hasVariableTarget) targetStr = divert.variableDivertName;else targetStr = divert.targetPathString;
+
+  				var jObj = {};
+  				jObj[divTypeKey] = targetStr;
+
+  				if (divert.hasVariableTarget) jObj["var"] = true;
+
+  				if (divert.isConditional) jObj["c"] = true;
+
+  				if (divert.externalArgs > 0) jObj["exArgs"] = divert.externalArgs;
+
+  				return jObj;
+  			}
+
+  			//		var choicePoint = obj as ChoicePoint;
+  			var choicePoint = obj;
+  			if (choicePoint instanceof ChoicePoint) {
+  				var jObj = {};
+  				jObj["*"] = choicePoint.pathStringOnChoice;
+  				jObj["flg"] = choicePoint.flags;
+  				return jObj;
+  			}
+
+  			//		var intVal = obj as IntValue;
+  			var intVal = obj;
+  			if (intVal instanceof IntValue) return intVal.value;
+
+  			//		var floatVal = obj as FloatValue;
+  			var floatVal = obj;
+  			if (floatVal instanceof FloatValue) return floatVal.value;
+
+  			//		var strVal = obj as StringValue;
+  			var strVal = obj;
+  			if (strVal instanceof StringValue) {
+  				if (strVal.isNewline) return "\n";else return "^" + strVal.value;
+  			}
+
+  			//		var listVal = obj as ListValue;
+  			var listVal = obj;
+  			if (listVal instanceof ListValue) {
+  				return this.InkListToJObject(listVal);
+  			}
+
+  			//		var divTargetVal = obj as DivertTargetValue;
+  			var divTargetVal = obj;
+  			if (divTargetVal instanceof DivertTargetValue) return {
+  				"^->": divTargetVal.value.componentsString
+  			};
+
+  			//		var varPtrVal = obj as VariablePointerValue;
+  			var varPtrVal = obj;
+  			if (varPtrVal instanceof VariablePointerValue) return {
+  				"^var": varPtrVal.value,
+  				"ci": varPtrVal.contextIndex
+  			};
+
+  			//		var glue = obj as Runtime.Glue;
+  			var glue = obj;
+  			if (glue instanceof Glue) {
+  				if (glue.isBi) return "<>";else if (glue.isLeft) return "G<";else return "G>";
+  			}
+
+  			//		var controlCmd = obj as ControlCommand;
+  			var controlCmd = obj;
+  			if (controlCmd instanceof ControlCommand) {
+  				return _controlCommandNames[parseInt(controlCmd.commandType)];
+  			}
+
+  			//		var nativeFunc = obj as Runtime.NativeFunctionCall;
+  			var nativeFunc = obj;
+  			if (nativeFunc instanceof NativeFunctionCall) {
+  				var name = nativeFunc.name;
+
+  				// Avoid collision with ^ used to indicate a string
+  				if (name == "^") name = "L^";
+  				return name;
+  			}
+
+  			// Variable reference
+  			//		var varRef = obj as VariableReference;
+  			var varRef = obj;
+  			if (varRef instanceof VariableReference) {
+  				var jObj = {};
+  				var readCountPath = varRef.pathStringForCount;
+  				if (readCountPath != null) {
+  					jObj["CNT?"] = readCountPath;
+  				} else {
+  					jObj["VAR?"] = varRef.name;
+  				}
+
+  				return jObj;
+  			}
+
+  			// Variable assignment
+  			//		var varAss = obj as VariableAssignment;
+  			var varAss = obj;
+  			if (varAss instanceof VariableAssignment) {
+  				var key = varAss.isGlobal ? "VAR=" : "temp=";
+  				var jObj = {};
+  				jObj[key] = varAss.variableName;
+
+  				// Reassignment?
+  				if (!varAss.isNewDeclaration) jObj["re"] = true;
+
+  				return jObj;
+  			}
+
+  			//		var voidObj = obj as Void;
+  			var voidObj = obj;
+  			if (voidObj instanceof Void) return "void";
+
+  			//		var tag = obj as Tag;
+  			var tag = obj;
+  			if (tag instanceof Tag) {
+  				var jObj = {};
+  				jObj["#"] = tag.text;
+  				return jObj;
+  			}
+
+  			// Used when serialising save state only
+  			//		var choice = obj as Choice;
+  			var choice = obj;
+  			if (choice instanceof Choice) return this.ChoiceToJObject(choice);
+
+  			throw "Failed to convert runtime object to Json token: " + obj;
+  		}
+  	}, {
+  		key: 'ContainerToJArray',
+  		value: function ContainerToJArray(container) {
+  			var jArray = this.ListToJArray(container.content);
+
+  			// Container is always an array [...]
+  			// But the final element is always either:
+  			//  - a dictionary containing the named content, as well as possibly
+  			//    the key "#" with the count flags
+  			//  - null, if neither of the above
+  			var namedOnlyContent = container.namedOnlyContent;
+  			var countFlags = container.countFlags;
+  			if (namedOnlyContent != null && namedOnlyContent.length > 0 || countFlags > 0 || container.name != null) {
+
+  				var terminatingObj;
+  				if (namedOnlyContent != null) {
+  					terminatingObj = this.DictionaryRuntimeObjsToJObject(namedOnlyContent);
+
+  					// Strip redundant names from containers if necessary
+  					for (var key in terminatingObj) {
+  						//					var subContainerJArray = namedContentObj.Value as JArray;
+  						var subContainerJArray = terminatingObj[key];
+  						if (subContainerJArray != null) {
+  							//						var attrJObj = subContainerJArray [subContainerJArray.Count - 1] as JObject;
+  							var attrJObj = subContainerJArray[subContainerJArray.length - 1];
+  							if (attrJObj != null) {
+  								delete attrJObj["#n"];
+  								if (Object.keys(attrJObj).length == 0) subContainerJArray[subContainerJArray.length - 1] = null;
+  							}
+  						}
+  					}
+  				} else terminatingObj = {};
+
+  				if (countFlags > 0) terminatingObj["#f"] = countFlags;
+
+  				if (container.name != null) terminatingObj["#n"] = container.name;
+
+  				jArray.push(terminatingObj);
+  			}
+
+  			// Add null terminator to indicate that there's no dictionary
+  			else {
+  					jArray.push(null);
+  				}
+
+  			return jArray;
+  		}
+  	}, {
+  		key: 'JArrayToContainer',
+  		value: function JArrayToContainer(jArray) {
+  			var container = new Container();
+  			container.content = this.JArrayToRuntimeObjList(jArray, true);
+
+  			// Final object in the array is always a combination of
+  			//  - named content
+  			//  - a "#" key with the countFlags
+  			// (if either exists at all, otherwise null)
+  			//		var terminatingObj = jArray [jArray.Count - 1] as JObject;
+  			var terminatingObj = jArray[jArray.length - 1];
+  			if (terminatingObj != null) {
+
+  				var namedOnlyContent = {};
+
+  				for (var key in terminatingObj) {
+  					if (key == "#f") {
+  						container.countFlags = parseInt(terminatingObj[key]);
+  					} else if (key == "#n") {
+  						container.name = terminatingObj[key].toString();
+  					} else {
+  						var namedContentItem = this.JTokenToRuntimeObject(terminatingObj[key]);
+  						//					var namedSubContainer = namedContentItem as Container;
+  						var namedSubContainer = namedContentItem;
+  						if (namedSubContainer instanceof Container) namedSubContainer.name = key;
+  						namedOnlyContent[key] = namedContentItem;
+  					}
+  				}
+
+  				container.namedOnlyContent = namedOnlyContent;
+  			}
+
+  			return container;
+  		}
+  	}, {
+  		key: 'JObjectToChoice',
+  		value: function JObjectToChoice(jObj) {
+  			var choice = new Choice();
+  			choice.text = jObj["text"].toString();
+  			choice.index = parseInt(jObj["index"]);
+  			choice.originalChoicePath = jObj["originalChoicePath"].toString();
+  			choice.originalThreadIndex = parseInt(jObj["originalThreadIndex"]);
+  			return choice;
+  		}
+  	}, {
+  		key: 'ChoiceToJObject',
+  		value: function ChoiceToJObject(choice) {
+  			var jObj = {};
+  			jObj["text"] = choice.text;
+  			jObj["index"] = choice.index;
+  			jObj["originalChoicePath"] = choice.originalChoicePath;
+  			jObj["originalThreadIndex"] = choice.originalThreadIndex;
+  			return jObj;
+  		}
+  	}, {
+  		key: 'InkListToJObject',
+  		value: function InkListToJObject(listVal) {
+  			var rawList = listVal.value;
+
+  			var dict = {};
+
+  			var content = {};
+
+  			rawList.forEach(function (itemAndValue) {
+  				var item = itemAndValue.Key;
+  				var val = itemAndValue.Value;
+  				content[item.toString()] = val;
+  			});
+
+  			dict["list"] = content;
+
+  			if (rawList.Count == 0 && rawList.originNames != null && rawList.originNames.length > 0) {
+  				//			dict["origins"] = rawList.originNames.Cast<object> ().ToList ();
+  				dict["origins"] = rawList.originNames;
+  			}
+
+  			return dict;
+  		}
+  	}, {
+  		key: 'ListDefinitionsToJToken',
+  		value: function ListDefinitionsToJToken(origin) {
+  			var result = {};
+
+  			origin.lists.forEach(function (def) {
+  				var listDefJson = {};
+  				def.items.forEach(function (itemToVal) {
+  					var item = itemToVal.Key;
+  					var val = itemToVal.Value;
+  					listDefJson[item.itemName] = val;
+  				});
+
+  				result[def.name] = listDefJson;
+  			});
+
+  			return result;
+  		}
+  	}, {
+  		key: 'JTokenToListDefinitions',
+  		value: function JTokenToListDefinitions(obj) {
+  			//		var defsObj = (Dictionary<string, object>)obj;
+  			var defsObj = obj;
+
+  			var allDefs = [];
+
+  			for (var key in defsObj) {
+  				var name = key.toString();
+  				//			var listDefJson = (Dictionary<string, object>)kv.Value;
+  				var listDefJson = defsObj[key];
+
+  				// Cast (string, object) to (string, int) for items
+  				var items = {};
+
+  				for (var nameValueKey in listDefJson) {
+  					var nameValue = listDefJson[nameValueKey];
+  					items[nameValueKey] = parseInt(nameValue);
+  				}
+
+  				var def = new ListDefinition(name, items);
+  				allDefs.push(def);
+  			}
+
+  			return new ListDefinitionsOrigin(allDefs);
+  		}
+  	}]);
+  	return JsonSerialisation;
+  }();
+
+  var _controlCommandNames = [];
+
+  _controlCommandNames[ControlCommand.CommandType.EvalStart] = "ev";
+  _controlCommandNames[ControlCommand.CommandType.EvalOutput] = "out";
+  _controlCommandNames[ControlCommand.CommandType.EvalEnd] = "/ev";
+  _controlCommandNames[ControlCommand.CommandType.Duplicate] = "du";
+  _controlCommandNames[ControlCommand.CommandType.PopEvaluatedValue] = "pop";
+  _controlCommandNames[ControlCommand.CommandType.PopFunction] = "~ret";
+  _controlCommandNames[ControlCommand.CommandType.PopTunnel] = "->->";
+  _controlCommandNames[ControlCommand.CommandType.BeginString] = "str";
+  _controlCommandNames[ControlCommand.CommandType.EndString] = "/str";
+  _controlCommandNames[ControlCommand.CommandType.NoOp] = "nop";
+  _controlCommandNames[ControlCommand.CommandType.ChoiceCount] = "choiceCnt";
+  _controlCommandNames[ControlCommand.CommandType.TurnsSince] = "turns";
+  _controlCommandNames[ControlCommand.CommandType.ReadCount] = "readc";
+  _controlCommandNames[ControlCommand.CommandType.Random] = "rnd";
+  _controlCommandNames[ControlCommand.CommandType.SeedRandom] = "srnd";
+  _controlCommandNames[ControlCommand.CommandType.VisitIndex] = "visit";
+  _controlCommandNames[ControlCommand.CommandType.SequenceShuffleIndex] = "seq";
+  _controlCommandNames[ControlCommand.CommandType.StartThread] = "thread";
+  _controlCommandNames[ControlCommand.CommandType.Done] = "done";
+  _controlCommandNames[ControlCommand.CommandType.End] = "end";
+  _controlCommandNames[ControlCommand.CommandType.ListFromInt] = "listInt";
+  _controlCommandNames[ControlCommand.CommandType.ListRange] = "range";
+
+  for (var i$1 = 0; i$1 < ControlCommand.CommandType.TOTAL_VALUES; ++i$1) {
+  	if (_controlCommandNames[i$1] == null) throw "Control command not accounted for in serialisation";
+  }
+
+  var Element = function () {
+  	function Element(type, container, contentIndex, inExpressionEvaluation) {
+  		classCallCheck(this, Element);
+
+  		this.currentContainer = container;
+  		this.currentContentIndex = contentIndex;
+  		this.inExpressionEvaluation = inExpressionEvaluation || false;
+  		this.temporaryVariables = {};
+  		this.type = type;
+  	}
+
+  	createClass(Element, [{
+  		key: 'Copy',
+  		value: function Copy() {
+  			var copy = new Element(this.type, this.currentContainer, this.currentContentIndex, this.inExpressionEvaluation);
+  			_extends(copy.temporaryVariables, this.temporaryVariables);
+  			return copy;
+  		}
+  	}, {
+  		key: 'currentObject',
+  		get: function get$$1() {
+  			if (this.currentContainer && this.currentContentIndex < this.currentContainer.content.length) {
+  				return this.currentContainer.content[this.currentContentIndex];
+  			}
+
+  			return null;
+  		},
+  		set: function set$$1(value) {
+  			var currentObj = value;
+  			if (currentObj == null) {
+  				this.currentContainer = null;
+  				this.currentContentIndex = 0;
+  				return;
+  			}
+
+  			//		currentContainer = currentObj.parent as Container;
+  			this.currentContainer = currentObj.parent;
+  			if (this.currentContainer instanceof Container) this.currentContentIndex = this.currentContainer.content.indexOf(currentObj);
+
+  			// Two reasons why the above operation might not work:
+  			//  - currentObj is already the root container
+  			//  - currentObj is a named container rather than being an object at an index
+  			if (this.currentContainer instanceof Container === false || this.currentContentIndex == -1) {
+  				//			currentContainer = currentObj as Container;
+  				this.currentContainer = currentObj;
+  				this.currentContentIndex = 0;
+  			}
+  		}
+  	}]);
+  	return Element;
+  }();
+
+  var Thread = function () {
+  	function Thread(jsonToken, storyContext) {
+  		var _this = this;
+
+  		classCallCheck(this, Thread);
+
+  		this.callstack = [];
+  		this.threadIndex = 0;
+  		this.previousContentObject = null;
+
+  		if (jsonToken && storyContext) {
+  			var jThreadObj = jsonToken;
+  			this.threadIndex = parseInt(jThreadObj["threadIndex"]);
+
+  			var jThreadCallstack = jThreadObj["callstack"];
+
+  			jThreadCallstack.forEach(function (jElTok) {
+  				var jElementObj = jElTok;
+
+  				var pushPopType = parseInt(jElementObj["type"]);
+
+  				var currentContainer = null;
+  				var contentIndex = 0;
+
+  				var currentContainerPathStr = null;
+  				var currentContainerPathStrToken = jElementObj["cPath"];
+  				if (typeof currentContainerPathStrToken !== 'undefined') {
+  					currentContainerPathStr = currentContainerPathStrToken.toString();
+  					//					currentContainer = storyContext.ContentAtPath (new Path(currentContainerPathStr)) as Container;
+  					currentContainer = storyContext.ContentAtPath(new Path$1(currentContainerPathStr));
+  					contentIndex = parseInt(jElementObj["idx"]);
+  				}
+
+  				var inExpressionEvaluation = !!jElementObj["exp"];
+
+  				var el = new Element(pushPopType, currentContainer, contentIndex, inExpressionEvaluation);
+
+  				var jObjTemps = jElementObj["temp"];
+  				el.temporaryVariables = JsonSerialisation.JObjectToDictionaryRuntimeObjs(jObjTemps);
+
+  				_this.callstack.push(el);
+  			});
+
+  			var prevContentObjPath = jThreadObj["previousContentObject"];
+  			if (typeof prevContentObjPath !== 'undefined') {
+  				var prevPath = new Path$1(prevContentObjPath.toString());
+  				this.previousContentObject = storyContext.ContentAtPath(prevPath);
+  			}
+  		}
+  	}
+
+  	createClass(Thread, [{
+  		key: 'Copy',
+  		value: function Copy() {
+  			var copy = new Thread();
+  			copy.threadIndex = this.threadIndex;
+  			this.callstack.forEach(function (e) {
+  				copy.callstack.push(e.Copy());
+  			});
+  			copy.previousContentObject = this.previousContentObject;
+  			return copy;
+  		}
+  	}, {
+  		key: 'jsonToken',
+  		get: function get$$1() {
+  			var threadJObj = {};
+
+  			var jThreadCallstack = [];
+  			this.callstack.forEach(function (el) {
+  				var jObj = {};
+  				if (el.currentContainer) {
+  					jObj["cPath"] = el.currentContainer.path.componentsString;
+  					jObj["idx"] = el.currentContentIndex;
+  				}
+  				jObj["exp"] = el.inExpressionEvaluation;
+  				jObj["type"] = parseInt(el.type);
+  				jObj["temp"] = JsonSerialisation.DictionaryRuntimeObjsToJObject(el.temporaryVariables);
+  				jThreadCallstack.push(jObj);
+  			});
+
+  			threadJObj["callstack"] = jThreadCallstack;
+  			threadJObj["threadIndex"] = this.threadIndex;
+
+  			if (this.previousContentObject != null) threadJObj["previousContentObject"] = this.previousContentObject.path.toString();
+
+  			return threadJObj;
+  		}
+  	}]);
+  	return Thread;
+  }();
+
+  var CallStack = function () {
+  	function CallStack(copyOrrootContentContainer) {
+  		var _this2 = this;
+
+  		classCallCheck(this, CallStack);
+
+  		this._threads = [];
+  		this._threadCounter = 0;
+  		this._threads.push(new Thread());
+
+  		if (copyOrrootContentContainer instanceof CallStack) {
+  			this._threads = [];
+
+  			copyOrrootContentContainer._threads.forEach(function (otherThread) {
+  				_this2._threads.push(otherThread.Copy());
+  			});
+  		} else {
+  			this._threads[0].callstack.push(new Element(PushPopType.Tunnel, copyOrrootContentContainer, 0));
+  		}
+  	}
+
+  	createClass(CallStack, [{
+  		key: 'CanPop',
+  		value: function CanPop(type) {
+  			if (!this.canPop) return false;
+
+  			if (type == null) return true;
+
+  			return this.currentElement.type == type;
+  		}
+  	}, {
+  		key: 'Pop',
+  		value: function Pop(type) {
+  			if (this.CanPop(type)) {
+  				this.callStack.pop();
+  				return;
+  			} else {
+  				throw "Mismatched push/pop in Callstack";
+  			}
+  		}
+  	}, {
+  		key: 'Push',
+  		value: function Push(type) {
+  			// When pushing to callstack, maintain the current content path, but jump out of expressions by default
+  			this.callStack.push(new Element(type, this.currentElement.currentContainer, this.currentElement.currentContentIndex, false));
+  		}
+  	}, {
+  		key: 'PushThread',
+  		value: function PushThread() {
+  			var newThread = this.currentThread.Copy();
+  			this._threadCounter++;
+  			newThread.threadIndex = this._threadCounter;
+  			this._threads.push(newThread);
+  		}
+  	}, {
+  		key: 'PopThread',
+  		value: function PopThread() {
+  			if (this.canPopThread) {
+  				this._threads.splice(this._threads.indexOf(this.currentThread), 1); //should be equivalent to a pop()
+  			} else {
+  				throw "Can't pop thread";
+  			}
+  		}
+  	}, {
+  		key: 'SetJsonToken',
+  		value: function SetJsonToken(token, storyContext) {
+  			var _this3 = this;
+
+  			this._threads.length = 0;
+
+  			var jObject = token;
+
+  			var jThreads = jObject["threads"];
+
+  			jThreads.forEach(function (jThreadTok) {
+  				var thread = new Thread(jThreadTok, storyContext);
+  				_this3._threads.push(thread);
+  			});
+
+  			this._threadCounter = parseInt(jObject["threadCounter"]);
+  		}
+  	}, {
+  		key: 'GetJsonToken',
+  		value: function GetJsonToken() {
+  			var jObject = {};
+
+  			var jThreads = [];
+  			this._threads.forEach(function (thread) {
+  				jThreads.push(thread.jsonToken);
+  			});
+
+  			jObject["threads"] = jThreads;
+  			jObject["threadCounter"] = this._threadCounter;
+
+  			return jObject;
+  		}
+  	}, {
+  		key: 'GetTemporaryVariableWithName',
+  		value: function GetTemporaryVariableWithName(name, contextIndex) {
+  			contextIndex = typeof contextIndex === 'undefined' ? -1 : contextIndex;
+
+  			if (contextIndex == -1) contextIndex = this.currentElementIndex + 1;
+
+  			var varValue = null;
+
+  			var contextElement = this.callStack[contextIndex - 1];
+
+  			if (varValue = contextElement.temporaryVariables[name]) {
+  				return varValue;
+  			} else {
+  				return null;
+  			}
+  		}
+  	}, {
+  		key: 'SetTemporaryVariable',
+  		value: function SetTemporaryVariable(name, value, declareNew, contextIndex) {
+  			contextIndex = typeof contextIndex === 'undefined' ? -1 : contextIndex;
+
+  			if (contextIndex == -1) contextIndex = this.currentElementIndex + 1;
+
+  			var contextElement = this.callStack[contextIndex - 1];
+
+  			if (!declareNew && !contextElement.temporaryVariables[name]) {
+  				throw new StoryException("Could not find temporary variable to set: " + name);
+  			}
+
+  			var oldValue;
+  			if (oldValue = contextElement.temporaryVariables[name]) ListValue.RetainListOriginsForAssignment(oldValue, value);
+
+  			contextElement.temporaryVariables[name] = value;
+  		}
+  	}, {
+  		key: 'ContextForVariableNamed',
+  		value: function ContextForVariableNamed(name) {
+  			// Current temporary context?
+  			// (Shouldn't attempt to access contexts higher in the callstack.)
+  			if (this.currentElement.temporaryVariables[name]) {
+  				return this.currentElementIndex + 1;
+  			}
+
+  			// Global
+  			else {
+  					return 0;
+  				}
+  		}
+  	}, {
+  		key: 'ThreadWithIndex',
+  		value: function ThreadWithIndex(index) {
+  			var filtered = this._threads.filter(function (t) {
+  				if (t.threadIndex == index) return t;
+  			});
+
+  			return filtered[0];
+  		}
+  	}, {
+  		key: 'currentThread',
+  		get: function get$$1() {
+  			return this._threads[this._threads.length - 1];
+  		},
+  		set: function set$$1(value) {
+  			if (this._threads.length != 1) console.warn("Shouldn't be directly setting the current thread when we have a stack of them");
+
+  			this._threads.length = 0;
+  			this._threads.push(value);
+  		}
+  	}, {
+  		key: 'callStack',
+  		get: function get$$1() {
+  			return this.currentThread.callstack;
+  		}
+  	}, {
+  		key: 'elements',
+  		get: function get$$1() {
+  			return this.callStack;
+  		}
+  	}, {
+  		key: 'depth',
+  		get: function get$$1() {
+  			return this.elements.length;
+  		}
+  	}, {
+  		key: 'currentElement',
+  		get: function get$$1() {
+  			return this.callStack[this.callStack.length - 1];
+  		}
+  	}, {
+  		key: 'currentElementIndex',
+  		get: function get$$1() {
+  			return this.callStack.length - 1;
+  		}
+  	}, {
+  		key: 'canPop',
+  		get: function get$$1() {
+  			return this.callStack.length > 1;
+  		}
+  	}, {
+  		key: 'canPopThread',
+  		get: function get$$1() {
+  			return this._threads.length > 1;
+  		}
+  	}]);
+  	return CallStack;
+  }();
+
+  //still needs: 
+  // - varchanged events
+  // - see if the internal getenumarators are needed
+  var VariablesState = function () {
+  	function VariablesState(callStack, listDefsOrigin) {
+  		classCallCheck(this, VariablesState);
+
+  		this._globalVariables = {};
+  		this._callStack = callStack;
+  		this._listDefsOrigin = listDefsOrigin;
+
+  		this._batchObservingVariableChanges = null;
+  		this._changedVariables = null;
+
+  		//the way variableChangedEvent is a bit different than the reference implementation. Originally it uses the C# += operator to add delegates, but in js we need to maintain an actual collection of delegates (ie. callbacks)
+  		//to register a new one, there is a special ObserveVariableChange method below.
+  		this.variableChangedEvent = null;
+  		this.variableChangedEventCallbacks = [];
+
+  		//if es6 proxies are available, use them.
+  		try {
+  			//the proxy is used to allow direct manipulation of global variables. It first tries to access the objetcs own property, and if none is found it delegates the call to the $ method, defined below
+  			var p = new Proxy(this, {
+  				get: function get$$1(target, name) {
+  					return name in target ? target[name] : target.$(name);
+  				},
+  				set: function set$$1(target, name, value) {
+  					if (name in target) target[name] = value;else target.$(name, value);
+  					return true; //returning a fasly value make sthe trap fail
+  				}
+  			});
+
+  			return p;
+  		} catch (e) {
+  			//thr proxy object is not available in this context. we should warn the dev but writting to the console feels a bit intrusive.
+  			//			console.log("ES6 Proxy not available - direct manipulation of global variables can't work, use $() instead.");
+  		}
+  	}
+
+  	createClass(VariablesState, [{
+  		key: 'ObserveVariableChange',
+
+
+  		/**
+     * This function is specific to the js version of ink. It allows to register a callback that will be called when a variable changes. The original code uses `state.variableChangedEvent += callback` instead.
+     * @param {function} callback 
+     */
+  		value: function ObserveVariableChange(callback) {
+  			var _this = this;
+
+  			if (this.variableChangedEvent == null) {
+  				this.variableChangedEvent = function (variableName, newValue) {
+  					_this.variableChangedEventCallbacks.forEach(function (cb) {
+  						cb(variableName, newValue);
+  					});
+  				};
+  			}
+
+  			this.variableChangedEventCallbacks.push(callback);
+  		}
+  	}, {
+  		key: 'CopyFrom',
+  		value: function CopyFrom(toCopy) {
+  			this._globalVariables = _extends({}, toCopy._globalVariables);
+
+  			this.variableChangedEvent = toCopy.variableChangedEvent;
+
+  			if (toCopy.batchObservingVariableChanges != this.batchObservingVariableChanges) {
+
+  				if (toCopy.batchObservingVariableChanges) {
+  					this._batchObservingVariableChanges = true;
+  					this._changedVariables = toCopy._changedVariables;
+  				} else {
+  					this._batchObservingVariableChanges = false;
+  					this._changedVariables = null;
+  				}
+  			}
+  		}
+  	}, {
+  		key: 'GetVariableWithName',
+  		value: function GetVariableWithName(name, contextIndex) {
+  			if (typeof contextIndex === 'undefined') contextIndex = -1;
+
+  			var varValue = this.GetRawVariableWithName(name, contextIndex);
+
+  			// Get value from pointer?
+  			//		var varPointer = varValue as VariablePointerValue;
+  			var varPointer = varValue;
+  			if (varPointer instanceof VariablePointerValue) {
+  				varValue = this.ValueAtVariablePointer(varPointer);
+  			}
+
+  			return varValue;
+  		}
+  	}, {
+  		key: 'GetRawVariableWithName',
+  		value: function GetRawVariableWithName(name, contextIndex) {
+  			var varValue = null;
+
+  			// 0 context = global
+  			if (contextIndex == 0 || contextIndex == -1) {
+  				if (varValue = this._globalVariables[name]) return varValue;
+
+  				var listItemValue = this._listDefsOrigin.FindSingleItemListWithName(name);
+  				if (listItemValue) return listItemValue;
+  			}
+
+  			// Temporary
+  			varValue = this._callStack.GetTemporaryVariableWithName(name, contextIndex);
+
+  			if (varValue == null) throw "RUNTIME ERROR: Variable '" + name + "' could not be found in context '" + contextIndex + "'. This shouldn't be possible so is a bug in the ink engine. Please try to construct a minimal story that reproduces the problem and report to inkle, thank you!";
+
+  			return varValue;
+  		}
+  	}, {
+  		key: 'ValueAtVariablePointer',
+  		value: function ValueAtVariablePointer(pointer) {
+  			return this.GetVariableWithName(pointer.variableName, pointer.contextIndex);
+  		}
+  	}, {
+  		key: 'Assign',
+  		value: function Assign(varAss, value) {
+  			var name = varAss.variableName;
+  			var contextIndex = -1;
+
+  			// Are we assigning to a global variable?
+  			var setGlobal = false;
+  			if (varAss.isNewDeclaration) {
+  				setGlobal = varAss.isGlobal;
+  			} else {
+  				setGlobal = !!this._globalVariables[name];
+  			}
+
+  			// Constructing new variable pointer reference
+  			if (varAss.isNewDeclaration) {
+  				//			var varPointer = value as VariablePointerValue;
+  				var varPointer = value;
+  				if (varPointer instanceof VariablePointerValue) {
+  					var fullyResolvedVariablePointer = this.ResolveVariablePointer(varPointer);
+  					value = fullyResolvedVariablePointer;
+  				}
+  			}
+
+  			// Assign to existing variable pointer?
+  			// Then assign to the variable that the pointer is pointing to by name.
+  			else {
+
+  					// De-reference variable reference to point to
+  					var existingPointer = null;
+  					do {
+  						//				existingPointer = GetRawVariableWithName (name, contextIndex) as VariablePointerValue;
+  						existingPointer = this.GetRawVariableWithName(name, contextIndex);
+  						if (existingPointer instanceof VariablePointerValue) {
+  							name = existingPointer.variableName;
+  							contextIndex = existingPointer.contextIndex;
+  							setGlobal = contextIndex == 0;
+  						}
+  					} while (existingPointer instanceof VariablePointerValue);
+  				}
+
+  			if (setGlobal) {
+  				this.SetGlobal(name, value);
+  			} else {
+  				this._callStack.SetTemporaryVariable(name, value, varAss.isNewDeclaration, contextIndex);
+  			}
+  		}
+  	}, {
+  		key: 'RetainListOriginsForAssignment',
+  		value: function RetainListOriginsForAssignment(oldValue, newValue) {
+  			//		var oldList = oldValue as ListValue;
+  			var oldList = oldValue;
+  			//		var newList = newValue as ListValue;
+  			var newList = newValue;
+
+  			if (oldList instanceof ListValue && newList instanceof ListValue && newList.value.Count == 0) newList.value.SetInitialOriginNames(oldList.value.originNames);
+  		}
+  	}, {
+  		key: 'SetGlobal',
+  		value: function SetGlobal(variableName, value) {
+  			var oldValue = null;
+  			oldValue = this._globalVariables[variableName];
+
+  			ListValue.RetainListOriginsForAssignment(oldValue, value);
+
+  			this._globalVariables[variableName] = value;
+
+  			if (this.variableChangedEvent != null && value !== oldValue) {
+
+  				if (this.batchObservingVariableChanges) {
+  					this._changedVariables.push(variableName);
+  				} else {
+  					this.variableChangedEvent(variableName, value);
+  				}
+  			}
+  		}
+  	}, {
+  		key: 'ResolveVariablePointer',
+  		value: function ResolveVariablePointer(varPointer) {
+  			var contextIndex = varPointer.contextIndex;
+
+  			if (contextIndex == -1) contextIndex = this.GetContextIndexOfVariableNamed(varPointer.variableName);
+
+  			var valueOfVariablePointedTo = this.GetRawVariableWithName(varPointer.variableName, contextIndex);
+
+  			// Extra layer of indirection:
+  			// When accessing a pointer to a pointer (e.g. when calling nested or 
+  			// recursive functions that take a variable references, ensure we don't create
+  			// a chain of indirection by just returning the final target.
+  			//		var doubleRedirectionPointer = valueOfVariablePointedTo as VariablePointerValue;
+  			var doubleRedirectionPointer = valueOfVariablePointedTo;
+  			if (doubleRedirectionPointer instanceof VariablePointerValue) {
+  				return doubleRedirectionPointer;
+  			}
+
+  			// Make copy of the variable pointer so we're not using the value direct from
+  			// the runtime. Temporary must be local to the current scope.
+  			else {
+  					return new VariablePointerValue(varPointer.variableName, contextIndex);
+  				}
+  		}
+  	}, {
+  		key: 'GetContextIndexOfVariableNamed',
+  		value: function GetContextIndexOfVariableNamed(varName) {
+  			if (this._globalVariables[varName]) return 0;
+
+  			return this._callStack.currentElementIndex;
+  		}
+  		//the original code uses a magic getter and setter for global variables, allowing things like variableState['varname]. This is not quite possible in js without a Proxy, so it is replaced with this $ function.
+
+  	}, {
+  		key: '$',
+  		value: function $(variableName, value) {
+  			if (typeof value === 'undefined') {
+  				var varContents = this._globalVariables[variableName];
+  				if (typeof varContents !== 'undefined')
+  					//			return (varContents as Runtime.Value).valueObject;
+  					return varContents.valueObject;else return null;
+  			} else {
+  				if (typeof this._globalVariables[variableName] === 'undefined') {
+  					throw new StoryException("Variable '" + variableName + "' doesn't exist, so can't be set.");
+  				}
+
+  				var val = Value.Create(value);
+  				if (val == null) {
+  					if (value == null) {
+  						throw new StoryException("Cannot pass null to VariableState");
+  					} else {
+  						throw new StoryException("Invalid value passed to VariableState: " + value.toString());
+  					}
+  				}
+
+  				this.SetGlobal(variableName, val);
+  			}
+  		}
+  	}, {
+  		key: 'callStack',
+  		get: function get$$1() {
+  			return this._callStack;
+  		},
+  		set: function set$$1(callStack) {
+  			this._callStack = callStack;
+  		}
+  	}, {
+  		key: 'batchObservingVariableChanges',
+  		get: function get$$1() {
+  			return this._batchObservingVariableChanges;
+  		},
+  		set: function set$$1(value) {
+  			var _this2 = this;
+
+  			value = !!value;
+  			this._batchObservingVariableChanges = value;
+  			if (value) {
+  				this._changedVariables = [];
+  			}
+
+  			// Finished observing variables in a batch - now send 
+  			// notifications for changed variables all in one go.
+  			else {
+  					if (this._changedVariables != null) {
+  						this._changedVariables.forEach(function (variableName) {
+  							var currentValue = _this2._globalVariables[variableName];
+  							_this2.variableChangedEvent(variableName, currentValue);
+  						});
+  					}
+
+  					this._changedVariables = null;
+  				}
+  		}
+  	}, {
+  		key: 'jsonToken',
+  		get: function get$$1() {
+  			return JsonSerialisation.DictionaryRuntimeObjsToJObject(this._globalVariables);
+  		},
+  		set: function set$$1(value) {
+  			this._globalVariables = JsonSerialisation.JObjectToDictionaryRuntimeObjs(value);
+  		}
+  	}]);
+  	return VariablesState;
+  }();
+
+  //Taken from https://gist.github.com/blixt/f17b47c62508be59987b
+  //Ink uses a seedable PRNG of which there is none in native javascript.
+  var PRNG = function () {
+  	function PRNG(seed) {
+  		classCallCheck(this, PRNG);
+
+  		this._seed = seed % 2147483647;
+  		if (this._seed <= 0) this._seed += 2147483646;
+  	}
+
+  	createClass(PRNG, [{
+  		key: "next",
+  		value: function next() {
+  			return this._seed = this._seed * 16807 % 2147483647;
+  		}
+  	}, {
+  		key: "nextFloat",
+  		value: function nextFloat() {
+  			return (this.next() - 1) / 2147483646;
+  		}
+  	}]);
+  	return PRNG;
+  }();
+
+  var StoryState = function () {
+  	function StoryState(story) {
+  		classCallCheck(this, StoryState);
+
+  		//actual constructor
+  		this.story = story;
+
+  		this._outputStream = [];
+  		this._outputStreamTextDirty = true;
+  		this._outputStreamTagsDirty = true;
+  		this.OutputStreamDirty();
+
+  		this._evaluationStack = [];
+
+  		this.callStack = new CallStack(story.rootContentContainer);
+  		this._variablesState = new VariablesState(this.callStack, story.listDefinitions);
+
+  		this._visitCounts = {};
+  		this._turnIndices = {};
+  		this._currentTurnIndex = -1;
+
+  		this.divertedTargetObject = null;
+
+  		var timeSeed = new Date().getTime();
+  		this.storySeed = new PRNG(timeSeed).next() % 100;
+  		this.previousRandom = 0;
+
+  		this._currentChoices = [];
+  		this._currentText = null;
+  		this._currentTags = null;
+  		this._currentErrors = null;
+
+  		this.didSafeExit = false;
+
+  		this._isExternalFunctionEvaluation = false;
+  		this._originalCallstack = null;
+  		this._originalEvaluationStackHeight = 0;
+
+  		this.GoToStart();
+  	}
+
+  	createClass(StoryState, [{
+  		key: 'MatchRightGlueForLeftGlue',
+  		value: function MatchRightGlueForLeftGlue(leftGlue) {
+  			if (!leftGlue.isLeft) return null;
+
+  			for (var i = this._outputStream.length - 1; i >= 0; i--) {
+  				var c = this._outputStream[i];
+  				//			var g = c as Glue;
+  				var g = c;
+  				if (g instanceof Glue && g.isRight && g.parent == leftGlue.parent) {
+  					return g;
+  				} else if (c instanceof ControlCommand) // e.g. BeginString
+  					break;
+  			}
+
+  			return null;
+  		}
+  	}, {
+  		key: 'GoToStart',
+  		value: function GoToStart() {
+  			this.callStack.currentElement.currentContainer = this.story.mainContentContainer;
+  			this.callStack.currentElement.currentContentIndex = 0;
+  		}
+  	}, {
+  		key: 'ResetErrors',
+  		value: function ResetErrors() {
+  			this._currentErrors = null;
+  		}
+  	}, {
+  		key: 'ResetOutput',
+  		value: function ResetOutput() {
+  			this._outputStream.length = 0;
+  			this.OutputStreamDirty();
+  		}
+  	}, {
+  		key: 'PushEvaluationStack',
+  		value: function PushEvaluationStack(obj) {
+  			var _this = this;
+
+  			//		var listValue = obj as ListValue;
+  			var listValue = obj;
+  			if (listValue instanceof ListValue) {
+
+  				// Update origin when list is has something to indicate the list origin
+  				var rawList = listValue.value;
+  				var names = rawList.originNames;
+  				if (names != null) {
+  					var origins = [];
+
+  					names.forEach(function (n) {
+  						var def = null;
+  						def = _this.story.listDefinitions.TryGetDefinition(n, def);
+  						if (origins.indexOf(def) < 0) origins.push(def);
+  					});
+
+  					rawList.origins = origins;
+  				}
+  			}
+
+  			this.evaluationStack.push(obj);
+  		}
+  	}, {
+  		key: 'PopEvaluationStack',
+  		value: function PopEvaluationStack(numberOfObjects) {
+  			if (!numberOfObjects) {
+  				var obj = this.evaluationStack.pop();
+  				return obj;
+  			} else {
+  				if (numberOfObjects > this.evaluationStack.length) {
+  					throw "trying to pop too many objects";
+  				}
+
+  				var popped = this.evaluationStack.splice(this.evaluationStack.length - numberOfObjects, numberOfObjects);
+  				return popped;
+  			}
+  		}
+  	}, {
+  		key: 'PeekEvaluationStack',
+  		value: function PeekEvaluationStack() {
+  			return this.evaluationStack[this.evaluationStack.length - 1];
+  		}
+  	}, {
+  		key: 'PushToOutputStream',
+  		value: function PushToOutputStream(obj) {
+  			var _this2 = this;
+
+  			//		var text = obj as StringValue;
+  			var text = obj;
+  			if (text instanceof StringValue) {
+  				var listText = this.TrySplittingHeadTailWhitespace(text);
+  				if (listText != null) {
+  					listText.forEach(function (textObj) {
+  						_this2.PushToOutputStreamIndividual(textObj);
+  					});
+  					return;
+  				}
+  			}
+
+  			this.PushToOutputStreamIndividual(obj);
+  			this.OutputStreamDirty();
+  		}
+  	}, {
+  		key: 'TrySplittingHeadTailWhitespace',
+  		value: function TrySplittingHeadTailWhitespace(single) {
+  			var str = single.value;
+
+  			var headFirstNewlineIdx = -1;
+  			var headLastNewlineIdx = -1;
+  			for (var i = 0; i < str.length; ++i) {
+  				var c = str[i];
+  				if (c == '\n') {
+  					if (headFirstNewlineIdx == -1) headFirstNewlineIdx = i;
+  					headLastNewlineIdx = i;
+  				} else if (c == ' ' || c == '\t') continue;else break;
+  			}
+
+  			var tailLastNewlineIdx = -1;
+  			var tailFirstNewlineIdx = -1;
+  			for (var i = 0; i < str.length; ++i) {
+  				var c = str[i];
+  				if (c == '\n') {
+  					if (tailLastNewlineIdx == -1) tailLastNewlineIdx = i;
+  					tailFirstNewlineIdx = i;
+  				} else if (c == ' ' || c == '\t') continue;else break;
+  			}
+
+  			// No splitting to be done?
+  			if (headFirstNewlineIdx == -1 && tailLastNewlineIdx == -1) return null;
+
+  			var listTexts = [];
+  			var innerStrStart = 0;
+  			var innerStrEnd = str.length;
+
+  			if (headFirstNewlineIdx != -1) {
+  				if (headFirstNewlineIdx > 0) {
+  					var leadingSpaces = str.substring(0, headFirstNewlineIdx);
+  					listTexts.push(leadingSpaces);
+  				}
+  				listTexts.push(new StringValue("\n"));
+  				innerStrStart = headLastNewlineIdx + 1;
+  			}
+
+  			if (tailLastNewlineIdx != -1) {
+  				innerStrEnd = tailFirstNewlineIdx;
+  			}
+
+  			if (innerStrEnd > innerStrStart) {
+  				var innerStrText = str.substring(innerStrStart, innerStrEnd - innerStrStart);
+  				listTexts.push(new StringValue(innerStrText));
+  			}
+
+  			if (tailLastNewlineIdx != -1 && tailFirstNewlineIdx > headLastNewlineIdx) {
+  				listTexts.push(new StringValue("\n"));
+  				if (tailLastNewlineIdx < str.length - 1) {
+  					var numSpaces = str.Length - tailLastNewlineIdx - 1;
+  					var trailingSpaces = new StringValue(str.substring(tailLastNewlineIdx + 1, numSpaces));
+  					listTexts.push(trailingSpaces);
+  				}
+  			}
+
+  			return listTexts;
+  		}
+  	}, {
+  		key: 'PushToOutputStreamIndividual',
+  		value: function PushToOutputStreamIndividual(obj) {
+  			var glue = obj;
+  			var text = obj;
+
+  			var includeInOutput = true;
+
+  			if (glue instanceof Glue) {
+  				// Found matching left-glue for right-glue? Close it.
+  				var existingRightGlue = this.currentRightGlue;
+  				var foundMatchingLeftGlue = !!(glue.isLeft && existingRightGlue && glue.parent == existingRightGlue.parent);
+  				var matchingRightGlue = null;
+
+  				if (glue.isLeft) matchingRightGlue = this.MatchRightGlueForLeftGlue(glue);
+
+  				// Left/Right glue is auto-generated for inline expressions 
+  				// where we want to absorb newlines but only in a certain direction.
+  				// "Bi" glue is written by the user in their ink with <>
+  				if (glue.isLeft || glue.isBi) {
+  					this.TrimNewlinesFromOutputStream(matchingRightGlue);
+  				}
+
+  				includeInOutput = glue.isBi || glue.isRight;
+  			} else if (text instanceof StringValue) {
+
+  				if (this.currentGlueIndex != -1) {
+
+  					// Absorb any new newlines if there's existing glue
+  					// in the output stream.
+  					// Also trim any extra whitespace (spaces/tabs) if so.
+  					if (text.isNewline) {
+  						this.TrimFromExistingGlue();
+  						includeInOutput = false;
+  					}
+
+  					// Able to completely reset when 
+  					else if (text.isNonWhitespace) {
+  							this.RemoveExistingGlue();
+  						}
+  				} else if (text.isNewline) {
+  					if (this.outputStreamEndsInNewline || !this.outputStreamContainsContent) includeInOutput = false;
+  				}
+  			}
+
+  			if (includeInOutput) {
+  				this._outputStream.push(obj);
+  				this.OutputStreamDirty();
+  			}
+  		}
+  	}, {
+  		key: 'TrimNewlinesFromOutputStream',
+  		value: function TrimNewlinesFromOutputStream(rightGlueToStopAt) {
+  			var removeWhitespaceFrom = -1;
+  			var rightGluePos = -1;
+  			var foundNonWhitespace = false;
+
+  			// Work back from the end, and try to find the point where
+  			// we need to start removing content. There are two ways:
+  			//  - Start from the matching right-glue (because we just saw a left-glue)
+  			//  - Simply work backwards to find the first newline in a string of whitespace
+  			var i = this._outputStream.length - 1;
+  			while (i >= 0) {
+  				var obj = this._outputStream[i];
+  				//			var cmd = obj as ControlCommand;
+  				var cmd = obj;
+  				//			var txt = obj as StringValue;
+  				var txt = obj;
+  				//			var glue = obj as Glue;
+  				var glue = obj;
+
+  				if (cmd instanceof ControlCommand || txt instanceof StringValue && txt.isNonWhitespace) {
+  					foundNonWhitespace = true;
+  					if (rightGlueToStopAt == null) break;
+  				} else if (rightGlueToStopAt && glue instanceof Glue && glue == rightGlueToStopAt) {
+  					rightGluePos = i;
+  					break;
+  				} else if (txt instanceof StringValue && txt.isNewline && !foundNonWhitespace) {
+  					removeWhitespaceFrom = i;
+  				}
+  				i--;
+  			}
+
+  			// Remove the whitespace
+  			if (removeWhitespaceFrom >= 0) {
+  				i = removeWhitespaceFrom;
+  				while (i < this._outputStream.length) {
+  					//				var text = _outputStream [i] as StringValue;
+  					var text = this._outputStream[i];
+  					if (text instanceof StringValue) {
+  						this._outputStream.splice(i, 1);
+  					} else {
+  						i++;
+  					}
+  				}
+  			}
+
+  			if (rightGlueToStopAt && rightGluePos > -1) {
+  				i = rightGluePos;
+  				while (i < this._outputStream.length) {
+  					if (this._outputStream[i] instanceof Glue && this._outputStream[i].isRight) {
+  						this.outputStream.splice(i, 1);
+  					} else {
+  						i++;
+  					}
+  				}
+  			}
+
+  			this.OutputStreamDirty();
+  		}
+  	}, {
+  		key: 'TrimFromExistingGlue',
+  		value: function TrimFromExistingGlue() {
+  			var i = this.currentGlueIndex;
+  			while (i < this._outputStream.length) {
+  				//			var txt = _outputStream [i] as StringValue;
+  				var txt = this._outputStream[i];
+  				if (txt instanceof StringValue && !txt.isNonWhitespace) this._outputStream.splice(i, 1);else i++;
+  			}
+
+  			this.OutputStreamDirty();
+  		}
+  	}, {
+  		key: 'RemoveExistingGlue',
+  		value: function RemoveExistingGlue() {
+  			for (var i = this._outputStream.length - 1; i >= 0; i--) {
+  				var c = this._outputStream[i];
+  				if (c instanceof Glue) {
+  					this._outputStream.splice(i, 1);
+  				} else if (c instanceof ControlCommand) {
+  					// e.g. BeginString
+  					break;
+  				}
+  			}
+
+  			this.OutputStreamDirty();
+  		}
+  	}, {
+  		key: 'ForceEnd',
+  		value: function ForceEnd() {
+  			while (this.callStack.canPopThread) {
+  				this.callStack.PopThread();
+  			}while (this.callStack.canPop) {
+  				this.callStack.Pop();
+  			}this._currentChoices.length = 0;
+
+  			this.currentContentObject = null;
+  			this.previousContentObject = null;
+
+  			this.didSafeExit = true;
+  		}
+  	}, {
+  		key: 'SetChosenPath',
+  		value: function SetChosenPath(path) {
+  			// Changing direction, assume we need to clear current set of choices
+  			this._currentChoices.length = 0;
+
+  			this.currentPath = path;
+
+  			this._currentTurnIndex++;
+  		}
+  	}, {
+  		key: 'StartExternalFunctionEvaluation',
+  		value: function StartExternalFunctionEvaluation(funcContainer, args) {
+  			// We'll start a new callstack, so keep hold of the original,
+  			// as well as the evaluation stack so we know if the function 
+  			// returned something
+  			this._originalCallstack = this.callStack;
+  			this._originalEvaluationStackHeight = this.evaluationStack.length;
+
+  			// Create a new base call stack element.
+  			this.callStack = new CallStack(funcContainer);
+  			this.callStack.currentElement.type = PushPopType.Function;
+
+  			this._variablesState.callStack = this.callStack;
+
+  			// By setting ourselves in external function evaluation mode,
+  			// we're saying it's okay to end the flow without a Done or End,
+  			// but with a ~ return instead.
+  			this._isExternalFunctionEvaluation = true;
+
+  			this.PassArgumentsToEvaluationStack(args);
+  		}
+  	}, {
+  		key: 'PassArgumentsToEvaluationStack',
+  		value: function PassArgumentsToEvaluationStack(args) {
+  			// Pass arguments onto the evaluation stack
+  			if (args != null) {
+  				for (var i = 0; i < args.length; i++) {
+  					if (!(typeof args[i] === 'number' || typeof args[i] === 'string')) {
+  						throw "ink arguments when calling EvaluateFunction / ChoosePathStringWithParameters  must be int, float or string";
+  					}
+
+  					this.PushEvaluationStack(Value.Create(args[i]));
+  				}
+  			}
+  		}
+  	}, {
+  		key: 'TryExitExternalFunctionEvaluation',
+  		value: function TryExitExternalFunctionEvaluation() {
+  			if (this._isExternalFunctionEvaluation && this.callStack.elements.length == 1 && this.callStack.currentElement.type == PushPopType.Function) {
+  				this.currentContentObject = null;
+  				this.didSafeExit = true;
+  				return true;
+  			}
+
+  			return false;
+  		}
+  	}, {
+  		key: 'CompleteExternalFunctionEvaluation',
+  		value: function CompleteExternalFunctionEvaluation() {
+  			// Do we have a returned value?
+  			// Potentially pop multiple values off the stack, in case we need
+  			// to clean up after ourselves (e.g. caller of EvaluateFunction may 
+  			// have passed too many arguments, and we currently have no way to check for that)
+  			var returnedObj = null;
+  			while (this.evaluationStack.length > this._originalEvaluationStackHeight) {
+  				var poppedObj = this.PopEvaluationStack();
+  				if (returnedObj == null) returnedObj = poppedObj;
+  			}
+
+  			// Restore our own state
+  			this.callStack = this._originalCallstack;
+  			this._originalCallstack = null;
+  			this._originalEvaluationStackHeight = 0;
+
+  			this._variablesState.callStack = this.callStack;
+
+  			if (returnedObj) {
+  				if (returnedObj instanceof Void) return null;
+
+  				// Some kind of value, if not void
+  				//			var returnVal = returnedObj as Runtime.Value;
+  				var returnVal = returnedObj;
+
+  				// DivertTargets get returned as the string of components
+  				// (rather than a Path, which isn't public)
+  				if (returnVal.valueType == ValueType.DivertTarget) {
+  					return returnVal.valueObject.toString();
+  				}
+
+  				// Other types can just have their exact object type:
+  				// int, float, string. VariablePointers get returned as strings.
+  				return returnVal.valueObject;
+  			}
+
+  			return null;
+  		}
+  	}, {
+  		key: 'AddError',
+  		value: function AddError(message) {
+  			if (this._currentErrors == null) {
+  				this._currentErrors = [];
+  			}
+
+  			this._currentErrors.push(message);
+  		}
+  	}, {
+  		key: 'OutputStreamDirty',
+  		value: function OutputStreamDirty() {
+  			this._outputStreamTextDirty = true;
+  			this._outputStreamTagsDirty = true;
+  		}
+  	}, {
+  		key: 'VisitCountAtPathString',
+  		value: function VisitCountAtPathString(pathString) {
+  			var visitCountOut;
+  			if (visitCountOut = this.visitCounts[pathString]) return visitCountOut;
+
+  			return 0;
+  		}
+  	}, {
+  		key: 'Copy',
+  		value: function Copy() {
+  			var copy = new StoryState(this.story);
+
+  			copy.outputStream.push.apply(copy.outputStream, this._outputStream);
+  			this.OutputStreamDirty();
+
+  			copy._currentChoices.push.apply(copy._currentChoices, this._currentChoices);
+
+  			if (this.hasError) {
+  				copy.currentErrors = [];
+  				copy.currentErrors.push.apply(copy.currentErrors, this.currentErrors);
+  			}
+
+  			copy.callStack = new CallStack(this.callStack);
+  			if (this._originalCallstack) copy._originalCallstack = new CallStack(this._originalCallstack);
+
+  			copy._variablesState = new VariablesState(copy.callStack, this.story.listDefinitions);
+  			copy.variablesState.CopyFrom(this.variablesState);
+
+  			copy.evaluationStack.push.apply(copy.evaluationStack, this.evaluationStack);
+  			copy._originalEvaluationStackHeight = this._originalEvaluationStackHeight;
+
+  			if (this.divertedTargetObject != null) copy.divertedTargetObject = this.divertedTargetObject;
+
+  			copy.previousContentObject = this.previousContentObject;
+
+  			copy._isExternalFunctionEvaluation = this._isExternalFunctionEvaluation;
+
+  			copy._visitCounts = {};
+  			for (var keyValue in this._visitCounts) {
+  				copy._visitCounts[keyValue] = this._visitCounts[keyValue];
+  			}
+  			copy._turnIndices = {};
+  			for (var keyValue in this._turnIndices) {
+  				copy._turnIndices[keyValue] = this._turnIndices[keyValue];
+  			}
+
+  			copy._currentTurnIndex = this.currentTurnIndex;
+  			copy.storySeed = this.storySeed;
+  			copy.previousRandom = this.previousRandom;
+
+  			copy.didSafeExit = this.didSafeExit;
+
+  			return copy;
+  		}
+  	}, {
+  		key: 'toJson',
+  		value: function toJson(indented) {
+  			return JSON.stringify(this.jsonToken, null, indented ? 2 : 0);
+  		}
+  	}, {
+  		key: 'LoadJson',
+  		value: function LoadJson(jsonString) {
+  			this.jsonToken = JSON.parse(jsonString);
+  		}
+  	}, {
+  		key: 'currentChoices',
+  		get: function get$$1() {
+  			// If we can continue generating text content rather than choices,
+  			// then we reflect the choice list as being empty, since choices
+  			// should always come at the end.
+  			if (this.canContinue) return [];
+  			return this._currentChoices;
+  		}
+  	}, {
+  		key: 'generatedChoices',
+  		get: function get$$1() {
+  			return this._currentChoices;
+  		}
+  	}, {
+  		key: 'currentErrors',
+  		get: function get$$1() {
+  			return this._currentErrors;
+  		}
+  	}, {
+  		key: 'visitCounts',
+  		get: function get$$1() {
+  			return this._visitCounts;
+  		}
+  	}, {
+  		key: 'turnIndices',
+  		get: function get$$1() {
+  			return this._turnIndices;
+  		}
+  	}, {
+  		key: 'currentTurnIndex',
+  		get: function get$$1() {
+  			return this._currentTurnIndex;
+  		}
+  	}, {
+  		key: 'variablesState',
+  		get: function get$$1() {
+  			return this._variablesState;
+  		}
+  	}, {
+  		key: 'currentContentObject',
+  		get: function get$$1() {
+  			return this.callStack.currentElement.currentObject;
+  		},
+  		set: function set$$1(value) {
+  			this.callStack.currentElement.currentObject = value;
+  		}
+  	}, {
+  		key: 'canContinue',
+  		get: function get$$1() {
+  			return this.currentContentObject != null && !this.hasError;
+  		}
+  	}, {
+  		key: 'hasError',
+  		get: function get$$1() {
+  			return this.currentErrors != null && this.currentErrors.length > 0;
+  		}
+  	}, {
+  		key: 'inExpressionEvaluation',
+  		get: function get$$1() {
+  			return this.callStack.currentElement.inExpressionEvaluation;
+  		},
+  		set: function set$$1(value) {
+  			this.callStack.currentElement.inExpressionEvaluation = value;
+  		}
+  	}, {
+  		key: 'evaluationStack',
+  		get: function get$$1() {
+  			return this._evaluationStack;
+  		}
+  	}, {
+  		key: 'outputStreamEndsInNewline',
+  		get: function get$$1() {
+  			if (this._outputStream.length > 0) {
+
+  				for (var i = this._outputStream.length - 1; i >= 0; i--) {
+  					var obj = this._outputStream[i];
+  					if (obj instanceof ControlCommand) // e.g. BeginString
+  						break;
+  					var text = this._outputStream[i];
+  					if (text instanceof StringValue) {
+  						if (text.isNewline) return true;else if (text.isNonWhitespace) break;
+  					}
+  				}
+  			}
+
+  			return false;
+  		}
+  	}, {
+  		key: 'outputStreamContainsContent',
+  		get: function get$$1() {
+  			for (var i = 0; i < this._outputStream.length; i++) {
+  				if (this._outputStream[i] instanceof StringValue) return true;
+  			}
+  			return false;
+  		}
+  	}, {
+  		key: 'currentGlueIndex',
+  		get: function get$$1() {
+  			for (var i = this._outputStream.length - 1; i >= 0; i--) {
+  				var c = this._outputStream[i];
+  				//			var glue = c as Glue;
+  				var glue = c;
+  				if (glue instanceof Glue) return i;else if (c instanceof ControlCommand) // e.g. BeginString
+  					break;
+  			}
+  			return -1;
+  		}
+  	}, {
+  		key: 'currentRightGlue',
+  		get: function get$$1() {
+  			for (var i = this._outputStream.length - 1; i >= 0; i--) {
+  				var c = this._outputStream[i];
+  				//			var glue = c as Glue;
+  				var glue = c;
+  				if (glue instanceof Glue && glue.isRight) return glue;else if (c instanceof ControlCommand) // e.g. BeginString
+  					break;
+  			}
+  			return null;
+  		}
+  	}, {
+  		key: 'inStringEvaluation',
+  		get: function get$$1() {
+  			for (var i = this._outputStream.length - 1; i >= 0; i--) {
+  				//			var cmd = this._outputStream[i] as ControlCommand;
+  				var cmd = this._outputStream[i];
+  				if (cmd instanceof ControlCommand && cmd.commandType == ControlCommand.CommandType.BeginString) {
+  					return true;
+  				}
+  			}
+
+  			return false;
+  		}
+  	}, {
+  		key: 'currentText',
+  		get: function get$$1() {
+  			if (this._outputStreamTextDirty) {
+  				var sb = new StringBuilder();
+
+  				this._outputStream.forEach(function (outputObj) {
+  					//			var textContent = outputObj as StringValue;
+  					var textContent = outputObj;
+  					if (textContent instanceof StringValue) {
+  						sb.Append(textContent.value);
+  					}
+  				});
+
+  				this._currentText = sb.toString();
+  				this._outputStreamTextDirty = false;
+  			}
+
+  			return this._currentText;
+  		}
+  	}, {
+  		key: 'currentTags',
+  		get: function get$$1() {
+  			var _this3 = this;
+
+  			if (this._outputStreamTagsDirty) {
+  				this._currentTags = [];
+
+  				this._outputStream.forEach(function (outputObj) {
+  					//			var tag = outputObj as Tag;
+  					var tag = outputObj;
+  					if (tag instanceof Tag) {
+  						_this3._currentTags.push(tag.text);
+  					}
+  				});
+
+  				this._outputStreamTagsDirty = false;
+  			}
+
+  			return this._currentTags;
+  		}
+  	}, {
+  		key: 'outputStream',
+  		get: function get$$1() {
+  			return this._outputStream;
+  		}
+  	}, {
+  		key: 'currentPath',
+  		get: function get$$1() {
+  			if (this.currentContentObject == null) return null;
+
+  			return this.currentContentObject.path;
+  		},
+  		set: function set$$1(value) {
+  			if (value != null) this.currentContentObject = this.story.ContentAtPath(value);else this.currentContentObject = null;
+  		}
+  	}, {
+  		key: 'currentContainer',
+  		get: function get$$1() {
+  			return this.callStack.currentElement.currentContainer;
+  		}
+  	}, {
+  		key: 'previousContentObject',
+  		get: function get$$1() {
+  			return this.callStack.currentThread.previousContentObject;
+  		},
+  		set: function set$$1(value) {
+  			this.callStack.currentThread.previousContentObject = value;
+  		}
+  	}, {
+  		key: 'callstackDepth',
+  		get: function get$$1() {
+  			return this.callStack.depth;
+  		}
+  	}, {
+  		key: 'jsonToken',
+  		get: function get$$1() {
+  			var _this4 = this;
+
+  			var obj = {};
+
+  			var choiceThreads = null;
+  			this._currentChoices.forEach(function (c) {
+  				c.originalChoicePath = c.choicePoint.path.componentsString;
+  				c.originalThreadIndex = c.threadAtGeneration.threadIndex;
+
+  				if (_this4.callStack.ThreadWithIndex(c.originalThreadIndex) == null) {
+  					if (choiceThreads == null) choiceThreads = {};
+
+  					choiceThreads[c.originalThreadIndex.toString()] = c.threadAtGeneration.jsonToken;
+  				}
+  			});
+
+  			if (this.choiceThreads != null) obj["choiceThreads"] = this.choiceThreads;
+
+  			obj["callstackThreads"] = this.callStack.GetJsonToken();
+  			obj["variablesState"] = this.variablesState.jsonToken;
+
+  			obj["evalStack"] = JsonSerialisation.ListToJArray(this.evaluationStack);
+
+  			obj["outputStream"] = JsonSerialisation.ListToJArray(this._outputStream);
+
+  			obj["currentChoices"] = JsonSerialisation.ListToJArray(this._currentChoices);
+
+  			if (this.divertedTargetObject != null) obj["currentDivertTarget"] = this.divertedTargetObject.path.componentsString;
+
+  			obj["visitCounts"] = JsonSerialisation.IntDictionaryToJObject(this.visitCounts);
+  			obj["turnIndices"] = JsonSerialisation.IntDictionaryToJObject(this.turnIndices);
+  			obj["turnIdx"] = this.currentTurnIndex;
+  			obj["storySeed"] = this.storySeed;
+
+  			obj["inkSaveVersion"] = StoryState.kInkSaveStateVersion;
+
+  			// Not using this right now, but could do in future.
+  			obj["inkFormatVersion"] = this.story.inkVersionCurrent;
+
+  			return obj;
+  		},
+  		set: function set$$1(value) {
+  			var _this5 = this;
+
+  			var jObject = value;
+
+  			var jSaveVersion = jObject["inkSaveVersion"];
+  			if (jSaveVersion == null) {
+  				throw new StoryException("ink save format incorrect, can't load.");
+  			} else if (parseInt(jSaveVersion) < StoryState.kMinCompatibleLoadVersion) {
+  				throw new StoryException("Ink save format isn't compatible with the current version (saw '" + jSaveVersion + "', but minimum is " + StoryState.kMinCompatibleLoadVersion + "), so can't load.");
+  			}
+
+  			this.callStack.SetJsonToken(jObject["callstackThreads"], this.story);
+  			this.variablesState.jsonToken = jObject["variablesState"];
+
+  			this._evaluationStack = JsonSerialisation.JArrayToRuntimeObjList(jObject["evalStack"]);
+
+  			this._outputStream = JsonSerialisation.JArrayToRuntimeObjList(jObject["outputStream"]);
+  			this.OutputStreamDirty();
+
+  			//		currentChoices = Json.JArrayToRuntimeObjList<Choice>((JArray)jObject ["currentChoices"]);
+  			this._currentChoices = JsonSerialisation.JArrayToRuntimeObjList(jObject["currentChoices"]);
+
+  			var currentDivertTargetPath = jObject["currentDivertTarget"];
+  			if (currentDivertTargetPath != null) {
+  				var divertPath = new Path$1(currentDivertTargetPath.toString());
+  				this.divertedTargetObject = this.story.ContentAtPath(divertPath);
+  			}
+
+  			this._visitCounts = JsonSerialisation.JObjectToIntDictionary(jObject["visitCounts"]);
+  			this._turnIndices = JsonSerialisation.JObjectToIntDictionary(jObject["turnIndices"]);
+  			this._currentTurnIndex = parseInt(jObject["turnIdx"]);
+  			this.storySeed = parseInt(jObject["storySeed"]);
+
+  			//		var jChoiceThreads = jObject["choiceThreads"] as JObject;
+  			var jChoiceThreads = jObject["choiceThreads"];
+
+  			this._currentChoices.forEach(function (c) {
+  				c.choicePoint = _this5.story.ContentAtPath(new Path$1(c.originalChoicePath));
+
+  				var foundActiveThread = _this5.callStack.ThreadWithIndex(c.originalThreadIndex);
+  				if (foundActiveThread != null) {
+  					c.threadAtGeneration = foundActiveThread;
+  				} else {
+  					var jSavedChoiceThread = jChoiceThreads[c.originalThreadIndex.toString()];
+  					c.threadAtGeneration = new CallStack.Thread(jSavedChoiceThread, _this5.story);
+  				}
+  			});
+  		}
+  	}]);
+  	return StoryState;
+  }();
+
+  StoryState.kInkSaveStateVersion = 7;
+  StoryState.kMinCompatibleLoadVersion = 6;
+
+  if (!Number.isInteger) {
+  	Number.isInteger = function isInteger(nVal) {
+  		return typeof nVal === "number" && isFinite(nVal) && nVal > -9007199254740992 && nVal < 9007199254740992 && Math.floor(nVal) === nVal;
+  	};
+  }
+
+  var Story = function (_InkObject) {
+  	inherits(Story, _InkObject);
+
+  	function Story(jsonString, lists) {
+  		classCallCheck(this, Story);
+
+  		var _this = possibleConstructorReturn(this, (Story.__proto__ || Object.getPrototypeOf(Story)).call(this));
+
+  		lists = lists || null;
+
+  		_this.inkVersionCurrent = 17;
+  		_this.inkVersionMinimumCompatible = 16;
+
+  		_this._variableObservers = null;
+  		_this._externals = {};
+  		_this._prevContainerSet = null;
+  		_this._listDefinitions = null;
+
+  		if (jsonString instanceof Container) {
+  			_this._mainContentContainer = jsonString;
+
+  			if (lists != null) _this._listDefinitions = new ListDefinitionsOrigin(lists);
+  		} else {
+  			//the original version only accepts a string as a constructor, but this is javascript and it's almost easier to get a JSON value than a string, so we're silently accepting both
+  			var rootObject = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
+
+  			var versionObj = rootObject["inkVersion"];
+  			if (versionObj == null) throw "ink version number not found. Are you sure it's a valid .ink.json file?";
+
+  			var formatFromFile = parseInt(versionObj);
+  			if (formatFromFile > _this.inkVersionCurrent) {
+  				throw "Version of ink used to build story was newer than the current verison of the engine";
+  			} else if (formatFromFile < _this.inkVersionMinimumCompatible) {
+  				throw "Version of ink used to build story is too old to be loaded by this verison of the engine";
+  			} else if (formatFromFile != _this.inkVersionCurrent) {
+  				console.warn("WARNING: Version of ink used to build story doesn't match current version of engine. Non-critical, but recommend synchronising.");
+  			}
+
+  			var rootToken = rootObject["root"];
+  			if (rootToken == null) throw "Root node for ink not found. Are you sure it's a valid .ink.json file?";
+
+  			var listDefsObj;
+  			if (listDefsObj = rootObject["listDefs"]) {
+  				_this._listDefinitions = JsonSerialisation.JTokenToListDefinitions(listDefsObj);
+  			}
+
+  			_this._mainContentContainer = JsonSerialisation.JTokenToRuntimeObject(rootToken);
+
+  			_this._hasValidatedExternals = null;
+  			_this.allowExternalFunctionFallbacks = false;
+
+  			_this.ResetState();
+  		}
+  		return _this;
+  	}
+
+  	createClass(Story, [{
+  		key: 'ToJsonString',
+  		value: function ToJsonString() {
+  			var rootContainerJsonList = JsonSerialisation.RuntimeObjectToJToken(this._mainContentContainer);
+
+  			var rootObject = {};
+  			rootObject["inkVersion"] = this.inkVersionCurrent;
+  			rootObject["root"] = rootContainerJsonList;
+
+  			if (this._listDefinitions != null) rootObject["listDefs"] = JsonSerialisation.ListDefinitionsToJToken(this._listDefinitions);
+
+  			return JSON.stringify(rootObject);
+  		}
+  	}, {
+  		key: 'ResetState',
+  		value: function ResetState() {
+  			this._state = new StoryState(this);
+  			this._state.variablesState.ObserveVariableChange(this.VariableStateDidChangeEvent.bind(this));
+
+  			this.ResetGlobals();
+  		}
+  	}, {
+  		key: 'ResetErrors',
+  		value: function ResetErrors() {
+  			this._state.ResetErrors();
+  		}
+  	}, {
+  		key: 'ResetCallstack',
+  		value: function ResetCallstack() {
+  			this._state.ForceEnd();
+  		}
+  	}, {
+  		key: 'ResetGlobals',
+  		value: function ResetGlobals() {
+  			if (this._mainContentContainer.namedContent["global decl"]) {
+  				var originalPath = this.state.currentPath;
+
+  				this.ChoosePathString("global decl");
+
+  				// Continue, but without validating external bindings,
+  				// since we may be doing this reset at initialisation time.
+  				this.ContinueInternal();
+
+  				this.state.currentPath = originalPath;
+  			}
+  		}
+  	}, {
+  		key: 'Continue',
+  		value: function Continue() {
+  			if (!this._hasValidatedExternals) this.ValidateExternalBindings();
+
+  			return this.ContinueInternal();
+  		}
+  	}, {
+  		key: 'ContinueInternal',
+  		value: function ContinueInternal() {
+  			if (!this.canContinue) {
+  				throw new StoryException("Can't continue - should check canContinue before calling Continue");
+  			}
+
+  			this._state.ResetOutput();
+
+  			this._state.didSafeExit = false;
+
+  			this._state.variablesState.batchObservingVariableChanges = true;
+
+  			try {
+
+  				var stateAtLastNewline = null;
+
+  				// The basic algorithm here is:
+  				//
+  				//     do { Step() } while( canContinue && !outputStreamEndsInNewline );
+  				//
+  				// But the complexity comes from:
+  				//  - Stepping beyond the newline in case it'll be absorbed by glue later
+  				//  - Ensuring that non-text content beyond newlines are generated - i.e. choices,
+  				//    which are actually built out of text content.
+  				// So we have to take a snapshot of the state, continue prospectively,
+  				// and rewind if necessary.
+  				// This code is slightly fragile :-/ 
+  				//
+
+  				do {
+
+  					// Run main step function (walks through content)
+  					this.Step();
+
+  					// Run out of content and we have a default invisible choice that we can follow?
+  					if (!this.canContinue) {
+  						this.TryFollowDefaultInvisibleChoice();
+  					}
+
+  					// Don't save/rewind during string evaluation, which is e.g. used for choices
+  					if (!this.state.inStringEvaluation) {
+
+  						// We previously found a newline, but were we just double checking that
+  						// it wouldn't immediately be removed by glue?
+  						if (stateAtLastNewline != null) {
+
+  							// Cover cases that non-text generated content was evaluated last step
+  							var currText = this.currentText;
+  							var prevTextLength = stateAtLastNewline.currentText.length;
+  							var prevTagCount = stateAtLastNewline.currentTags.length;
+
+  							// Output has been extended?
+  							if (currText !== stateAtLastNewline.currentText || prevTagCount != this.currentTags.length) {
+
+  								// Original newline still exists?
+  								if (currText.length >= prevTextLength && currText[prevTextLength - 1] == '\n') {
+
+  									this.RestoreStateSnapshot(stateAtLastNewline);
+  									break;
+  								}
+
+  								// Newline that previously existed is no longer valid - e.g.
+  								// glue was encounted that caused it to be removed.
+  								else {
+  										stateAtLastNewline = null;
+  									}
+  							}
+  						}
+
+  						// Current content ends in a newline - approaching end of our evaluation
+  						if (this.state.outputStreamEndsInNewline) {
+
+  							// If we can continue evaluation for a bit:
+  							// Create a snapshot in case we need to rewind.
+  							// We're going to continue stepping in case we see glue or some
+  							// non-text content such as choices.
+  							if (this.canContinue) {
+  								// Don't bother to record the state beyond the current newline.
+  								// e.g.:
+  								// Hello world\n			// record state at the end of here
+  								// ~ complexCalculation()   // don't actually need this unless it generates text
+  								if (stateAtLastNewline == null) {
+  									stateAtLastNewline = this.StateSnapshot();
+  								}
+  							}
+
+  							// Can't continue, so we're about to exit - make sure we
+  							// don't have an old state hanging around.
+  							else {
+  									stateAtLastNewline = null;
+  								}
+  						}
+  					}
+  				} while (this.canContinue);
+
+  				// Need to rewind, due to evaluating further than we should?
+  				if (stateAtLastNewline != null) {
+  					this.RestoreStateSnapshot(stateAtLastNewline);
+  				}
+
+  				// Finished a section of content / reached a choice point?
+  				if (!this.canContinue) {
+
+  					if (this.state.callStack.canPopThread) {
+  						this.Error("Thread available to pop, threads should always be flat by the end of evaluation?");
+  					}
+
+  					if (this.state.generatedChoices.length == 0 && !this.state.didSafeExit && this._temporaryEvaluationContainer == null) {
+  						if (this.state.callStack.CanPop(PushPopType.Tunnel)) {
+  							this.Error("unexpectedly reached end of content. Do you need a '->->' to return from a tunnel?");
+  						} else if (this.state.callStack.CanPop(PushPopType.Function)) {
+  							this.Error("unexpectedly reached end of content. Do you need a '~ return'?");
+  						} else if (!this.state.callStack.canPop) {
+  							this.Error("ran out of content. Do you need a '-> DONE' or '-> END'?");
+  						} else {
+  							this.Error("unexpectedly reached end of content for unknown reason. Please debug compiler!");
+  						}
+  					}
+  				}
+  			} catch (e) {
+  				throw e;
+  				this.AddError(e.Message, e.useEndLineNumber);
+  			} finally {
+  				this.state.didSafeExit = false;
+
+  				this._state.variablesState.batchObservingVariableChanges = false;
+  			}
+
+  			return this.currentText;
+  		}
+  	}, {
+  		key: 'ContinueMaximally',
+  		value: function ContinueMaximally() {
+  			var sb = new StringBuilder();
+
+  			while (this.canContinue) {
+  				sb.Append(this.Continue());
+  			}
+
+  			return sb.toString();
+  		}
+  	}, {
+  		key: 'ContentAtPath',
+  		value: function ContentAtPath(path) {
+  			return this.mainContentContainer.ContentAtPath(path);
+  		}
+  	}, {
+  		key: 'StateSnapshot',
+  		value: function StateSnapshot() {
+  			return this.state.Copy();
+  		}
+  	}, {
+  		key: 'RestoreStateSnapshot',
+  		value: function RestoreStateSnapshot(state) {
+  			this._state = state;
+  		}
+  	}, {
+  		key: 'Step',
+  		value: function Step() {
+  			var shouldAddToStream = true;
+
+  			// Get current content
+  			var currentContentObj = this.state.currentContentObject;
+  			if (currentContentObj == null) {
+  				return;
+  			}
+  			// Step directly to the first element of content in a container (if necessary)
+  			//		Container currentContainer = currentContentObj as Container;
+  			var currentContainer = currentContentObj;
+  			while (currentContainer instanceof Container) {
+
+  				// Mark container as being entered
+  				this.VisitContainer(currentContainer, true);
+
+  				// No content? the most we can do is step past it
+  				if (currentContainer.content.length == 0) break;
+
+  				currentContentObj = currentContainer.content[0];
+  				this.state.callStack.currentElement.currentContentIndex = 0;
+  				this.state.callStack.currentElement.currentContainer = currentContainer;
+
+  				//			currentContainer = currentContentObj as Container;
+  				currentContainer = currentContentObj;
+  			}
+  			currentContainer = this.state.callStack.currentElement.currentContainer;
+
+  			// Is the current content object:
+  			//  - Normal content
+  			//  - Or a logic/flow statement - if so, do it
+  			// Stop flow if we hit a stack pop when we're unable to pop (e.g. return/done statement in knot
+  			// that was diverted to rather than called as a function)
+  			var isLogicOrFlowControl = this.PerformLogicAndFlowControl(currentContentObj);
+
+  			// Has flow been forced to end by flow control above?
+  			if (this.state.currentContentObject == null) {
+  				return;
+  			}
+
+  			if (isLogicOrFlowControl) {
+  				shouldAddToStream = false;
+  			}
+
+  			// Choice with condition?
+  			//		var choicePoint = currentContentObj as ChoicePoint;
+  			var choicePoint = currentContentObj;
+  			if (choicePoint instanceof ChoicePoint) {
+  				var choice = this.ProcessChoice(choicePoint);
+  				if (choice) {
+  					this.state.generatedChoices.push(choice);
+  				}
+
+  				currentContentObj = null;
+  				shouldAddToStream = false;
+  			}
+
+  			// If the container has no content, then it will be
+  			// the "content" itself, but we skip over it.
+  			if (currentContentObj instanceof Container) {
+  				shouldAddToStream = false;
+  			}
+
+  			// Content to add to evaluation stack or the output stream
+  			if (shouldAddToStream) {
+
+  				// If we're pushing a variable pointer onto the evaluation stack, ensure that it's specific
+  				// to our current (possibly temporary) context index. And make a copy of the pointer
+  				// so that we're not editing the original runtime object.
+  				//			var varPointer = currentContentObj as VariablePointerValue;
+  				var varPointer = currentContentObj;
+  				if (varPointer instanceof VariablePointerValue && varPointer.contextIndex == -1) {
+
+  					// Create new object so we're not overwriting the story's own data
+  					var contextIdx = this.state.callStack.ContextForVariableNamed(varPointer.variableName);
+  					currentContentObj = new VariablePointerValue(varPointer.variableName, contextIdx);
+  				}
+
+  				// Expression evaluation content
+  				if (this.state.inExpressionEvaluation) {
+  					this.state.PushEvaluationStack(currentContentObj);
+  				}
+  				// Output stream content (i.e. not expression evaluation)
+  				else {
+  						this.state.PushToOutputStream(currentContentObj);
+  					}
+  			}
+
+  			// Increment the content pointer, following diverts if necessary
+  			this.NextContent();
+
+  			// Starting a thread should be done after the increment to the content pointer,
+  			// so that when returning from the thread, it returns to the content after this instruction.
+  			//		var controlCmd = currentContentObj as ControlCommand;
+  			var controlCmd = currentContentObj;
+  			if (controlCmd instanceof ControlCommand && controlCmd.commandType == ControlCommand.CommandType.StartThread) {
+  				this.state.callStack.PushThread();
+  			}
+  		}
+  	}, {
+  		key: 'VisitContainer',
+  		value: function VisitContainer(container, atStart) {
+  			if (!container.countingAtStartOnly || atStart) {
+  				if (container.visitsShouldBeCounted) this.IncrementVisitCountForContainer(container);
+
+  				if (container.turnIndexShouldBeCounted) this.RecordTurnIndexVisitToContainer(container);
+  			}
+  		}
+  	}, {
+  		key: 'VisitChangedContainersDueToDivert',
+  		value: function VisitChangedContainersDueToDivert() {
+  			var previousContentObject = this.state.previousContentObject;
+  			var newContentObject = this.state.currentContentObject;
+
+  			if (!newContentObject) return;
+
+  			// First, find the previously open set of containers
+  			this._prevContainerSet = [];
+  			if (previousContentObject) {
+  				//			Container prevAncestor = previousContentObject as Container ?? previousContentObject.parent as Container;
+  				var prevAncestor = previousContentObject instanceof Container ? previousContentObject : previousContentObject.parent;
+  				while (prevAncestor instanceof Container) {
+  					this._prevContainerSet.push(prevAncestor);
+  					//				prevAncestor = prevAncestor.parent as Container;
+  					prevAncestor = prevAncestor.parent;
+  				}
+  			}
+
+  			// If the new object is a container itself, it will be visited automatically at the next actual
+  			// content step. However, we need to walk up the new ancestry to see if there are more new containers
+  			var currentChildOfContainer = newContentObject;
+  			//		Container currentContainerAncestor = currentChildOfContainer.parent as Container;
+  			var currentContainerAncestor = currentChildOfContainer.parent;
+  			while (currentContainerAncestor instanceof Container && this._prevContainerSet.indexOf(currentContainerAncestor) < 0) {
+
+  				// Check whether this ancestor container is being entered at the start,
+  				// by checking whether the child object is the first.
+  				var enteringAtStart = currentContainerAncestor.content.length > 0 && currentChildOfContainer == currentContainerAncestor.content[0];
+
+  				// Mark a visit to this container
+  				this.VisitContainer(currentContainerAncestor, enteringAtStart);
+
+  				currentChildOfContainer = currentContainerAncestor;
+  				//			currentContainerAncestor = currentContainerAncestor.parent as Container;
+  				currentContainerAncestor = currentContainerAncestor.parent;
+  			}
+  		}
+  	}, {
+  		key: 'ProcessChoice',
+  		value: function ProcessChoice(choicePoint) {
+  			var showChoice = true;
+
+  			// Don't create choice if choice point doesn't pass conditional
+  			if (choicePoint.hasCondition) {
+  				var conditionValue = this.state.PopEvaluationStack();
+  				if (!this.IsTruthy(conditionValue)) {
+  					showChoice = false;
+  				}
+  			}
+
+  			var startText = "";
+  			var choiceOnlyText = "";
+
+  			if (choicePoint.hasChoiceOnlyContent) {
+  				//			var choiceOnlyStrVal = state.PopEvaluationStack () as StringValue;
+  				var choiceOnlyStrVal = this.state.PopEvaluationStack();
+  				choiceOnlyText = choiceOnlyStrVal.value;
+  			}
+
+  			if (choicePoint.hasStartContent) {
+  				//			var startStrVal = state.PopEvaluationStack () as StringValue;
+  				var startStrVal = this.state.PopEvaluationStack();
+  				startText = startStrVal.value;
+  			}
+
+  			// Don't create choice if player has already read this content
+  			if (choicePoint.onceOnly) {
+  				var visitCount = this.VisitCountForContainer(choicePoint.choiceTarget);
+  				if (visitCount > 0) {
+  					showChoice = false;
+  				}
+  			}
+
+  			var choice = new Choice(choicePoint);
+  			choice.threadAtGeneration = this.state.callStack.currentThread.Copy();
+
+  			// We go through the full process of creating the choice above so
+  			// that we consume the content for it, since otherwise it'll
+  			// be shown on the output stream.
+  			if (!showChoice) {
+  				return null;
+  			}
+
+  			// Set final text for the choice
+  			choice.text = startText + choiceOnlyText;
+
+  			return choice;
+  		}
+  	}, {
+  		key: 'IsTruthy',
+  		value: function IsTruthy(obj) {
+  			var truthy = false;
+  			if (obj instanceof Value) {
+  				var val = obj;
+
+  				if (val instanceof DivertTargetValue) {
+  					var divTarget = val;
+  					this.Error("Shouldn't use a divert target (to " + divTarget.targetPath + ") as a conditional value. Did you intend a function call 'likeThis()' or a read count check 'likeThis'? (no arrows)");
+  					return false;
+  				}
+
+  				return val.isTruthy;
+  			}
+  			return truthy;
+  		}
+  	}, {
+  		key: 'PerformLogicAndFlowControl',
+  		value: function PerformLogicAndFlowControl(contentObj) {
+  			if (contentObj == null) {
+  				return false;
+  			}
+
+  			// Divert
+  			if (contentObj instanceof Divert) {
+  				var currentDivert = contentObj;
+
+  				if (currentDivert.isConditional) {
+  					var conditionValue = this.state.PopEvaluationStack();
+
+  					// False conditional? Cancel divert
+  					if (!this.IsTruthy(conditionValue)) return true;
+  				}
+
+  				if (currentDivert.hasVariableTarget) {
+  					var varName = currentDivert.variableDivertName;
+
+  					var varContents = this.state.variablesState.GetVariableWithName(varName);
+
+  					if (!(varContents instanceof DivertTargetValue)) {
+
+  						//					var intContent = varContents as IntValue;
+  						var intContent = varContents;
+
+  						var errorMessage = "Tried to divert to a target from a variable, but the variable (" + varName + ") didn't contain a divert target, it ";
+  						if (intContent instanceof IntValue && intContent.value == 0) {
+  							errorMessage += "was empty/null (the value 0).";
+  						} else {
+  							errorMessage += "contained '" + varContents + "'.";
+  						}
+
+  						this.Error(errorMessage);
+  					}
+
+  					var target = varContents;
+  					this.state.divertedTargetObject = this.ContentAtPath(target.targetPath);
+  				} else if (currentDivert.isExternal) {
+  					this.CallExternalFunction(currentDivert.targetPathString, currentDivert.externalArgs);
+  					return true;
+  				} else {
+  					this.state.divertedTargetObject = currentDivert.targetContent;
+  				}
+
+  				if (currentDivert.pushesToStack) {
+  					this.state.callStack.Push(currentDivert.stackPushType);
+  				}
+
+  				if (this.state.divertedTargetObject == null && !currentDivert.isExternal) {
+
+  					// Human readable name available - runtime divert is part of a hard-written divert that to missing content
+  					if (currentDivert && currentDivert.debugMetadata.sourceName != null) {
+  						this.Error("Divert target doesn't exist: " + currentDivert.debugMetadata.sourceName);
+  					} else {
+  						this.Error("Divert resolution failed: " + currentDivert);
+  					}
+  				}
+
+  				return true;
+  			}
+
+  			// Start/end an expression evaluation? Or print out the result?
+  			else if (contentObj instanceof ControlCommand) {
+  					var evalCommand = contentObj;
+
+  					switch (evalCommand.commandType) {
+
+  						case ControlCommand.CommandType.EvalStart:
+  							if (this.state.inExpressionEvaluation) console.warn("Already in expression evaluation?");
+  							this.state.inExpressionEvaluation = true;
+  							break;
+
+  						case ControlCommand.CommandType.EvalEnd:
+  							if (!this.state.inExpressionEvaluation) console.warn("Not in expression evaluation mode");
+  							this.state.inExpressionEvaluation = false;
+  							break;
+
+  						case ControlCommand.CommandType.EvalOutput:
+
+  							// If the expression turned out to be empty, there may not be anything on the stack
+  							if (this.state.evaluationStack.length > 0) {
+
+  								var output = this.state.PopEvaluationStack();
+
+  								// Functions may evaluate to Void, in which case we skip output
+  								if (output != null && !(output instanceof Void)) {
+  									// TODO: Should we really always blanket convert to string?
+  									// It would be okay to have numbers in the output stream the
+  									// only problem is when exporting text for viewing, it skips over numbers etc.
+  									var text = new StringValue(output.toString());
+
+  									this.state.PushToOutputStream(text);
+  								}
+  							}
+  							break;
+
+  						case ControlCommand.CommandType.NoOp:
+  							break;
+
+  						case ControlCommand.CommandType.Duplicate:
+  							this.state.PushEvaluationStack(this.state.PeekEvaluationStack());
+  							break;
+
+  						case ControlCommand.CommandType.PopEvaluatedValue:
+  							this.state.PopEvaluationStack();
+  							break;
+
+  						case ControlCommand.CommandType.PopFunction:
+  						case ControlCommand.CommandType.PopTunnel:
+
+  							var popType = evalCommand.commandType == ControlCommand.CommandType.PopFunction ? PushPopType.Function : PushPopType.Tunnel;
+
+  							var overrideTunnelReturnTarget = null;
+  							if (popType == PushPopType.Tunnel) {
+  								var popped = this.state.PopEvaluationStack();
+  								//					overrideTunnelReturnTarget = popped as DivertTargetValue;
+  								overrideTunnelReturnTarget = popped;
+  								if (overrideTunnelReturnTarget instanceof DivertTargetValue === false) {
+  									if (popped instanceof Void === false) {
+  										throw "Expected void if ->-> doesn't override target";
+  									} else {
+  										overrideTunnelReturnTarget = null;
+  									}
+  								}
+  							}
+
+  							if (this.state.TryExitExternalFunctionEvaluation()) {
+  								break;
+  							} else if (this.state.callStack.currentElement.type != popType || !this.state.callStack.canPop) {
+
+  								var names = {};
+  								names[PushPopType.Function] = "function return statement (~ return)";
+  								names[PushPopType.Tunnel] = "tunnel onwards statement (->->)";
+
+  								var expected = names[this.state.callStack.currentElement.type];
+  								if (!this.state.callStack.canPop) expected = "end of flow (-> END or choice)";
+
+  								var errorMsg = "Found " + names[popType] + ", when expected " + expected;
+
+  								this.Error(errorMsg);
+  							} else {
+  								this.state.callStack.Pop();
+
+  								if (overrideTunnelReturnTarget) this.state.divertedTargetObject = this.ContentAtPath(overrideTunnelReturnTarget.targetPath);
+  							}
+  							break;
+
+  						case ControlCommand.CommandType.BeginString:
+  							this.state.PushToOutputStream(evalCommand);
+
+  							if (!this.state.inExpressionEvaluation) console.warn("Expected to be in an expression when evaluating a string");
+  							this.state.inExpressionEvaluation = false;
+  							break;
+
+  						case ControlCommand.CommandType.EndString:
+
+  							var contentStackForString = [];
+
+  							var outputCountConsumed = 0;
+  							for (var i = this.state.outputStream.length - 1; i >= 0; --i) {
+  								var obj = this.state.outputStream[i];
+
+  								outputCountConsumed++;
+
+  								//					var command = obj as ControlCommand;
+  								var command = obj;
+  								if (command instanceof ControlCommand && command.commandType == ControlCommand.CommandType.BeginString) {
+  									break;
+  								}
+
+  								if (obj instanceof StringValue) contentStackForString.push(obj);
+  							}
+
+  							// Consume the content that was produced for this string
+  							this.state.outputStream.splice(this.state.outputStream.length - outputCountConsumed, outputCountConsumed);
+
+  							//the C# version uses a Stack for contentStackForString, but we're using a simple array, so we need to reverse it before using it
+  							contentStackForString = contentStackForString.reverse();
+
+  							// Build string out of the content we collected
+  							var sb = new StringBuilder();
+  							contentStackForString.forEach(function (c) {
+  								sb.Append(c.toString());
+  							});
+
+  							// Return to expression evaluation (from content mode)
+  							this.state.inExpressionEvaluation = true;
+  							this.state.PushEvaluationStack(new StringValue(sb.toString()));
+  							break;
+
+  						case ControlCommand.CommandType.ChoiceCount:
+  							var choiceCount = this.state.generatedChoices.length;
+  							this.state.PushEvaluationStack(new IntValue(choiceCount));
+  							break;
+
+  						case ControlCommand.CommandType.TurnsSince:
+  						case ControlCommand.CommandType.ReadCount:
+  							var target = this.state.PopEvaluationStack();
+  							if (!(target instanceof DivertTargetValue)) {
+  								var extraNote = "";
+  								if (target instanceof IntValue) extraNote = ". Did you accidentally pass a read count ('knot_name') instead of a target ('-> knot_name')?";
+  								this.Error("TURNS_SINCE / READ_COUNT expected a divert target (knot, stitch, label name), but saw " + target + extraNote);
+  								break;
+  							}
+
+  							//				var divertTarget = target as DivertTargetValue;
+  							var divertTarget = target;
+  							//				var container = ContentAtPath (divertTarget.targetPath) as Container;
+  							var container = this.ContentAtPath(divertTarget.targetPath);
+
+  							var eitherCount;
+  							if (evalCommand.commandType == ControlCommand.CommandType.TurnsSince) eitherCount = this.TurnsSinceForContainer(container);else eitherCount = this.VisitCountForContainer(container);
+
+  							this.state.PushEvaluationStack(new IntValue(eitherCount));
+  							break;
+
+  						case ControlCommand.CommandType.Random:
+  							var maxInt = this.state.PopEvaluationStack();
+  							var minInt = this.state.PopEvaluationStack();
+
+  							if (minInt == null || minInt instanceof IntValue === false) this.Error("Invalid value for minimum parameter of RANDOM(min, max)");
+
+  							if (maxInt == null || minInt instanceof IntValue === false) this.Error("Invalid value for maximum parameter of RANDOM(min, max)");
+
+  							// +1 because it's inclusive of min and max, for e.g. RANDOM(1,6) for a dice roll.
+  							var randomRange = maxInt.value - minInt.value + 1;
+  							if (randomRange <= 0) this.Error("RANDOM was called with minimum as " + minInt.value + " and maximum as " + maxInt.value + ". The maximum must be larger");
+
+  							var resultSeed = this.state.storySeed + this.state.previousRandom;
+  							var random = new PRNG(resultSeed);
+
+  							var nextRandom = random.next();
+  							var chosenValue = nextRandom % randomRange + minInt.value;
+  							this.state.PushEvaluationStack(new IntValue(chosenValue));
+
+  							// Next random number (rather than keeping the Random object around)
+  							this.state.previousRandom = nextRandom;
+  							break;
+
+  						case ControlCommand.CommandType.SeedRandom:
+  							var seed = this.state.PopEvaluationStack();
+  							if (seed == null || seed instanceof IntValue === false) this.Error("Invalid value passed to SEED_RANDOM");
+
+  							// Story seed affects both RANDOM and shuffle behaviour
+  							this.state.storySeed = seed.value;
+  							this.state.previousRandom = 0;
+
+  							// SEED_RANDOM returns nothing.
+  							this.state.PushEvaluationStack(new Void());
+  							break;
+
+  						case ControlCommand.CommandType.VisitIndex:
+  							var count = this.VisitCountForContainer(this.state.currentContainer) - 1; // index not count
+  							this.state.PushEvaluationStack(new IntValue(count));
+  							break;
+
+  						case ControlCommand.CommandType.SequenceShuffleIndex:
+  							var shuffleIndex = this.NextSequenceShuffleIndex();
+  							this.state.PushEvaluationStack(new IntValue(shuffleIndex));
+  							break;
+
+  						case ControlCommand.CommandType.StartThread:
+  							// Handled in main step function
+  							break;
+
+  						case ControlCommand.CommandType.Done:
+
+  							// We may exist in the context of the initial
+  							// act of creating the thread, or in the context of
+  							// evaluating the content.
+  							if (this.state.callStack.canPopThread) {
+  								this.state.callStack.PopThread();
+  							}
+
+  							// In normal flow - allow safe exit without warning
+  							else {
+  									this.state.didSafeExit = true;
+
+  									// Stop flow in current thread
+  									this.state.currentContentObject = null;
+  								}
+
+  							break;
+
+  						// Force flow to end completely
+  						case ControlCommand.CommandType.End:
+  							this.state.ForceEnd();
+  							break;
+
+  						case ControlCommand.CommandType.ListFromInt:
+  							//				var intVal = state.PopEvaluationStack () as IntValue;
+  							var intVal = parseInt(this.state.PopEvaluationStack());
+  							//				var listNameVal = state.PopEvaluationStack () as StringValue;
+  							var listNameVal = this.state.PopEvaluationStack().toString();
+
+  							var generatedListValue = null;
+
+  							var foundListDef;
+  							if (foundListDef = this.listDefinitions.TryGetDefinition(listNameVal, foundListDef)) {
+  								var foundItem = foundListDef.TryGetItemWithValue(intVal.value);
+  								if (foundItem.exists) {
+  									generatedListValue = new ListValue(foundItem.item, intVal.value);
+  								}
+  							} else {
+  								throw new StoryException("Failed to find LIST called " + listNameVal.value);
+  							}
+
+  							if (generatedListValue == null) generatedListValue = new ListValue();
+
+  							this.state.PushEvaluationStack(generatedListValue);
+  							break;
+
+  						case ControlCommand.CommandType.ListRange:
+  							var max = this.state.PopEvaluationStack();
+  							var min = this.state.PopEvaluationStack();
+
+  							//				var targetList = state.PopEvaluationStack () as ListValue;
+  							var targetList = this.state.PopEvaluationStack();
+
+  							if (targetList instanceof ListValue === false || targetList == null || min == null || max == null) throw new StoryException("Expected list, minimum and maximum for LIST_RANGE");
+
+  							// Allow either int or a particular list item to be passed for the bounds,
+  							// so wrap up a function to handle this casting for us.
+  							var IntBound = function IntBound(obj) {
+  								//					var listValue = obj as ListValue;
+  								var listValue = obj;
+  								if (listValue instanceof ListValue) {
+  									return parseInt(listValue.value.maxItem.Value);
+  								}
+
+  								//					var intValue = obj as IntValue;
+  								var intValue = obj;
+  								if (intValue instanceof IntValue) {
+  									return intValue.value;
+  								}
+
+  								return -1;
+  							};
+
+  							var minVal = IntBound(min);
+  							var maxVal = IntBound(max);
+  							if (minVal == -1) throw new StoryException("Invalid min range bound passed to LIST_VALUE(): " + min);
+
+  							if (maxVal == -1) throw new StoryException("Invalid max range bound passed to LIST_VALUE(): " + max);
+
+  							// Extract the range of items from the origin list
+  							var result = new ListValue();
+  							var origins = targetList.value.origins;
+
+  							if (origins != null) {
+  								origins.forEach(function (origin) {
+  									var rangeFromOrigin = origin.ListRange(minVal, maxVal);
+  									rangeFromOrigin.value.forEach(function (kv) {
+  										result.value.Add(kv.Key, kv.Value);
+  									});
+  								});
+  							}
+
+  							this.state.PushEvaluationStack(result);
+  							break;
+
+  						default:
+  							this.Error("unhandled ControlCommand: " + evalCommand);
+  							break;
+  					}
+
+  					return true;
+  				}
+
+  				// Variable assignment
+  				else if (contentObj instanceof VariableAssignment) {
+  						var varAss = contentObj;
+  						var assignedVal = this.state.PopEvaluationStack();
+
+  						// When in temporary evaluation, don't create new variables purely within
+  						// the temporary context, but attempt to create them globally
+  						//var prioritiseHigherInCallStack = _temporaryEvaluationContainer != null;
+
+  						this.state.variablesState.Assign(varAss, assignedVal);
+
+  						return true;
+  					}
+
+  					// Variable reference
+  					else if (contentObj instanceof VariableReference) {
+  							var varRef = contentObj;
+  							var foundValue = null;
+
+  							// Explicit read count value
+  							if (varRef.pathForCount != null) {
+
+  								var container = varRef.containerForCount;
+  								var count = this.VisitCountForContainer(container);
+  								foundValue = new IntValue(count);
+  							}
+
+  							// Normal variable reference
+  							else {
+
+  									foundValue = this.state.variablesState.GetVariableWithName(varRef.name);
+
+  									if (foundValue == null) {
+  										this.Error("Uninitialised variable: " + varRef.name);
+  										foundValue = new IntValue(0);
+  									}
+  								}
+
+  							this.state.PushEvaluationStack(foundValue);
+
+  							return true;
+  						}
+
+  						// Native function call
+  						else if (contentObj instanceof NativeFunctionCall) {
+  								var func = contentObj;
+  								var funcParams = this.state.PopEvaluationStack(func.numberOfParameters);
+  								var result = func.Call(funcParams);
+  								this.state.PushEvaluationStack(result);
+  								return true;
+  							}
+
+  			// No control content, must be ordinary content
+  			return false;
+  		}
+  	}, {
+  		key: 'ChoosePathString',
+  		value: function ChoosePathString(path, args) {
+  			args = args || [];
+  			this.state.PassArgumentsToEvaluationStack(args);
+  			this.ChoosePath(new Path$1(path));
+  		}
+  	}, {
+  		key: 'ChoosePath',
+  		value: function ChoosePath(p) {
+  			this.state.SetChosenPath(p);
+
+  			// Take a note of newly visited containers for read counts etc
+  			this.VisitChangedContainersDueToDivert();
+  		}
+  	}, {
+  		key: 'ChooseChoiceIndex',
+  		value: function ChooseChoiceIndex(choiceIdx) {
+  			choiceIdx = choiceIdx;
+  			var choices = this.currentChoices;
+  			if (choiceIdx < 0 || choiceIdx > choices.length) console.warn("choice out of range");
+
+  			// Replace callstack with the one from the thread at the choosing point, 
+  			// so that we can jump into the right place in the flow.
+  			// This is important in case the flow was forked by a new thread, which
+  			// can create multiple leading edges for the story, each of
+  			// which has its own context.
+  			var choiceToChoose = choices[choiceIdx];
+  			this.state.callStack.currentThread = choiceToChoose.threadAtGeneration;
+
+  			this.ChoosePath(choiceToChoose.choicePoint.choiceTarget.path);
+  		}
+  	}, {
+  		key: 'HasFunction',
+  		value: function HasFunction(functionName) {
+  			try {
+  				return this.ContentAtPath(new Path$1(functionName)) instanceof Container;
+  			} catch (e) {
+  				return false;
+  			}
+  		}
+  	}, {
+  		key: 'EvaluateFunction',
+  		value: function EvaluateFunction(functionName, args, returnTextOutput) {
+  			//EvaluateFunction behaves slightly differently than the C# version. In C#, you can pass a (second) parameter `out textOutput` to get the text outputted by the function. This is not possible in js. Instead, we maintain the regular signature (functionName, args), plus an optional third parameter returnTextOutput. If set to true, we will return both the textOutput and the returned value, as an object.
+  			returnTextOutput = !!returnTextOutput;
+
+  			if (functionName == null) {
+  				throw "Function is null";
+  			} else if (functionName == '' || functionName.trim() == '') {
+  				throw "Function is empty or white space.";
+  			}
+
+  			var funcContainer = null;
+  			try {
+  				funcContainer = this.ContentAtPath(new Path$1(functionName));
+  			} catch (e) {
+  				if (e.message.indexOf("not found") >= 0) throw "Function doesn't exist: '" + functionName + "'";else throw e;
+  			}
+
+  			this.state.StartExternalFunctionEvaluation(funcContainer, args);
+
+  			// Evaluate the function, and collect the string output
+  			var stringOutput = new StringBuilder();
+  			while (this.canContinue) {
+  				stringOutput.Append(this.Continue());
+  			}
+  			var textOutput = stringOutput.toString();
+
+  			var result = this.state.CompleteExternalFunctionEvaluation();
+
+  			return returnTextOutput ? { 'returned': result, 'output': textOutput } : result;
+  		}
+  	}, {
+  		key: 'EvaluateExpression',
+  		value: function EvaluateExpression(exprContainer) {
+  			var startCallStackHeight = this.state.callStack.elements.length;
+
+  			this.state.callStack.Push(PushPopType.Tunnel);
+
+  			this._temporaryEvaluationContainer = exprContainer;
+
+  			this.state.GoToStart();
+
+  			var evalStackHeight = this.state.evaluationStack.length;
+
+  			this.Continue();
+
+  			this._temporaryEvaluationContainer = null;
+
+  			// Should have fallen off the end of the Container, which should
+  			// have auto-popped, but just in case we didn't for some reason,
+  			// manually pop to restore the state (including currentPath).
+  			if (this.state.callStack.elements.length > startCallStackHeight) {
+  				this.state.callStack.Pop();
+  			}
+
+  			var endStackHeight = this.state.evaluationStack.length;
+  			if (endStackHeight > evalStackHeight) {
+  				return this.state.PopEvaluationStack();
+  			} else {
+  				return null;
+  			}
+  		}
+  	}, {
+  		key: 'CallExternalFunction',
+  		value: function CallExternalFunction(funcName, numberOfArguments) {
+  			var func = this._externals[funcName];
+  			var fallbackFunctionContainer = null;
+
+  			var foundExternal = typeof func !== 'undefined';
+
+  			// Try to use fallback function?
+  			if (!foundExternal) {
+  				if (this.allowExternalFunctionFallbacks) {
+  					//				fallbackFunctionContainer = ContentAtPath (new Path (funcName)) as Container;
+  					fallbackFunctionContainer = this.ContentAtPath(new Path$1(funcName));
+  					if (!(fallbackFunctionContainer instanceof Container)) console.warn("Trying to call EXTERNAL function '" + funcName + "' which has not been bound, and fallback ink function could not be found.");
+
+  					// Divert direct into fallback function and we're done
+  					this.state.callStack.Push(PushPopType.Function);
+  					this.state.divertedTargetObject = fallbackFunctionContainer;
+  					return;
+  				} else {
+  					console.warn("Trying to call EXTERNAL function '" + funcName + "' which has not been bound (and ink fallbacks disabled).");
+  				}
+  			}
+
+  			// Pop arguments
+  			var args = [];
+  			for (var i = 0; i < numberOfArguments; ++i) {
+  				//			var poppedObj = state.PopEvaluationStack () as Value;
+  				var poppedObj = this.state.PopEvaluationStack();
+  				var valueObj = poppedObj.valueObject;
+  				args.push(valueObj);
+  			}
+
+  			// Reverse arguments from the order they were popped,
+  			// so they're the right way round again.
+  			args.reverse();
+
+  			// Run the function!
+  			var funcResult = func(args);
+
+  			// Convert return value (if any) to the a type that the ink engine can use
+  			var returnObj = null;
+  			if (funcResult != null) {
+  				returnObj = Value.Create(funcResult);
+  				if (returnObj == null) console.warn("Could not create ink value from returned object of type " + (typeof funcResult === 'undefined' ? 'undefined' : _typeof(funcResult)));
+  			} else {
+  				returnObj = new Void();
+  			}
+
+  			this.state.PushEvaluationStack(returnObj);
+  		}
+  	}, {
+  		key: 'TryCoerce',
+  		value: function TryCoerce(value) {
+  			//we're skipping type coercition in this implementation. First of, js is loosely typed, so it's not that important. Secondly, there is no clean way (AFAIK) for the user to describe what type of parameters he/she expects.
+  			return value;
+  		}
+  	}, {
+  		key: 'BindExternalFunctionGeneral',
+  		value: function BindExternalFunctionGeneral(funcName, func) {
+  			if (this._externals[funcName]) console.warn("Function '" + funcName + "' has already been bound.");
+  			this._externals[funcName] = func;
+  		}
+  	}, {
+  		key: 'BindExternalFunction',
+  		value: function BindExternalFunction(funcName, func) {
+  			var _this2 = this;
+
+  			if (!func) console.warn("Can't bind a null function");
+
+  			this.BindExternalFunctionGeneral(funcName, function (args) {
+  				if (args.length < func.length) console.warn("External function expected " + func.length + " arguments");
+
+  				var coercedArgs = [];
+  				for (var i = 0, l = args.length; i < l; i++) {
+  					coercedArgs[i] = _this2.TryCoerce(args[i]);
+  				}
+  				return func.apply(null, coercedArgs);
+  			});
+  		}
+  	}, {
+  		key: 'UnbindExternalFunction',
+  		value: function UnbindExternalFunction(funcName) {
+  			if (typeof this._externals[funcName] === 'undefined') console.warn("Function '" + funcName + "' has not been bound.");
+  			delete this._externals[funcName];
+  		}
+  	}, {
+  		key: 'ValidateExternalBindings',
+  		value: function ValidateExternalBindings(containerOrObject, missingExternals) {
+  			var _this3 = this;
+
+  			if (!containerOrObject) {
+  				var missingExternals = [];
+  				this.ValidateExternalBindings(this._mainContentContainer, missingExternals);
+  				this._hasValidatedExternals = true;
+
+  				// No problem! Validation complete
+  				if (missingExternals.length == 0) {
+  					this._hasValidatedExternals = true;
+  				}
+
+  				// Error for all missing externals
+  				else {
+  						var message = "Error: Missing function binding for external";
+  						message += missingExternals.length > 1 ? "s" : "";
+  						message += ": '";
+  						message += missingExternals.join("', '");
+  						message += "' ";
+  						message += this.allowExternalFunctionFallbacks ? ", and no fallback ink function found." : " (ink fallbacks disabled)";
+
+  						this.Error(message);
+  					}
+  			} else if (containerOrObject instanceof Container) {
+  				var c = containerOrObject;
+
+  				c.content.forEach(function (innerContent) {
+  					_this3.ValidateExternalBindings(innerContent, missingExternals);
+  				});
+  				for (var key in c.namedContent) {
+  					this.ValidateExternalBindings(c.namedContent[key], missingExternals);
+  				}
+  			} else {
+  				var o = containerOrObject;
+  				//the following code is already taken care of above in this implementation
+  				//			var container = o as Container;
+  				//            if (container) {
+  				//                ValidateExternalBindings (container, missingExternals);
+  				//                return;
+  				//            }
+
+  				//            var divert = o as Divert;
+  				var divert = o;
+  				if (divert instanceof Divert && divert.isExternal) {
+  					var name = divert.targetPathString;
+
+  					if (!this._externals[name]) {
+  						if (this.allowExternalFunctionFallbacks) {
+  							var fallbackFound = !!this.mainContentContainer.namedContent[name];
+  							if (!fallbackFound) {
+  								missingExternals.push(name);
+  							}
+  						} else {
+  							missingExternals.push(name);
+  						}
+  					}
+  				}
+  			}
+  		}
+  	}, {
+  		key: 'ObserveVariable',
+  		value: function ObserveVariable(variableName, observer) {
+  			if (this._variableObservers == null) this._variableObservers = {};
+
+  			if (this._variableObservers[variableName]) {
+  				this._variableObservers[variableName].push(observer);
+  			} else {
+  				this._variableObservers[variableName] = [observer];
+  			}
+  		}
+  	}, {
+  		key: 'ObserveVariables',
+  		value: function ObserveVariables(variableNames, observers) {
+  			for (var i = 0, l = variableNames.length; i < l; i++) {
+  				this.ObserveVariable(variableNames[i], observers[i]);
+  			}
+  		}
+  	}, {
+  		key: 'RemoveVariableObserver',
+  		value: function RemoveVariableObserver(observer, specificVariableName) {
+  			if (this._variableObservers == null) return;
+
+  			// Remove observer for this specific variable
+  			if (typeof specificVariableName !== 'undefined') {
+  				if (this._variableObservers[specificVariableName]) {
+  					this._variableObservers[specificVariableName].splice(this._variableObservers[specificVariableName].indexOf(observer), 1);
+  				}
+  			}
+
+  			// Remove observer for all variables
+  			else {
+  					for (var varName in this._variableObservers) {
+  						this._variableObservers[varName].splice(this._variableObservers[varName].indexOf(observer), 1);
+  					}
+  				}
+  		}
+  	}, {
+  		key: 'VariableStateDidChangeEvent',
+  		value: function VariableStateDidChangeEvent(variableName, newValueObj) {
+  			if (this._variableObservers == null) return;
+
+  			var observers = this._variableObservers[variableName];
+  			if (typeof observers !== 'undefined') {
+
+  				if (!(newValueObj instanceof Value)) {
+  					throw "Tried to get the value of a variable that isn't a standard type";
+  				}
+  				//			var val = newValueObj as Value;
+  				var val = newValueObj;
+
+  				observers.forEach(function (observer) {
+  					observer(variableName, val.valueObject);
+  				});
+  			}
+  		}
+  	}, {
+  		key: 'TagsForContentAtPath',
+  		value: function TagsForContentAtPath(path) {
+  			return this.TagsAtStartOfFlowContainerWithPathString(path);
+  		}
+  	}, {
+  		key: 'TagsAtStartOfFlowContainerWithPathString',
+  		value: function TagsAtStartOfFlowContainerWithPathString(pathString) {
+  			var path = new Path$1(pathString);
+
+  			// Expected to be global story, knot or stitch
+  			//		var flowContainer = ContentAtPath (path) as Container;
+  			var flowContainer = this.ContentAtPath(path);
+  			while (true) {
+  				var firstContent = flowContainer.content[0];
+  				if (firstContent instanceof Container) flowContainer = firstContent;else break;
+  			}
+
+  			// Any initial tag objects count as the "main tags" associated with that story/knot/stitch
+  			var tags = null;
+
+  			flowContainer.content.every(function (c) {
+  				//			var tag = c as Runtime.Tag;
+  				var tag = c;
+  				if (tag instanceof Tag) {
+  					if (tags == null) tags = [];
+  					tags.push(tag.text);
+  					return true;
+  				} else return false;
+  			});
+
+  			return tags;
+  		}
+  	}, {
+  		key: 'BuildStringOfHierarchy',
+  		value: function BuildStringOfHierarchy() {
+  			var sb = new StringBuilder();
+
+  			this.mainContentContainer.BuildStringOfHierarchy(sb, 0, this.state.currentContentObject);
+
+  			return sb.toString();
+  		}
+  	}, {
+  		key: 'BuildStringOfContainer',
+  		value: function BuildStringOfContainer(container) {
+  			var sb = new StringBuilder();
+  			container.BuildStringOfHierarchy(sb, 0, this.state.currentContentObject);
+  			return sb.toString();
+  		}
+  	}, {
+  		key: 'NextContent',
+  		value: function NextContent() {
+  			// Setting previousContentObject is critical for VisitChangedContainersDueToDivert
+  			this.state.previousContentObject = this.state.currentContentObject;
+
+  			// Divert step?
+  			if (this.state.divertedTargetObject != null) {
+
+  				this.state.currentContentObject = this.state.divertedTargetObject;
+  				this.state.divertedTargetObject = null;
+
+  				// Internally uses state.previousContentObject and state.currentContentObject
+  				this.VisitChangedContainersDueToDivert();
+
+  				// Diverted location has valid content?
+  				if (this.state.currentContentObject != null) {
+  					return;
+  				}
+
+  				// Otherwise, if diverted location doesn't have valid content,
+  				// drop down and attempt to increment.
+  				// This can happen if the diverted path is intentionally jumping
+  				// to the end of a container - e.g. a Conditional that's re-joining
+  			}
+
+  			var successfulPointerIncrement = this.IncrementContentPointer();
+
+  			// Ran out of content? Try to auto-exit from a function,
+  			// or finish evaluating the content of a thread
+  			if (!successfulPointerIncrement) {
+
+  				var didPop = false;
+
+  				if (this.state.callStack.CanPop(PushPopType.Function)) {
+
+  					// Pop from the call stack
+  					this.state.callStack.Pop(PushPopType.Function);
+
+  					// This pop was due to dropping off the end of a function that didn't return anything,
+  					// so in this case, we make sure that the evaluator has something to chomp on if it needs it
+  					if (this.state.inExpressionEvaluation) {
+  						this.state.PushEvaluationStack(new Void());
+  					}
+
+  					didPop = true;
+  				} else if (this.state.callStack.canPopThread) {
+  					this.state.callStack.PopThread();
+
+  					didPop = true;
+  				} else {
+  					this.state.TryExitExternalFunctionEvaluation();
+  				}
+
+  				// Step past the point where we last called out
+  				if (didPop && this.state.currentContentObject != null) {
+  					this.NextContent();
+  				}
+  			}
+  		}
+  	}, {
+  		key: 'IncrementContentPointer',
+  		value: function IncrementContentPointer() {
+  			var successfulIncrement = true;
+
+  			var currEl = this.state.callStack.currentElement;
+  			currEl.currentContentIndex++;
+
+  			// Each time we step off the end, we fall out to the next container, all the
+  			// while we're in indexed rather than named content
+  			while (currEl.currentContentIndex >= currEl.currentContainer.content.length) {
+
+  				successfulIncrement = false;
+
+  				//			Container nextAncestor = currEl.currentContainer.parent as Container;
+  				var nextAncestor = currEl.currentContainer.parent;
+  				if (nextAncestor instanceof Container === false) {
+  					break;
+  				}
+
+  				var indexInAncestor = nextAncestor.content.indexOf(currEl.currentContainer);
+  				if (indexInAncestor == -1) {
+  					break;
+  				}
+
+  				currEl.currentContainer = nextAncestor;
+  				currEl.currentContentIndex = indexInAncestor + 1;
+
+  				successfulIncrement = true;
+  			}
+
+  			if (!successfulIncrement) currEl.currentContainer = null;
+
+  			return successfulIncrement;
+  		}
+  	}, {
+  		key: 'TryFollowDefaultInvisibleChoice',
+  		value: function TryFollowDefaultInvisibleChoice() {
+  			var allChoices = this._state.currentChoices;
+
+  			// Is a default invisible choice the ONLY choice?
+  			var invisibleChoices = allChoices.filter(function (c) {
+  				return c.choicePoint.isInvisibleDefault;
+  			});
+  			if (invisibleChoices.length == 0 || allChoices.length > invisibleChoices.length) return false;
+
+  			var choice = invisibleChoices[0];
+
+  			this.ChoosePath(choice.choicePoint.choiceTarget.path);
+
+  			return true;
+  		}
+  	}, {
+  		key: 'VisitCountForContainer',
+  		value: function VisitCountForContainer(container) {
+  			if (!container.visitsShouldBeCounted) {
+  				console.warn("Read count for target (" + container.name + " - on " + container.debugMetadata + ") unknown. The story may need to be compiled with countAllVisits flag (-c).");
+  				return 0;
+  			}
+
+  			var count = 0;
+  			var containerPathStr = container.path.toString();
+  			count = this.state.visitCounts[containerPathStr] || count;
+  			return count;
+  		}
+  	}, {
+  		key: 'IncrementVisitCountForContainer',
+  		value: function IncrementVisitCountForContainer(container) {
+  			var count = 0;
+  			var containerPathStr = container.path.toString();
+  			if (this.state.visitCounts[containerPathStr]) count = this.state.visitCounts[containerPathStr];
+  			count++;
+  			this.state.visitCounts[containerPathStr] = count;
+  		}
+  	}, {
+  		key: 'RecordTurnIndexVisitToContainer',
+  		value: function RecordTurnIndexVisitToContainer(container) {
+  			var containerPathStr = container.path.toString();
+  			this.state.turnIndices[containerPathStr] = this.state.currentTurnIndex;
+  		}
+  	}, {
+  		key: 'TurnsSinceForContainer',
+  		value: function TurnsSinceForContainer(container) {
+  			if (!container.turnIndexShouldBeCounted) {
+  				this.Error("TURNS_SINCE() for target (" + container.name + " - on " + container.debugMetadata + ") unknown. The story may need to be compiled with countAllVisits flag (-c).");
+  			}
+
+  			var containerPathStr = container.path.toString();
+  			var index = this.state.turnIndices[containerPathStr];
+  			if (typeof index !== 'undefined') {
+  				return this.state.currentTurnIndex - index;
+  			} else {
+  				return -1;
+  			}
+  		}
+  	}, {
+  		key: 'NextSequenceShuffleIndex',
+  		value: function NextSequenceShuffleIndex() {
+  			//		var numElementsIntVal = state.PopEvaluationStack () as IntValue;
+  			var numElementsIntVal = this.state.PopEvaluationStack();
+  			if (!(numElementsIntVal instanceof IntValue)) {
+  				this.Error("expected number of elements in sequence for shuffle index");
+  				return 0;
+  			}
+
+  			var seqContainer = this.state.currentContainer;
+
+  			var numElements = numElementsIntVal.value;
+
+  			//		var seqCountVal = state.PopEvaluationStack () as IntValue;
+  			var seqCountVal = this.state.PopEvaluationStack();
+  			var seqCount = seqCountVal.value;
+  			var loopIndex = seqCount / numElements;
+  			var iterationIndex = seqCount % numElements;
+
+  			// Generate the same shuffle based on:
+  			//  - The hash of this container, to make sure it's consistent
+  			//    each time the runtime returns to the sequence
+  			//  - How many times the runtime has looped around this full shuffle
+  			var seqPathStr = seqContainer.path.toString();
+  			var sequenceHash = 0;
+  			for (var i = 0, l = seqPathStr.length; i < l; i++) {
+  				sequenceHash += seqPathStr.charCodeAt[i] || 0;
+  			}
+  			var randomSeed = sequenceHash + loopIndex + this.state.storySeed;
+  			var random = new PRNG(parseInt(randomSeed));
+
+  			var unpickedIndices = [];
+  			for (var i = 0; i < numElements; ++i) {
+  				unpickedIndices.push(i);
+  			}
+
+  			for (var i = 0; i <= iterationIndex; ++i) {
+  				var chosen = random.next() % unpickedIndices.length;
+  				var chosenIndex = unpickedIndices[chosen];
+  				unpickedIndices.splice(chosen, 1);
+
+  				if (i == iterationIndex) {
+  					return chosenIndex;
+  				}
+  			}
+
+  			throw "Should never reach here";
+  		}
+  	}, {
+  		key: 'Error',
+  		value: function Error(message, useEndLineNumber) {
+  			var e = new StoryException(message);
+  			//		e.useEndLineNumber = useEndLineNumber;
+  			throw e;
+  		}
+  	}, {
+  		key: 'AddError',
+  		value: function AddError(message, useEndLineNumber) {
+  			//		var dm = this.currentDebugMetadata;
+  			var dm = null;
+
+  			if (dm != null) {
+  				var lineNum = useEndLineNumber ? dm.endLineNumber : dm.startLineNumber;
+  				message = "RUNTIME ERROR: '" + dm.fileName + "' line " + lineNum + ": " + message;
+  			} else {
+  				message = "RUNTIME ERROR: " + message;
+  			}
+
+  			this.state.AddError(message);
+
+  			// In a broken state don't need to know about any other errors.
+  			this.state.ForceEnd();
+  		}
+  	}, {
+  		key: 'currentChoices',
+  		get: function get$$1() {
+  			// Don't include invisible choices for external usage.
+  			var choices = [];
+
+  			this._state.currentChoices.forEach(function (c) {
+  				if (!c.choicePoint.isInvisibleDefault) {
+  					c.index = choices.length;
+  					choices.push(c);
+  				}
+  			});
+
+  			return choices;
+  		}
+  	}, {
+  		key: 'currentText',
+  		get: function get$$1() {
+  			return this.state.currentText;
+  		}
+  	}, {
+  		key: 'currentTags',
+  		get: function get$$1() {
+  			return this.state.currentTags;
+  		}
+  	}, {
+  		key: 'currentErrors',
+  		get: function get$$1() {
+  			return this.state.currentErrors;
+  		}
+  	}, {
+  		key: 'hasError',
+  		get: function get$$1() {
+  			return this.state.hasError;
+  		}
+  	}, {
+  		key: 'variablesState',
+  		get: function get$$1() {
+  			return this.state.variablesState;
+  		}
+  	}, {
+  		key: 'listDefinitions',
+  		get: function get$$1() {
+  			return this._listDefinitions;
+  		}
+  	}, {
+  		key: 'state',
+  		get: function get$$1() {
+  			return this._state;
+  		}
+  	}, {
+  		key: 'mainContentContainer',
+  		get: function get$$1() {
+  			if (this._temporaryEvaluationContainer) {
+  				return this._temporaryEvaluationContainer;
+  			} else {
+  				return this._mainContentContainer;
+  			}
+  		}
+  	}, {
+  		key: 'canContinue',
+  		get: function get$$1() {
+  			return this.state.canContinue;
+  		}
+  	}, {
+  		key: 'globalTags',
+  		get: function get$$1() {
+  			return this.TagsAtStartOfFlowContainerWithPathString("");
+  		}
+  	}]);
+  	return Story;
+  }(Object$1);
+
+  exports.Story = Story;
+
+  Object.defineProperty(exports, '__esModule', { value: true });
+
+})));

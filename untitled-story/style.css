@@ -52,7 +52,4 @@ img.blur {
 /* Media Queries */
 
 @media (max-width: 480px){
-    html {
-        font-size: 14px;
-    }
 }

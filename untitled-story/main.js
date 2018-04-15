@@ -36,24 +36,24 @@
 
             // Get ink to generate the next paragraph
             var paragraphText = story.Continue();
-            
-            // Prints the first tag in a thing
-            console.log(story.currentTags);
 
             // From Ethan - checks the current tag and creates different elements
             // Add as many as you want using this pattern!
-            if (story.currentTags[0] === undefined){
-                var paragraphElement = document.createElement("p");
+            
+            var paragraphElement = document.createElement("p");
+            
+            if (story.currentTags[0] != undefined){
+                var tags = story.currentTags;
+                if (tags.includes("toggleFlow")){
+                    toggleFlow();
+                }
+                else if (tags.includes("h1")){
+                    var paragraphElement = document.createElement("h1");
+                }
+                else if (tags.includes("h2")){
+                    var paragraphElement = document.createElement("h2");
+                }
             }
-            else if (story.currentTags[0] === "h1"){
-                console.log("h1");
-                var paragraphElement = document.createElement("h1");
-            }
-            else if (story.currentTags[0] === "h2"){
-                console.log("h2");
-                var paragraphElement = document.createElement("h2");
-            }
-            // etc.
             
             paragraphElement.innerHTML = paragraphText;
             storyContainer.appendChild(paragraphElement);
@@ -94,15 +94,18 @@
                 // Tell the story where to go next
                 story.ChooseChoiceIndex(choice.index);
 
-                // from Ethan - deleting all the contents to make it more Twine like!
-                document.getElementById("story").innerHTML = "";
+                // Save state?
+
+                if(ActLikeTwine){
+                    // from Ethan - deleting all the contents to make it more Twine like!
+                    document.getElementById("story").innerHTML = "";
+                }
 
                 // Aaand loop
                 continueStory();
             });
         });
-
-        scrollToBottom();
+        if(scrollToBottomTrue){scrollToBottom();}
     }
 
      continueStory();

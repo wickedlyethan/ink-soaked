@@ -46,14 +46,14 @@
             
             if (story.currentTags[0] != undefined){
                 var tags = story.currentTags;
+                for (var i = 0; i < tags.length; i++) {
+                    if (tags[i] == ("h1") || tags[i] == ("h2") || tags[i] == ("h3") || tags[i] == ("h4") || tags[i] == ("h5") || tags[i] == ("h6"))
+                    {
+                        var paragraphElement = document.createElement(tags[i]);
+                    }
+                }
                 if (tags.includes("toggleFlow")){
                     toggleFlow();
-                }
-                if (tags.includes("h1")){
-                    var paragraphElement = document.createElement("h1");
-                }
-                if (tags.includes("h2")){
-                    var paragraphElement = document.createElement("h2");
                 }
             }
             

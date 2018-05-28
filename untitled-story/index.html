@@ -4,8 +4,8 @@
     <meta charset="utf-8">
 
     <title>untitled</title>
-    <meta name="author" content="John Doe">
-    <meta name="description" content="description">
+    <meta name="author" content="">
+    <meta name="description" content="">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -14,13 +14,30 @@
 
 
 <body>
-
-    <div id="story" class="container">
+    <div class="container">
+        
+        <div class="header">
+            <a id="myBtn" style="float: right;font-size: 1.5em;">&#9776; </a>
+        </div>
+        
+        <div id="story"></div>
+        
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h1>Paused</h1>
+                <p>Put information about your game here</p>
+            </div>
+        </div>
     </div>
-    
+
+    <script src="modal.js"></script>
     <script src="settings.js"></script>
     <script src="ink.js"></script>
     <script src="untitled.js"></script>
     <script src="main.js"></script>
 </body>
+
 </html>

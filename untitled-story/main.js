@@ -63,21 +63,36 @@
             // Fade in paragraph after a short delay
             showAfter(delay, paragraphElement);
 
-            delay += 75.0;
+            delay += textDelay;
         }
 
         // Create HTML choices from ink choices
         story.currentChoices.forEach(function(choice) {
+            
+                // Create paragraph with anchor element
+                var choiceParagraphElement = document.createElement('p');
+                choiceParagraphElement.classList.add("choice");
+                choiceParagraphElement.innerHTML = `<a href='#'>${choice.text}</a>`
+                storyContainer.appendChild(choiceParagraphElement);
 
-            // Create paragraph with anchor element
-            var choiceParagraphElement = document.createElement('p');
-            choiceParagraphElement.classList.add("choice");
-            choiceParagraphElement.innerHTML = `<a href='#'>${choice.text}</a>`
-            storyContainer.appendChild(choiceParagraphElement);
+            // From Ethan - Delays rendering choices.
+            if (waittoRenderChoices == true){
+                setTimeout(drawChoices, bodytoChoicesDelay);
+                // delay = 0;
+            }
 
-            // Fade choice in after a short delay
-            showAfter(delay, choiceParagraphElement);
-            delay += 200.0;
+            function drawChoices(){
+                // If option to show all options simultaneously is set, don't delay between them
+                if (delayBetweenChoices == false){
+                    showAfter(0, choiceParagraphElement);
+                }
+                else{
+                    // Fade choice in after a short delay
+                    showAfter(delay, choiceParagraphElement);
+                    delay += choiceDelay;
+                }
+
+            }
 
             // Click on choice
             var choiceAnchorEl = choiceParagraphElement.querySelectorAll("a")[0];
@@ -110,6 +125,6 @@
         if(scrollToBottomTrue){scrollToBottom();}
     }
 
-     continueStory();
+    continueStory();
 
 })(storyContent);

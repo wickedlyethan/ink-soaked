@@ -1,12 +1,12 @@
 # ink-soaked
 
-This is a template for creating hypertext fiction that acts like most [Twine](https://twinery.org/) story formats, but is written in inkle's powerful scripting language [ink](https://www.inklestudios.com/ink/). 
+_ink-soaked_ is a template for creating hypertext fiction that acts like most [Twine](https://twinery.org/) story formats, but your story content written in inkle's powerful scripting language [ink](https://www.inklestudios.com/ink/). 
 
 All I did was lightly edit the template created by inkle's IDE, [Inky](https://github.com/inkle/inky), which renders ink stories into HTML and Javascript using the fantastic port of the ink compiler by [y-lohse](https://github.com/y-lohse/inkjs). My edits include erasing each page once a choice is made, mimicking Twine and other hypertext fiction, and creating a template for using ink's tags system for formatting.
 
-- [How to Use](##how-to-use)
-- [Using Tags](##using-tags)
-- [Customizing Your Story](##customizing-your-story)
+- [How to Use](#how-to-use)
+- [Using Tags](#using-tags-for-formatting)
+- [Customizing Your Story](#customizing-your-story)
 
 ## How to Use
 

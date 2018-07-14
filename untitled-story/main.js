@@ -29,21 +29,18 @@
     function continueStory() {
 
         var paragraphIndex = 0;
-        var delay = 0.0;
+        var delay = textDelay;
 
         // Generate story text - loop through available content
         while(story.canContinue) {
 
             // Get ink to generate the next paragraph
             var paragraphText = story.Continue();
-
-            // From Ethan - checks the current tag and creates different elements
-            // Add as many as you want using this pattern!
             
             var paragraphElement = document.createElement("p");
-
-            // console.log(story.currentTags.toString());
             
+            // From Ethan - checks the current tag and creates different elements
+            // Add as many as you want using this pattern!
             if (story.currentTags[0] != undefined){
                 var tags = story.currentTags;
                 for (var i = 0; i < tags.length; i++) {
@@ -60,26 +57,31 @@
             paragraphElement.innerHTML = paragraphText;
             storyContainer.appendChild(paragraphElement);
 
-            // Fade in paragraph after a short delay
-            showAfter(delay, paragraphElement);
-
-            delay += textDelay;
+            if (delayText == true){
+                // Fade in paragraph after a short delay
+                showAfter(delay, paragraphElement);
+                delay += textDelay;
+            }
+            else {
+                showAfter(0, paragraphElement);
+            }
         }
 
         // Create HTML choices from ink choices
         story.currentChoices.forEach(function(choice) {
             
-                // Create paragraph with anchor element
-                var choiceParagraphElement = document.createElement('p');
-                choiceParagraphElement.classList.add("choice");
-                choiceParagraphElement.innerHTML = `<a href='#'>${choice.text}</a>`
-                storyContainer.appendChild(choiceParagraphElement);
+            // Create paragraph with anchor element
+            var choiceParagraphElement = document.createElement('p');
+            choiceParagraphElement.classList.add("choice");
+            choiceParagraphElement.innerHTML = `<a href='#'>${choice.text}</a>`
+            storyContainer.appendChild(choiceParagraphElement);
 
             // From Ethan - Delays rendering choices.
             if (waittoRenderChoices == true){
                 setTimeout(drawChoices, bodytoChoicesDelay);
                 // delay = 0;
             }
+            else {drawChoices();}
 
             function drawChoices(){
                 // If option to show all options simultaneously is set, don't delay between them

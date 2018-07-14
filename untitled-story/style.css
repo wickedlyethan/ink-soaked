@@ -33,7 +33,7 @@ p, a {
 #story p {
     opacity: 0.0;
     transition-timing-function: ease-in-out;
-    transition: opacity 1.0s;
+    transition: opacity 0.5s;
 }
 
 #story p.show {
@@ -111,6 +111,5 @@ img.blur {
 
 
 /* -----  Media Queries ----- */
-
 @media (max-width: 480px){
 }

@@ -4,6 +4,8 @@
 
 This is hopefully a useful tool for publishing ink stories that can be played in any modern web browser, whether on desktop or mobile.
 
+In the future I'd like to implement a restart button and auto-saving, but I'm learning JavaScript as I go! If you know how to implement those features go for it and then [tell me all about it](https://twitter.com/wickedlyethan).
+
 - [Getting Started](#getting-started)
 - [Features](#features)
 - [Customizing Your Story](#customizing-your-story)

@@ -33,7 +33,7 @@ p, a {
 #story p {
     opacity: 0.0;
     transition-timing-function: ease-in-out;
-    transition: opacity 1.0s;
+    transition: opacity 0.5s;
 }
 
 #story p.show {
@@ -45,7 +45,8 @@ p.choice {
 }
 
 a {
-    text-decoration: none; color:blue;
+    text-decoration: none; 
+    color:blue;
 }
 
 a:hover {
@@ -61,9 +62,6 @@ h1 {
 img {
     max-width: 100%;
     margin:auto;
-}
-img.blur {
-    filter: blur(3px);
 }
 
 /* ----- Modal Styles ----- */
@@ -107,10 +105,4 @@ img.blur {
     color: black;
     text-decoration: none;
     cursor: pointer;
-}
-
-
-/* -----  Media Queries ----- */
-
-@media (max-width: 480px){
 }

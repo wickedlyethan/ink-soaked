@@ -125,4 +125,4 @@ main.js
 
 ---
 
-For full transparency, I also minify'd the code for `ink.js` using [JSCompress](https://jscompress.com/) - this was as much a psychological thing (so I wouldn't touch it) as it was an efficiency move (it cut out 55% of the file, making the whole folder to excatly 100kb, which is good for a webpage.)
+For full transparency, I also minify'd the code for `ink.js` using [JSCompress](https://jscompress.com/) - this was as much a psychological thing (so I wouldn't touch it) as it was an efficiency move (it cut out 55% of the file, making the whole folder to exactly 100kb, which is good for a web-page.)

@@ -69,9 +69,17 @@ Inkle did a marvelous job of creating a simple, lovely web template for easily p
 
 I've added a few minor modifications to make choice text more apparent and left-aligned, much like in Twine 2's default story format, Harlowe, and to have a strong emphasis on readability and mobile-responsiveness. But the beauty of CSS is [anyone can do it](https://www.w3schools.com/css/)! Make your story beautiful!
 
+### Text Timing
+
+In the `settings.js` file there are a lot of variables for the exact timing of text appearing on the screen. This was inspired by Joseph Humfrey's wonderful essay on ["Designing Text UX for Effortless Reading"](https://youtu.be/mopBSNyFEE4), and while the defaults aren't perfect, they create a relaxing, simple reading experience.
+
+However, this tool is about control, so there are broad boolean variables for disabling these behaviors. You can make all the text and choices render simultaneously, have a delay between choices and body text, have a delay only between different choices, etc. 
+
+If you'd like to change the behavior of the text itself fading in, that is done on line 34 of `style.css`, where the story text is set to an opacity of 0, then gains an attribute that makes it fade in. Simply change the opacity from 0 to 1 and the text will not fade in, as well as disable all fade timing.
+
 ### Images
 
-Inserting images is incredibly easy: simply insert an HTML `img` tag as its own line anywhere in your ink script, with the correct `src` path for the image. The CSS included in this template will make it fit into the current story container. For example:
+Inserting images is incredibly easy: simply insert an HTML `img` tag as its own line anywhere in your ink script, with the correct `src` path for the image. The CSS included in this template will make it fit into the current story container, as if it is a line of text. For example:
 
 ```
 <img src="images/1.jpg">
@@ -89,13 +97,29 @@ Your first impression is always important, and there are some finishing touches 
 
 2) Change the `<title>` property in your final HMTL file. By default it is "untitled" and that's what will show up as the name of the tab on someone's web browser - change this to the title of your game! Also change the values for "author" and "description" right near there, even just as a way to sign your name.
 
-3) Consider implementing the [Open Graph Protocol](http://ogp.me/) and [Twitter Card](https://developer.twitter.com/en/docs/tweets/optimize-with-cards/guides/getting-started) `meta` tags. If you plan on sharing your project on social media, or serious about getting people to read it in general, consider utilizing Facebook and Twitter's code that makes your project look great when shared. They give you a lot of control over how your work gets shared, and it looks very professional if done right.
+3) Consider implementing the [Open Graph Protocol](http://ogp.me/) and [Twitter Card](https://developer.twitter.com/en/docs/tweets/optimize-with-cards/guides/getting-started) `meta` tags. If you plan on sharing your project on social media, or serious about getting people to read it in general, consider utilizing those sets of Facebook and Twitter code that makes your project look great when shared. They give you a lot of control over how your work gets shared, and it looks very professional if done right. You might want to create a cover image and use it in that metadata as well.
 
 ### Publishing to Itch.io
 
-Additionally, if you wanted to be a bit crazy, or if you want to host on your own website or Itch.io, you can in fact take all the scripts and combine them into the `index.html` file - be careful, and consider compressing the JavaScript when you do so, but this will make launching your game even easier! (This is what I've done with the demo story included at the root of the repo - all the JavaScript, including the story itself, and CSS is in that one HTML file, and it's only ~100kb.)
+To publish to Itch.io, all you have to do is zip the `your-story` folder (or whatever you've re-named it to) and upload it as an HTML5 project. That's it!
 
 ### Publishing to GitHub Pages
+
+To publish to GitHub Pages, you would create a repository that is your working files, then make the `master` branch into the source for a GitHub Page. The default URL for your story would be `your-story.github.io`, but you can get custom URLs for GitHub Pages very easily. Read more about GitHub Pages [here](https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/).
+
+### Single Executable
+
+(Note: this hasn't been updated to include the settings and modal yet, so it's out of date, will fix soon.)
+
+If you want to be a bit crazy, you can in fact take all the scripts and combine them into the `index.html` file - be careful, and consider compressing the JavaScript when you do so, but this will make launching your game pretty fool-proof, and a bit easier to email. (This is what I've done with the demo story included at the root of the repo - all the JavaScript, including the story itself, and CSS is in that one HTML file, and it's only ~100kb.)
+
+You do need to be careful about the order in which you place them, however. So, before the closing `<body>` tag, take the compressed (I recommend [JSCompress](https://jscompress.com/)) versions of these scripts and put them in their own `<script>` tags, in this order:
+
+```
+Ink.js
+your-story.js
+main.js
+```
 
 ---
 

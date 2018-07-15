@@ -9,6 +9,7 @@ var ActLikeTwine = true;
 /* ----- Modal Setting ----- */
 // If you don't want the modal, turn this to false
 var HaveModal = true;
+var scrollToBottomTrue = true;
 
 /* ----- Text Timing Variables ----- */
 // Choose whether to have a delay between each line of body text 

@@ -29,7 +29,7 @@
     function continueStory() {
 
         var paragraphIndex = 0;
-        var delay = textDelay;
+        var delay = 0;
 
         // Generate story text - loop through available content
         while(story.canContinue) {
